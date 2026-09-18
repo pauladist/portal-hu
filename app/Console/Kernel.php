@@ -12,7 +12,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->command('inspire')->hourly();
+        $schedule->command('news:publish-scheduled')->everyFiveMinutes(); //luego consultar cada cuanto tiempo se hace la consulta 
     }
 
     /**
