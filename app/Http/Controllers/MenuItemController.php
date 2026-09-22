@@ -27,6 +27,7 @@ class MenuItemController extends Controller
     public function store(StoreMenuItemRequest $request)
     {
         MenuItem::create([
+            'parent_id' => $request->parent_id,
             'title' => $request->title,
             'url' => $request->url,
             'order' => $request->order,
@@ -50,6 +51,7 @@ class MenuItemController extends Controller
         MenuItem $menuItem
     ) {
         $menuItem->update([
+            'parent_id' => $request->parent_id,
             'title' => $request->title,
             'url' => $request->url,
             'order' => $request->order,

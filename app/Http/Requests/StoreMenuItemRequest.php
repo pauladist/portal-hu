@@ -14,6 +14,12 @@ class StoreMenuItemRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'parent_id' => [
+                'nullable',
+                'integer',
+                'exists:menu_items,id',
+            ],
+
             'title' => [
                 'required',
                 'string',
@@ -42,6 +48,8 @@ class StoreMenuItemRequest extends FormRequest
     public function messages(): array
     {
         return [
+            'parent_id.exists' => 'El menú seleccionado como padre no existe.',
+
             'title.required' => 'El nombre del botón es obligatorio.',
             'title.max' => 'El nombre del botón no puede superar los 255 caracteres.',
 

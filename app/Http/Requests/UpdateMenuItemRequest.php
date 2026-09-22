@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateMenuItemRequest extends FormRequest
 {
@@ -13,7 +14,16 @@ class UpdateMenuItemRequest extends FormRequest
 
     public function rules(): array
     {
+        $menuItem = $this->route('menu_item');
+
         return [
+            'parent_id' => [
+                'nullable',
+                'integer',
+                'exists:menu_items,id',
+                Rule::notIn([$menuItem->id]),
+            ],
+
             'title' => [
                 'required',
                 'string',
@@ -42,6 +52,9 @@ class UpdateMenuItemRequest extends FormRequest
     public function messages(): array
     {
         return [
+            'parent_id.exists' => 'El menú seleccionado como padre no existe.',
+            'parent_id.not_in' => 'Un botón no puede ser su propio padre.',
+
             'title.required' => 'El nombre del botón es obligatorio.',
             'title.max' => 'El nombre del botón no puede superar los 255 caracteres.',
 
