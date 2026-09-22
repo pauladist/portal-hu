@@ -12,6 +12,7 @@ class Tag extends Model
 
     protected $fillable = [
         'title',
+        'slug',
     ];
 
     public function news(): BelongsToMany

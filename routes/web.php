@@ -3,6 +3,8 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\TagController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -71,5 +73,11 @@ Route::middleware(['auth', 'role:Administrador,Comunicación'])
         });
 
         Route::resource('news', NewsController::class)
+            ->except(['show']);
+
+        Route::resource('categories', CategoryController::class)
+            ->except(['show']);
+
+        Route::resource('tags', TagController::class)
             ->except(['show']);
     });
