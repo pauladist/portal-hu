@@ -5,6 +5,7 @@ use App\Http\Controllers\NewsController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\TagController;
+use App\Http\Controllers\MenuItemController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -53,6 +54,8 @@ Route::middleware(['auth', 'role:Administrador'])
         });
 
         Route::resource('users', UserController::class)
+            ->except(['show']);
+        Route::resource('menu-items', MenuItemController::class)
             ->except(['show']);
     });
 
