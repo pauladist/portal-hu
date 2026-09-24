@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreMenuItemRequest extends FormRequest
 {
@@ -26,10 +27,22 @@ class StoreMenuItemRequest extends FormRequest
                 'max:255',
             ],
 
+            'destination_type' => [
+                'nullable',
+                Rule::in(['url', 'pdf']),
+            ],
+
             'url' => [
                 'nullable',
-                'string',
+                'url',
                 'max:2048',
+            ],
+
+            'file' => [
+                'nullable',
+                'file',
+                'mimes:pdf',
+                'max:10240',
             ],
 
             'order' => [
@@ -45,6 +58,28 @@ class StoreMenuItemRequest extends FormRequest
         ];
     }
 
+    public function withValidator($validator): void
+    {
+        $validator->after(function ($validator) {
+
+            $type = $this->input('destination_type');
+
+            if ($type === 'url' && !$this->filled('url')) {
+                $validator->errors()->add(
+                    'url',
+                    'Debe ingresar una URL para este tipo de destino.'
+                );
+            }
+
+            if ($type === 'pdf' && !$this->hasFile('file')) {
+                $validator->errors()->add(
+                    'file',
+                    'Debe seleccionar un archivo PDF para este tipo de destino.'
+                );
+            }
+        });
+    }
+
     public function messages(): array
     {
         return [
@@ -53,7 +88,14 @@ class StoreMenuItemRequest extends FormRequest
             'title.required' => 'El nombre del botón es obligatorio.',
             'title.max' => 'El nombre del botón no puede superar los 255 caracteres.',
 
+            'destination_type.in' => 'El tipo de destino seleccionado no es válido.',
+
+            'url.url' => 'La URL ingresada no es válida.',
             'url.max' => 'La URL no puede superar los 2048 caracteres.',
+
+            'file.file' => 'El archivo seleccionado no es válido.',
+            'file.mimes' => 'El archivo debe ser un PDF.',
+            'file.max' => 'El archivo no puede superar los 10 MB.',
 
             'order.required' => 'El orden es obligatorio.',
             'order.integer' => 'El orden debe ser un número entero.',
