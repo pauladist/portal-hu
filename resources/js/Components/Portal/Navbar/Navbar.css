@@ -1,0 +1,649 @@
+/* =========================================================
+   NAVBAR
+   ========================================================= */
+
+.portal-navbar {
+    position: absolute;
+
+    top: 18px;
+    left: 0;
+    right: 0;
+
+    z-index: 1000;
+
+    width: 100%;
+    padding: 0 20px;
+}
+
+.portal-navbar__container {
+    position: relative;
+
+    width: 100%;
+    max-width: 1280px;
+    margin: 0 auto;
+
+    background: var(--hu-surface);
+
+    border: 1px solid var(--hu-border);
+    border-radius: var(--hu-radius-lg);
+
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+
+    overflow: visible;
+}
+
+/* =========================================================
+   FILA PRINCIPAL
+   ========================================================= */
+
+.portal-navbar__top {
+    min-height: 72px;
+
+    display: flex;
+    align-items: center;
+
+    padding: 8px 18px;
+}
+
+/* =========================================================
+   LOGO
+   ========================================================= */
+
+.portal-navbar__brand {
+    display: flex;
+    align-items: center;
+
+    flex-shrink: 0;
+
+    margin-right: 24px;
+}
+
+.portal-navbar__brand img {
+    width: auto;
+    height: 48px;
+
+    object-fit: contain;
+}
+
+/* =========================================================
+   MENU
+   ========================================================= */
+
+.portal-navbar__menu {
+    display: flex;
+    align-items: center;
+
+    gap: 4px;
+
+    flex: 1;
+}
+
+/* =========================================================
+   ITEM WRAPPER
+   ========================================================= */
+
+.portal-navbar__item-wrapper {
+    position: relative;
+
+    flex-shrink: 0;
+}
+
+/* =========================================================
+   ITEMS
+   ========================================================= */
+
+.portal-navbar__item,
+.portal-navbar__more {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 42px;
+
+    padding: 7px 12px;
+
+    border-radius: var(--hu-radius-sm);
+
+    color: var(--hu-text);
+
+    font-size: 13px;
+    font-weight: 600;
+
+    white-space: nowrap;
+
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease;
+}
+
+.portal-navbar__item:hover,
+.portal-navbar__more:hover {
+    background: #f1f4f7;
+    color: var(--hu-primary);
+}
+
+/* =========================================================
+   FLECHAS
+   ========================================================= */
+
+.portal-navbar__arrow {
+    margin-left: 4px;
+
+    font-size: 17px;
+
+    transition: transform 0.2s ease;
+}
+
+.portal-navbar__item-wrapper--has-children:hover
+    > .portal-navbar__item
+    .portal-navbar__arrow:not(.portal-navbar__arrow--right) {
+    transform: rotate(180deg);
+}
+
+.portal-navbar__arrow--right {
+    margin-left: 12px;
+
+    font-size: 17px;
+}
+
+/* =========================================================
+   DROPDOWN BASE
+   ========================================================= */
+
+.portal-navbar__dropdown {
+    position: absolute;
+
+    top: calc(100% + 6px);
+    left: 50%;
+
+    min-width: 240px;
+
+    z-index: 1100;
+
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+
+    transform: translate(-50%, -8px);
+
+    transition:
+        opacity 0.18s ease,
+        transform 0.18s ease,
+        visibility 0.18s ease;
+}
+
+/*
+ * PUENTE INVISIBLE
+ *
+ * Evita que el menú desaparezca cuando el mouse
+ * pasa del botón al dropdown.
+ */
+
+.portal-navbar__dropdown::before {
+    content: "";
+
+    position: absolute;
+
+    top: -10px;
+    left: -10px;
+
+    width: calc(100% + 20px);
+    height: 10px;
+}
+
+/* Mostrar dropdown */
+
+.portal-navbar__item-wrapper:hover > .portal-navbar__dropdown {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+
+    transform: translate(-50%, 0);
+}
+
+/* =========================================================
+   CONTENIDO DROPDOWN
+   ========================================================= */
+
+.portal-navbar__dropdown-inner {
+    display: flex;
+    flex-direction: column;
+
+    padding: 7px;
+
+    background: var(--hu-surface);
+
+    border: 1px solid var(--hu-border);
+    border-radius: var(--hu-radius-md);
+
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+}
+
+/* =========================================================
+   ITEM DROPDOWN
+   ========================================================= */
+
+.portal-navbar__dropdown-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    min-height: 38px;
+
+    padding: 8px 11px;
+
+    border-radius: var(--hu-radius-sm);
+
+    color: var(--hu-text);
+
+    font-size: 12px;
+    font-weight: 500;
+
+    white-space: nowrap;
+
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease;
+}
+
+.portal-navbar__dropdown-item:hover {
+    background: #f1f4f7;
+    color: var(--hu-primary);
+}
+
+/* =========================================================
+   DROPDOWN ANIDADO
+   ========================================================= */
+.portal-navbar__dropdown--nested {
+    top: -8px;
+    left: calc(100% + 6px);
+
+    transform: translateX(-8px);
+}
+
+.portal-navbar__item-wrapper--dropdown-left
+> .portal-navbar__dropdown--nested {
+    left: auto;
+    right: calc(100% + 6px);
+
+    transform: translateX(8px);
+}
+.portal-navbar__item-wrapper--dropdown-left:hover
+> .portal-navbar__dropdown--nested {
+    transform: translateX(0);
+}
+
+/*
+ * PUENTE ENTRE NIVELES
+ *
+ * Este puente es MUY importante.
+ * Permite mover el mouse desde el primer dropdown
+ * hasta el segundo sin que desaparezca.
+ */
+
+.portal-navbar__dropdown--nested::before {
+    top: 0;
+    left: -12px;
+
+    width: 12px;
+    height: 100%;
+}
+
+/* Mostrar segundo nivel */
+
+.portal-navbar__item-wrapper:hover > .portal-navbar__dropdown--nested {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+
+    transform: translateX(0);
+}
+
+/* =========================================================
+   MÁS
+   ========================================================= */
+
+.portal-navbar__more {
+    border: 0;
+
+    background: transparent;
+
+    font-family: inherit;
+
+    cursor: pointer;
+}
+
+.portal-navbar__more-wrapper {
+    position: static;
+}
+
+/* =========================================================
+   SEGUNDA FILA DE "MÁS"
+   ========================================================= */
+
+/*
+ * La segunda fila flota debajo del navbar.
+ * No ocupa espacio dentro del documento.
+ */
+
+.portal-navbar__more-row {
+    position: absolute;
+
+    top: calc(100% - 1px);
+    left: 0;
+    right: 0;
+
+    z-index: 1050;
+
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+
+    transform: translateY(-4px);
+
+    transition:
+        opacity 0.2s ease,
+        transform 0.2s ease,
+        visibility 0.2s ease;
+}
+
+/*
+ * PUENTE INVISIBLE
+ *
+ * Cubre el pequeño espacio entre la primera
+ * y segunda fila para que el mouse nunca
+ * pierda el hover.
+ */
+
+.portal-navbar__more-row::before {
+    content: "";
+
+    position: absolute;
+
+    top: -8px;
+    left: 0;
+    right: 0;
+
+    height: 8px;
+}
+
+/* Mostrar segunda fila */
+.portal-navbar__more-row {
+    position: absolute;
+
+    top: calc(100% - 1px);
+    left: 0;
+    right: 0;
+
+    z-index: 1050;
+
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+
+    transform: translateY(-4px);
+
+    transition:
+        opacity 0.2s ease,
+        transform 0.2s ease,
+        visibility 0.2s ease;
+}
+
+.portal-navbar__more-row--open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+
+    transform: translateY(0);
+}
+.portal-navbar__more-arrow {
+    transition: transform 0.2s ease;
+}
+
+.portal-navbar__more-arrow--open {
+    transform: rotate(180deg);
+}
+
+/* =========================================================
+   CONTENIDO SEGUNDA FILA
+   ========================================================= */
+
+.portal-navbar__more-menu {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-wrap: wrap;
+
+    gap: 4px;
+
+    /*
+     * Sin padding superior:
+     * queda pegada a la primera fila.
+     */
+    padding: 8px 18px;
+
+    background: var(--hu-surface);
+
+    border: 1px solid var(--hu-border);
+
+    border-radius: 0 0 var(--hu-radius-lg) var(--hu-radius-lg);
+
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.1);
+}
+
+/*
+ * Los elementos de la segunda fila mantienen
+ * exactamente el mismo comportamiento que
+ * los elementos de la primera.
+ */
+
+.portal-navbar__more-menu .portal-navbar__item-wrapper {
+    position: relative;
+}
+
+/* =========================================================
+   HAMBURGER
+   ========================================================= */
+
+.portal-navbar__toggle {
+    display: none;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 42px;
+    height: 42px;
+
+    margin-left: auto;
+
+    border: 0;
+    border-radius: var(--hu-radius-sm);
+
+    background: transparent;
+
+    color: var(--hu-primary);
+
+    cursor: pointer;
+}
+
+.portal-navbar__toggle:hover {
+    background: #f1f4f7;
+}
+
+.portal-navbar__toggle .material-symbols-outlined {
+    font-size: 28px;
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+.portal-navbar__mobile {
+    display: none;
+}
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 1100px) {
+    .portal-navbar__brand {
+        margin-right: 14px;
+    }
+
+    .portal-navbar__brand img {
+        height: 44px;
+    }
+
+    .portal-navbar__item,
+    .portal-navbar__more {
+        padding: 7px 9px;
+
+        font-size: 12px;
+    }
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 768px) {
+    .portal-navbar {
+        top: 10px;
+        left: 0;
+        right: 0;
+        width: 100%;
+
+        padding: 0 12px;
+    }
+
+    .portal-navbar__container {
+        border-radius: var(--hu-radius-md);
+    }
+
+    .portal-navbar__top {
+        min-height: 62px;
+
+        padding: 7px 12px;
+    }
+
+    .portal-navbar__brand {
+        margin-right: 0;
+    }
+
+    .portal-navbar__brand img {
+        height: 42px;
+    }
+
+    /* Ocultar desktop */
+
+    .portal-navbar__menu {
+        display: none;
+    }
+
+    /* Hamburger */
+
+    .portal-navbar__toggle {
+        display: flex;
+    }
+
+    /* Mobile */
+
+    .portal-navbar__mobile {
+        display: block;
+
+        max-height: 0;
+
+        overflow: hidden;
+
+        transition: max-height 0.3s ease;
+    }
+
+    .portal-navbar__mobile--open {
+        max-height: 1000px;
+    }
+
+    .portal-navbar__mobile-menu {
+        display: flex;
+        flex-direction: column;
+
+        padding: 0 12px 12px;
+    }
+
+    /* Items */
+
+    .portal-navbar__mobile .portal-navbar__item-wrapper {
+        width: 100%;
+    }
+
+    .portal-navbar__mobile .portal-navbar__item {
+        width: 100%;
+
+        justify-content: space-between;
+
+        min-height: 46px;
+
+        padding: 10px 12px;
+
+        font-size: 14px;
+    }
+
+    /*
+     * En mobile los dropdowns no se comportan
+     * como desktop.
+     */
+
+    .portal-navbar__mobile .portal-navbar__dropdown {
+        position: static;
+
+        width: 100%;
+        min-width: 0;
+
+        padding-left: 14px;
+
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+
+        transform: none;
+
+        display: none;
+    }
+
+    .portal-navbar__mobile
+        .portal-navbar__item-wrapper:hover
+        > .portal-navbar__dropdown {
+        display: block;
+    }
+
+    /* Ocultar Más desktop */
+
+    .portal-navbar__more-row {
+        display: none;
+    }
+}
+
+/* =========================================================
+   MOBILE PEQUEÑO
+   ========================================================= */
+
+@media (max-width: 480px) {
+    .portal-navbar {
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+
+    .portal-navbar__top {
+        min-height: 58px;
+    }
+
+    .portal-navbar__brand img {
+        height: 38px;
+    }
+
+    .portal-navbar__toggle {
+        width: 40px;
+        height: 40px;
+    }
+}

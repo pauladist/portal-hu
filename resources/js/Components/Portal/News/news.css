@@ -1,0 +1,320 @@
+/* =========================================================
+   NEWS SECTION
+========================================================= */
+
+.portal-news {
+    padding: 70px 0px 60px;
+    background-color: var(--hu-background);
+}
+
+.portal-news__container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.portal-news__header {
+    margin-bottom: 25px;
+}
+
+.portal-news__eyebrow {
+    display: block;
+
+    margin-bottom: 6px;
+
+    color: var(--hu-secondary);
+
+    font-family: var(--hu-font);
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.portal-news__title {
+    margin: 0;
+
+    color: var(--hu-primary);
+
+    font-family: var(--hu-font);
+    font-size: 30px;
+    font-weight: 800;
+}
+
+/* =========================================================
+   GRID
+========================================================= */
+
+.portal-news__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(300px, 1fr);
+    gap: 24px;
+    align-items: start;
+}
+
+/* =========================================================
+   FEATURED NEWS
+========================================================= */
+
+.portal-featured-news {
+    overflow: hidden;
+
+    background-color: var(--hu-surface);
+    border-radius: var(--hu-radius-md);
+
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+}
+
+.portal-featured-news__image-link {
+    display: block;
+}
+
+.portal-featured-news__image {
+    width: 100%;
+    height: 360px;
+
+    display: block;
+
+    object-fit: cover;
+}
+
+.portal-featured-news__content {
+    padding: 24px 26px 26px;
+}
+
+.portal-featured-news__date {
+    display: block;
+
+    margin-bottom: 9px;
+
+    color: var(--hu-secondary);
+
+    font-family: var(--hu-font);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.portal-featured-news__title {
+    margin: 0 0 12px;
+
+    color: var(--hu-primary);
+
+    font-family: var(--hu-font);
+    font-size: 27px;
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+.portal-featured-news__subtitle {
+    margin: 0 0 20px;
+
+    color: var(--hu-text);
+
+    font-family: var(--hu-font);
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+.portal-featured-news__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    color: var(--hu-primary);
+
+    font-family: var(--hu-font);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.portal-featured-news__link .material-symbols-outlined {
+    font-size: 18px;
+
+    transition: transform 0.2s ease;
+}
+
+.portal-featured-news__link:hover
+.portal-featured-news__link .material-symbols-outlined {
+    transform: translateX(4px);
+}
+
+/* =========================================================
+   POPULAR NEWS
+========================================================= */
+
+.portal-popular-news {
+    padding: 22px;
+
+    background-color: var(--hu-surface);
+    border-radius: var(--hu-radius-md);
+
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+}
+
+.portal-popular-news__header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    padding-bottom: 16px;
+    margin-bottom: 4px;
+
+    border-bottom: 1px solid var(--hu-border);
+}
+
+.portal-popular-news__header .material-symbols-outlined {
+    color: var(--hu-secondary);
+    font-size: 21px;
+}
+
+.portal-popular-news__header h3 {
+    margin: 0;
+
+    color: var(--hu-primary);
+
+    font-family: var(--hu-font);
+    font-size: 17px;
+    font-weight: 800;
+}
+
+.portal-popular-news__item {
+    display: grid;
+    grid-template-columns: 25px 75px minmax(0, 1fr);
+    gap: 11px;
+    align-items: center;
+
+    padding: 14px 0;
+
+    border-bottom: 1px solid var(--hu-border);
+}
+
+.portal-popular-news__item:last-child {
+    border-bottom: none;
+}
+
+.portal-popular-news__number {
+    color: var(--hu-secondary);
+
+    font-family: var(--hu-font);
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.portal-popular-news__image-wrapper {
+    width: 75px;
+    height: 65px;
+
+    overflow: hidden;
+
+    border-radius: var(--hu-radius-sm);
+}
+
+.portal-popular-news__image {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+}
+
+.portal-popular-news__content {
+    min-width: 0;
+}
+
+.portal-popular-news__content h4 {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+
+    margin: 0 0 5px;
+
+    color: var(--hu-primary);
+
+    font-family: var(--hu-font);
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.35;
+}
+
+.portal-popular-news__content span {
+    color: var(--hu-text-muted);
+
+    font-family: var(--hu-font);
+    font-size: 10px;
+}
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 900px) {
+
+    .portal-news__grid {
+        grid-template-columns: 1fr;
+    }
+
+    .portal-popular-news {
+        margin-top: 0;
+    }
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 768px) {
+
+    .portal-news {
+        padding: 50px 18px 60px;
+    }
+
+    .portal-news__title {
+        font-size: 25px;
+    }
+
+    .portal-featured-news__image {
+        height: 260px;
+    }
+
+    .portal-featured-news__content {
+        padding: 20px;
+    }
+
+    .portal-featured-news__title {
+        font-size: 23px;
+    }
+
+    .portal-popular-news {
+        padding: 18px;
+    }
+}
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 480px) {
+
+    .portal-news {
+        padding-left: 14px;
+        padding-right: 14px;
+    }
+
+    .portal-featured-news__image {
+        height: 220px;
+    }
+
+    .portal-popular-news__item {
+        grid-template-columns: 22px 65px minmax(0, 1fr);
+        gap: 9px;
+    }
+
+    .portal-popular-news__image-wrapper {
+        width: 65px;
+        height: 58px;
+    }
+}

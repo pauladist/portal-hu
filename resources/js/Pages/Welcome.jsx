@@ -1,17 +1,30 @@
 import React from 'react';
-import { Head, Link } from '@inertiajs/react';
 
-export default function Welcome() {
+import Navbar from '@/Components/Portal/Navbar/Navbar';
+import Hero from '@/Components/Portal/Hero/Hero';
+import QuickLinks from '@/Components/Portal/QuickLinks/QuickLinks';
+import NewsSection from '@/Components/Portal/News/NewsSection';
+
+export default function Welcome({
+    menuItems = [],
+    quickLinks = [],
+    featuredNews = null,
+    popularNews = [],
+}) {
     return (
         <>
-            <Head title="Portal HU" />
+            <Navbar menuItems={menuItems} />
 
-            <div>
-                <h1>Portal Hospital Universitario</h1>
-                <p>Bienvenido/a.</p>
+            <main>
+                <Hero />
 
-                <Link href="/login">Iniciar sesión</Link>
-            </div>
+                <QuickLinks quickLinks={quickLinks} />
+
+                <NewsSection
+                    featuredNews={featuredNews}
+                    popularNews={popularNews}
+                />
+            </main>
         </>
     );
 }

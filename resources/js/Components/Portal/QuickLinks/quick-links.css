@@ -1,0 +1,134 @@
+.portal-quick-links {
+    position: relative;
+    z-index: 5;
+
+    margin-top: -45px;
+    padding: 0 30px /* 10px */;
+}
+
+.portal-quick-links__container {
+    width: 100%;
+    max-width: 1120px;
+
+    margin: 0 auto;
+
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 10px;
+}
+
+.portal-quick-link {
+    min-height: 105px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    gap: 9px;
+
+    padding: 15px 8px;
+
+    background-color: var(--hu-surface);
+    color: var(--hu-primary);
+
+    border-radius: var(--hu-radius-md);
+
+    box-shadow: 0 7px 20px rgba(0, 0, 0, 0.10);
+
+    text-decoration: none;
+
+    transition:
+        transform 0.2s ease,
+        background-color 0.2s ease,
+        color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.portal-quick-link .material-symbols-outlined {
+    font-size: 27px;
+    font-weight: 400;
+}
+
+.portal-quick-link__title {
+    font-family: var(--hu-font);
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.2;
+    text-align: center;
+}
+
+.portal-quick-link:hover {
+    transform: translateY(-5px);
+
+    background-color: var(--hu-primary);
+    color: var(--hu-surface);
+
+    box-shadow: 0 12px 30px rgba(0, 55, 100, 0.18);
+}
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 1100px) {
+
+    .portal-quick-links {
+        padding-left: 25px;
+        padding-right: 25px;
+    }
+
+    .portal-quick-links__container {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 768px) {
+
+    .portal-quick-links {
+        margin-top: -35px;
+        padding: 0 18px 50px;
+    }
+
+    .portal-quick-links__container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .portal-quick-link {
+        min-height: 115px;
+    }
+}
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 480px) {
+
+    .portal-quick-links {
+        padding-left: 14px;
+        padding-right: 14px;
+    }
+
+    .portal-quick-links__container {
+        gap: 10px;
+    }
+
+    .portal-quick-link {
+        min-height: 105px;
+        padding: 16px 8px;
+    }
+
+    .portal-quick-link .material-symbols-outlined {
+        font-size: 28px;
+    }
+
+    .portal-quick-link__title {
+        font-size: 12px;
+    }
+}
