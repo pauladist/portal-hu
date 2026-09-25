@@ -201,6 +201,33 @@
     transform: translate(-50%, 0);
 }
 
+/*
+ * VARIANTES DE ALINEACIÓN (nivel 0)
+ *
+ * Evitan que el dropdown se salga del viewport
+ * cuando el item está cerca del borde derecho
+ * o izquierdo del navbar (ej: COVID-19, Protocolos).
+ */
+
+.portal-navbar__item-wrapper--dropdown-right > .portal-navbar__dropdown {
+    left: 0;
+    transform: translate(0, -8px);
+}
+
+.portal-navbar__item-wrapper--dropdown-right:hover > .portal-navbar__dropdown {
+    transform: translate(0, 0);
+}
+
+.portal-navbar__item-wrapper--dropdown-edge-left > .portal-navbar__dropdown {
+    left: auto;
+    right: 0;
+    transform: translate(0, -8px);
+}
+
+.portal-navbar__item-wrapper--dropdown-edge-left:hover > .portal-navbar__dropdown {
+    transform: translate(0, 0);
+}
+
 /* =========================================================
    CONTENIDO DROPDOWN
    ========================================================= */

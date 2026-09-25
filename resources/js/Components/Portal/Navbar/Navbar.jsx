@@ -1,15 +1,15 @@
 import React, { useState } from "react";
-import "./navbar.css";
+import "./Navbar.css";
 
 function NavbarItem({ item, level = 0 }) {
     const hasChildren = item.children?.length > 0;
 
-    const [openDirection, setOpenDirection] = useState('right');
+    const [openDirection, setOpenDirection] = useState('center');
 
     const itemRef = React.useRef(null);
 
     const handleMouseEnter = () => {
-        if (!hasChildren || level === 0) {
+        if (!hasChildren) {
             return;
         }
 
@@ -21,10 +21,28 @@ function NavbarItem({ item, level = 0 }) {
 
         const rect = element.getBoundingClientRect();
 
+        const dropdownWidth = 250;
+
+        if (level === 0) {
+            // Dropdown de primer nivel: se centra con left:50%,
+            // así que puede desbordar tanto por derecha como por izquierda.
+            const center = rect.left + rect.width / 2;
+            const spaceRight = window.innerWidth - center;
+            const spaceLeft = center;
+
+            if (spaceRight < dropdownWidth / 2) {
+                setOpenDirection('edge-left');
+            } else if (spaceLeft < dropdownWidth / 2) {
+                setOpenDirection('right');
+            } else {
+                setOpenDirection('center');
+            }
+
+            return;
+        }
+
         const spaceRight = window.innerWidth - rect.right;
         const spaceLeft = rect.left;
-
-        const dropdownWidth = 250;
 
         if (
             spaceRight < dropdownWidth &&
@@ -45,9 +63,13 @@ function NavbarItem({ item, level = 0 }) {
                     ? 'portal-navbar__item-wrapper--has-children'
                     : ''
             } ${
-                openDirection === 'left'
-                    ? 'portal-navbar__item-wrapper--dropdown-left'
-                    : ''
+                level === 0
+                    ? openDirection !== 'center'
+                        ? `portal-navbar__item-wrapper--dropdown-${openDirection}`
+                        : ''
+                    : openDirection === 'left'
+                        ? 'portal-navbar__item-wrapper--dropdown-left'
+                        : ''
             }`}
         >
             <a
