@@ -19,11 +19,15 @@ class MenuItem extends Model
         'file_path',
         'order',
         'is_active',
+        'is_quick_link',
+        'quick_link_order',
     ];
 
     protected $casts = [
         'order' => 'integer',
         'is_active' => 'boolean',
+        'is_quick_link' => 'boolean',
+        'quick_link_order' => 'integer',
     ];
 
     public function parent(): BelongsTo
@@ -34,6 +38,8 @@ class MenuItem extends Model
     public function children(): HasMany
     {
         return $this->hasMany(MenuItem::class, 'parent_id')
-            ->orderBy('order');
+            ->where('is_active', true)
+            ->orderBy('order')
+            ->with('children');
     }
 }

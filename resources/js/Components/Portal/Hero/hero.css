@@ -1,0 +1,172 @@
+.portal-hero {
+    position: relative;
+
+    min-height: 430px;
+
+    display: flex;
+    align-items: center;
+
+    background-image: url('/images/hospital-fondo.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    overflow: hidden;
+}
+
+.portal-hero__overlay {
+    position: absolute;
+    inset: 0;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(0, 55, 100, 0.88) 0%,
+            rgba(0, 55, 100, 0.65) 38%,
+            rgba(0, 55, 100, 0.20) 72%,
+            rgba(0, 55, 100, 0.08) 100%
+        );
+}
+
+.portal-hero__content {
+    position: relative;
+    z-index: 1;
+
+    width: 100%;
+    max-width: 1280px;
+
+    margin: 0 auto;
+    padding: 155px 50px 90px;
+}
+
+.portal-hero__line {
+    display: block;
+
+    width: 60px;
+    height: 4px;
+
+    margin-bottom: 22px;
+
+    background-color: var(--hu-secondary);
+    border-radius: 20px;
+}
+
+.portal-hero h1 {
+    max-width: 600px;
+
+    margin: 0 0 18px;
+
+    color: var(--hu-surface);
+
+    font-family: var(--hu-font);
+    font-size: clamp(40px, 4.2vw, 58px);
+    font-weight: 800;
+
+    line-height: 1.08;
+    letter-spacing: -1px;
+}
+
+.portal-hero p {
+    max-width: 540px;
+
+    margin: 0;
+
+    color: rgba(255, 255, 255, 0.92);
+
+    font-family: var(--hu-font);
+    font-size: 16px;
+    font-weight: 400;
+
+    line-height: 1.5;
+}
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 1100px) {
+
+    .portal-hero {
+        min-height: 620px;
+    }
+
+    .portal-hero__content {
+        padding: 180px 45px 100px;
+    }
+
+    .portal-hero h1 {
+        font-size: 56px;
+    }
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 768px) {
+
+    .portal-hero {
+        min-height: 600px;
+
+        background-position: center;
+    }
+
+    .portal-hero__overlay {
+        background:
+            linear-gradient(
+                90deg,
+                rgba(0, 55, 100, 0.88) 0%,
+                rgba(0, 55, 100, 0.68) 100%
+            );
+    }
+
+    .portal-hero__content {
+        padding: 150px 25px 90px;
+    }
+
+    .portal-hero__line {
+        width: 50px;
+        height: 3px;
+        margin-bottom: 18px;
+    }
+
+    .portal-hero h1 {
+        max-width: 500px;
+
+        font-size: 42px;
+        line-height: 1.1;
+        letter-spacing: -0.5px;
+    }
+
+    .portal-hero p {
+        max-width: 480px;
+
+        font-size: 16px;
+        line-height: 1.5;
+    }
+}
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 480px) {
+
+    .portal-hero {
+        min-height: 570px;
+
+        background-position: 58% center;
+    }
+
+    .portal-hero__content {
+        padding: 135px 20px 80px;
+    }
+
+    .portal-hero h1 {
+        font-size: 36px;
+    }
+
+    .portal-hero p {
+        font-size: 15px;
+    }
+}
