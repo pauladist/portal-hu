@@ -1,8 +1,10 @@
+import React from 'react';
+import PanelLayout from '../../Layouts/PanelLayout';
+
 export default function Dashboard() {
     return (
-        <div>
-            <h1>Panel de Administración</h1>
-            <p>Sesión iniciada correctamente.</p>
-        </div>
+        <PanelLayout title="Administración">
+            {/* contenido del panel */}
+        </PanelLayout>
     );
 }

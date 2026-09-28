@@ -55,6 +55,16 @@ class StoreMenuItemRequest extends FormRequest
                 'required',
                 'boolean',
             ],
+            'is_quick_link' => [
+                'required',
+                'boolean',
+            ],
+
+            'quick_link_order' => [
+                'nullable',
+                'integer',
+                'min:1',
+            ],
         ];
     }
 
