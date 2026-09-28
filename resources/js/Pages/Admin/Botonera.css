@@ -1,0 +1,334 @@
+/* =========================================
+   BOTONERA - ADMIN
+   ========================================= */
+
+.botonera-page {
+    width: 100%;
+    min-height: 100%;
+    padding: 32px;
+    background: var(--hu-background, #f5f7fa);
+    color: var(--hu-text, #1f2937);
+}
+
+
+/* =========================================
+   HEADER
+   ========================================= */
+
+.botonera-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 28px;
+}
+
+.botonera-header h1 {
+    margin: 0 0 6px;
+    color: var(--hu-primary);
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.botonera-header p {
+    margin: 0;
+    color: var(--hu-text-secondary, #6b7280);
+    font-size: 15px;
+}
+
+
+/* =========================================
+   CONTENIDO
+   ========================================= */
+
+.botonera-content {
+    width: 100%;
+}
+
+.menu-tree {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+
+/* =========================================
+   ITEM
+   ========================================= */
+
+.menu-item-wrapper {
+    width: 100%;
+}
+
+.menu-item-card {
+    width: 100%;
+    background: var(--hu-white, #ffffff);
+    border: 1px solid var(--hu-border, #e5e7eb);
+    border-radius: 10px;
+    box-shadow: var(--hu-shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.05));
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.menu-item-card:hover {
+    border-color: var(--hu-primary);
+    box-shadow: var(
+        --hu-shadow-md,
+        0 4px 12px rgba(0, 0, 0, 0.08)
+    );
+}
+
+.menu-item-main {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-height: 76px;
+    padding: 14px 18px;
+}
+
+
+/* =========================================
+   EXPANDIR / CONTRAER
+   ========================================= */
+
+.menu-expand-button,
+.menu-expand-placeholder {
+    flex: 0 0 32px;
+    width: 32px;
+    height: 32px;
+}
+
+.menu-expand-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.menu-expand-button:hover {
+    background: var(--hu-background, #f5f7fa);
+}
+
+.menu-expand-button span {
+    width: 9px;
+    height: 9px;
+    border-right: 2px solid var(--hu-primary);
+    border-bottom: 2px solid var(--hu-primary);
+    transform: rotate(-45deg);
+    transition: transform 0.2s ease;
+}
+
+.menu-expand-button.is-open span {
+    transform: rotate(45deg);
+}
+
+
+/* =========================================
+   INFORMACIÓN
+   ========================================= */
+
+.menu-item-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.menu-item-title-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 9px;
+}
+
+.menu-item-title-row h3 {
+    margin: 0;
+    color: var(--hu-primary);
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.4;
+    word-break: break-word;
+}
+
+.menu-item-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 6px;
+    color: var(--hu-text-secondary, #6b7280);
+    font-size: 13px;
+}
+
+.menu-destination {
+    font-weight: 500;
+}
+
+
+/* =========================================
+   ESTADOS
+   ========================================= */
+
+.menu-status,
+.menu-quick-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 24px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1;
+}
+
+.status-active {
+    color: var(--hu-success, #166534);
+    background: var(--hu-success-light, #dcfce7);
+}
+
+.status-inactive {
+    color: var(--hu-danger, #991b1b);
+    background: var(--hu-danger-light, #fee2e2);
+}
+
+.menu-quick-link {
+    color: var(--hu-primary);
+    background: var(--hu-primary-light, #eaf1f7);
+}
+
+
+/* =========================================
+   ACCIONES
+   ========================================= */
+
+.menu-item-actions {
+    flex-shrink: 0;
+}
+
+.menu-action-button {
+    padding: 8px 14px;
+    color: var(--hu-primary);
+    background: transparent;
+    border: 1px solid var(--hu-primary);
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+        background 0.2s ease,
+        color 0.2s ease;
+}
+
+.menu-action-button:hover {
+    color: var(--hu-white, #ffffff);
+    background: var(--hu-primary);
+}
+
+
+/* =========================================
+   HIJOS
+   ========================================= */
+
+.menu-children {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+    margin-left: 38px;
+    padding-left: 18px;
+    border-left: 2px solid var(--hu-border, #e5e7eb);
+}
+
+.menu-level-1 .menu-item-card {
+    background: var(--hu-background, #f8fafc);
+}
+
+.menu-level-2 .menu-item-card {
+    background: var(--hu-white, #ffffff);
+}
+
+
+/* =========================================
+   VACÍO
+   ========================================= */
+
+.botonera-empty {
+    padding: 50px 30px;
+    text-align: center;
+    background: var(--hu-white, #ffffff);
+    border: 1px dashed var(--hu-border, #d1d5db);
+    border-radius: 10px;
+}
+
+.botonera-empty h3 {
+    margin: 0 0 8px;
+    color: var(--hu-primary);
+    font-size: 18px;
+}
+
+.botonera-empty p {
+    margin: 0;
+    color: var(--hu-text-secondary, #6b7280);
+    font-size: 14px;
+}
+
+
+/* =========================================
+   RESPONSIVE
+   ========================================= */
+
+@media (max-width: 768px) {
+    .botonera-page {
+        padding: 20px;
+    }
+
+    .botonera-header h1 {
+        font-size: 24px;
+    }
+
+    .menu-item-main {
+        align-items: flex-start;
+        padding: 14px;
+    }
+
+    .menu-item-title-row {
+        gap: 6px;
+    }
+
+    .menu-item-actions {
+        display: none;
+    }
+
+    .menu-children {
+        margin-left: 18px;
+        padding-left: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .botonera-page {
+        padding: 15px;
+    }
+
+    .menu-item-main {
+        gap: 9px;
+    }
+
+    .menu-expand-button,
+    .menu-expand-placeholder {
+        flex-basis: 26px;
+        width: 26px;
+    }
+
+    .menu-item-title-row h3 {
+        font-size: 14px;
+    }
+
+    .menu-item-meta {
+        font-size: 12px;
+    }
+}

@@ -42,7 +42,6 @@ Route::post('/logout', [LoginController::class, 'destroy'])
 | Administración
 |--------------------------------------------------------------------------
 */
-
 Route::middleware(['auth', 'role:Administrador'])
     ->prefix('admin')
     ->name('admin.')
@@ -50,14 +49,17 @@ Route::middleware(['auth', 'role:Administrador'])
 
         Route::get('/', function () {
             return Inertia::render('Admin/Dashboard');
-        });
+        })->name('dashboard');
+
+        Route::get('/botonera', [MenuItemController::class, 'index'])
+            ->name('botonera');
 
         Route::resource('users', UserController::class)
             ->except(['show']);
+
         Route::resource('menu-items', MenuItemController::class)
             ->except(['show']);
     });
-
 
 /*
 |--------------------------------------------------------------------------

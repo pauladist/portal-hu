@@ -1,0 +1,580 @@
+/* =========================================================
+   PANEL LAYOUT
+   ========================================================= */
+
+.panel-layout {
+    min-height: 100vh;
+    display: flex;
+    background: var(--hu-background, #f4f6f8);
+}
+
+
+/* =========================================================
+   SIDEBAR
+   ========================================================= */
+
+.panel-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 250px;
+    height: 100vh;
+    overflow: hidden;
+    z-index: 1000;
+    background: var(--hu-primary-dark, #002b4d);
+}
+
+.panel-sidebar-background {
+    position: absolute;
+    inset: 0;
+
+    background-image:
+        linear-gradient(
+            to bottom,
+            rgba(0, 55, 100, 0.88) 0%,
+            rgba(0, 55, 100, 0.84) 45%,
+            rgba(0, 43, 77, 0.94) 100%
+        ),
+        url('/images/hospital-bg.jpg');
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+
+/* Capa adicional para integrar mejor la foto */
+.panel-sidebar-background::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(0, 43, 77, 0.15) 0%,
+            rgba(0, 43, 77, 0.10) 50%,
+            rgba(0, 43, 77, 0.30) 100%
+        );
+}
+
+
+/* Contenido por encima de la imagen */
+.panel-sidebar-content {
+    position: relative;
+    z-index: 2;
+
+    display: flex;
+    flex-direction: column;
+
+    width: 100%;
+    height: 100%;
+}
+
+
+/* =========================================================
+   LOGO
+   ========================================================= */
+
+.panel-sidebar-logo {
+    display: flex;
+    align-items: center;
+
+    height: 150px;
+    padding: 30px 28px 20px;
+}
+
+.panel-sidebar-logo img {
+    display: block;
+
+    width: 165px;
+    max-width: 100%;
+    height: auto;
+
+    object-fit: contain;
+}
+
+
+/* =========================================================
+   NAVEGACIÓN
+   ========================================================= */
+
+.panel-sidebar-nav {
+    display: flex;
+    flex-direction: column;
+
+    width: 100%;
+    margin-top: 28px;
+}
+
+
+/* Item normal */
+.panel-sidebar-item {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+
+    width: calc(100% - 14px);
+    min-height: 56px;
+
+    padding: 0 22px 0 36px;
+    margin: 4px 0;
+
+    gap: 14px;
+
+    color: rgba(255, 255, 255, 0.92);
+    text-decoration: none;
+
+    border-radius: 0 28px 28px 0;
+
+    font-size: 15px;
+    font-weight: 400;
+
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+/* Iconos */
+.panel-sidebar-item svg {
+    flex-shrink: 0;
+
+    width: 20px;
+    height: 20px;
+
+    color: currentColor;
+}
+
+
+/* Hover */
+.panel-sidebar-item:hover {
+    background: rgba(255, 255, 255, 0.10);
+    color: var(--hu-white, #ffffff);
+}
+
+
+/* =========================================================
+   ITEM ACTIVO
+   ========================================================= */
+
+.panel-sidebar-item.is-active {
+    background: var(--hu-white, #ffffff);
+    color: var(--hu-primary, #003764);
+
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   FOOTER SIDEBAR
+   ========================================================= */
+
+.panel-sidebar-footer {
+    margin-top: auto;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    min-height: 70px;
+    padding: 0 20px 18px;
+
+    color: rgba(255, 255, 255, 0.72);
+
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+}
+
+
+/* =========================================================
+   CONTENIDO PRINCIPAL
+   ========================================================= */
+
+.panel-main {
+    width: calc(100% - 250px);
+    min-height: 100vh;
+
+    margin-left: 250px;
+}
+
+
+/* =========================================================
+   TOPBAR
+   ========================================================= */
+
+.panel-topbar {
+    position: sticky;
+    top: 0;
+
+    z-index: 900;
+
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    height: 78px;
+
+    padding: 0 30px;
+
+    background: var(--hu-white, #ffffff);
+
+    border-bottom: 1px solid var(--hu-border, #e1e6eb);
+}
+
+
+.panel-topbar-spacer {
+    flex: 1;
+}
+
+
+/* =========================================================
+   USUARIO
+   ========================================================= */
+
+.panel-user-wrapper {
+    position: relative;
+}
+
+
+.panel-user-button {
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    min-height: 54px;
+
+    padding: 6px 16px 6px 8px;
+
+    border: 1px solid var(--hu-border, #dce3e9);
+    border-radius: 28px;
+
+    background: var(--hu-white, #ffffff);
+
+    color: var(--hu-primary, #003764);
+
+    cursor: pointer;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.panel-user-button:hover,
+.panel-user-button.is-open {
+    border-color: rgba(0, 55, 100, 0.30);
+
+    box-shadow:
+        0 4px 14px rgba(0, 43, 77, 0.08);
+}
+
+
+/* Avatar */
+.panel-user-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 38px;
+    height: 38px;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background: var(--hu-primary, #003764);
+    color: var(--hu-white, #ffffff);
+
+    font-size: 12px;
+    font-weight: 700;
+}
+
+
+.panel-user-role {
+    font-size: 14px;
+    font-weight: 600;
+
+    white-space: nowrap;
+}
+
+
+.panel-user-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-left: 4px;
+}
+
+
+.panel-user-arrow svg {
+    width: 16px;
+    height: 16px;
+}
+
+
+/* =========================================================
+   DROPDOWN USUARIO
+   ========================================================= */
+
+.panel-user-dropdown {
+    position: absolute;
+
+    top: calc(100% + 8px);
+    right: 0;
+
+    min-width: 190px;
+
+    padding: 6px;
+
+    background: var(--hu-white, #ffffff);
+
+    border: 1px solid var(--hu-border, #e1e6eb);
+    border-radius: 12px;
+
+    box-shadow:
+        0 10px 30px rgba(0, 43, 77, 0.12);
+}
+
+
+.panel-logout-button {
+    display: flex;
+    align-items: center;
+
+    width: 100%;
+
+    gap: 10px;
+
+    padding: 11px 12px;
+
+    border: 0;
+    border-radius: 8px;
+
+    background: transparent;
+
+    color: #4c5964;
+
+    font-family: inherit;
+    font-size: 14px;
+
+    cursor: pointer;
+
+    text-align: left;
+
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease;
+}
+
+
+.panel-logout-button:hover {
+    background: #f4f6f8;
+    color: var(--hu-primary, #003764);
+}
+
+
+.panel-logout-button svg {
+    width: 18px;
+    height: 18px;
+
+    flex-shrink: 0;
+}
+
+
+/* =========================================================
+   CONTENIDO
+   ========================================================= */
+
+.panel-content {
+    width: 100%;
+    min-height: calc(100vh - 78px);
+
+    padding: 54px 64px 70px;
+}
+
+
+/* =========================================================
+   BOTÓN HAMBURGUESA
+   ========================================================= */
+
+.panel-menu-toggle {
+    display: none;
+
+    width: 42px;
+    height: 42px;
+
+    padding: 9px;
+
+    border: 0;
+    border-radius: 8px;
+
+    background: transparent;
+
+    cursor: pointer;
+}
+
+
+.panel-menu-toggle span {
+    display: block;
+
+    width: 22px;
+    height: 2px;
+
+    margin: 5px auto;
+
+    background: var(--hu-primary, #003764);
+
+    border-radius: 2px;
+}
+
+
+/* =========================================================
+   OVERLAY MOBILE
+   ========================================================= */
+
+.panel-sidebar-overlay {
+    position: fixed;
+    inset: 0;
+
+    z-index: 999;
+
+    border: 0;
+
+    background: rgba(0, 20, 35, 0.45);
+
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 1000px) {
+
+    .panel-sidebar {
+        width: 230px;
+    }
+
+    .panel-main {
+        width: calc(100% - 230px);
+        margin-left: 230px;
+    }
+
+    .panel-content {
+        padding: 45px 40px 60px;
+    }
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+    .panel-sidebar {
+        width: 250px;
+
+        transform: translateX(-100%);
+
+        transition: transform 0.25s ease;
+
+        box-shadow:
+            8px 0 30px rgba(0, 0, 0, 0.12);
+    }
+
+    .panel-sidebar.is-open {
+        transform: translateX(0);
+    }
+
+
+    .panel-main {
+        width: 100%;
+        margin-left: 0;
+    }
+
+
+    .panel-topbar {
+        justify-content: space-between;
+
+        height: 70px;
+
+        padding: 0 18px;
+    }
+
+
+    .panel-menu-toggle {
+        display: block;
+    }
+
+
+    .panel-user-button {
+        min-height: 48px;
+
+        padding-right: 12px;
+    }
+
+
+    .panel-user-avatar {
+        width: 34px;
+        height: 34px;
+    }
+
+
+    .panel-user-role {
+        font-size: 13px;
+    }
+
+
+    .panel-content {
+        min-height: calc(100vh - 70px);
+
+        padding: 35px 22px 50px;
+    }
+}
+
+
+/* =========================================================
+   MOBILE PEQUEÑO
+   ========================================================= */
+
+@media (max-width: 480px) {
+
+    .panel-sidebar {
+        width: 285px;
+        max-width: 85vw;
+    }
+
+
+    .panel-topbar {
+        padding: 0 14px;
+    }
+
+
+    .panel-user-role {
+        display: none;
+    }
+
+
+    .panel-user-button {
+        gap: 4px;
+
+        padding: 5px 9px 5px 5px;
+    }
+
+
+    .panel-user-arrow {
+        margin-left: 3px;
+    }
+
+
+    .panel-content {
+        padding: 28px 16px 40px;
+    }
+}

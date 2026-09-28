@@ -12,11 +12,13 @@ class MenuItemController extends Controller
 {
     public function index()
     {
-        $menuItems = MenuItem::with('parent')
+        $menuItems = MenuItem::query()
+            ->whereNull('parent_id')
+            ->with('children')
             ->orderBy('order')
             ->get();
 
-        return Inertia::render('Admin/MenuItems/Index', [
+        return Inertia::render('Admin/Botonera', [
             'menuItems' => $menuItems,
         ]);
     }
@@ -47,6 +49,8 @@ class MenuItemController extends Controller
             'file_path' => $filePath,
             'order' => $request->order,
             'is_active' => $request->is_active,
+            'is_quick_link' => $request->boolean('is_quick_link'),
+            'quick_link_order' => $request->quick_link_order,
         ]);
 
         return redirect()
@@ -77,6 +81,8 @@ class MenuItemController extends Controller
             'url' => $request->url,
             'order' => $request->order,
             'is_active' => $request->is_active,
+            'is_quick_link' => $request->boolean('is_quick_link'),
+            'quick_link_order' => $request->quick_link_order,
         ];
 
         if ($request->hasFile('file')) {
