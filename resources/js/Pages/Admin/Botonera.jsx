@@ -1,162 +1,412 @@
-import React, { useState } from 'react';
-import { Head } from '@inertiajs/react';
+import React, { useEffect, useMemo, useState } from "react";
+import { router } from "@inertiajs/react";
 
-import PanelLayout from '../../Layouts/PanelLayout';
+import PanelLayout from "../../Layouts/PanelLayout";
+import MenuTree from "./Botonera/Components/MenuTree";
+import MenuItemForm from "./Botonera/Form/MenuItemForm";
 
-import './Botonera.css';
+import "./Botonera.css";
 
 export default function Botonera({ menuItems = [] }) {
+    const [openItems, setOpenItems] = useState({});
+    const [draggedItem, setDraggedItem] = useState(null);
+
+    /*
+    |--------------------------------------------------------------------------
+    | Formulario
+    |--------------------------------------------------------------------------
+    */
+
+    const [formMode, setFormMode] = useState(null);
+    const [selectedItem, setSelectedItem] = useState(null);
+    const [parentItem, setParentItem] = useState(null);
+
+    const [itemToDelete, setItemToDelete] = useState(null);
+
+    /*
+    |--------------------------------------------------------------------------
+    | Bloquear scroll cuando hay un modal abierto
+    |--------------------------------------------------------------------------
+    */
+
+    useEffect(() => {
+        if (!formMode && !itemToDelete) {
+            return;
+        }
+
+        const originalOverflow = document.body.style.overflow;
+
+        document.body.style.overflow = "hidden";
+
+        return () => {
+            document.body.style.overflow = originalOverflow;
+        };
+    }, [formMode, itemToDelete]);
+
+    /*
+    |--------------------------------------------------------------------------
+    | Accesos rápidos
+    |--------------------------------------------------------------------------
+    */
+
+    const quickLinksCount = useMemo(() => {
+        const countQuickLinks = (items) => {
+            return items.reduce((total, item) => {
+                const currentItem = item.is_quick_link ? 1 : 0;
+
+                const childrenCount = countQuickLinks(
+                    item.children || []
+                );
+
+                return total + currentItem + childrenCount;
+            }, 0);
+        };
+
+        return countQuickLinks(menuItems);
+    }, [menuItems]);
+
+    const quickLinksLimitReached = quickLinksCount >= 8;
+
+    /*
+    |--------------------------------------------------------------------------
+    | Expandir / contraer
+    |--------------------------------------------------------------------------
+    */
+
+    const toggleItem = (id) => {
+        setOpenItems((current) => ({
+            ...current,
+            [id]: !current[id],
+        }));
+    };
+
+    /*
+    |--------------------------------------------------------------------------
+    | Estado activo / inactivo
+    |--------------------------------------------------------------------------
+    */
+
+    const toggleStatus = (item) => {
+        router.patch(
+            `/admin/menu-items/${item.id}/status`,
+            {
+                is_active: !item.is_active,
+            },
+            {
+                preserveScroll: true,
+            }
+        );
+    };
+
+    /*
+    |--------------------------------------------------------------------------
+    | Acceso rápido
+    |--------------------------------------------------------------------------
+    */
+
+    const toggleQuickLink = (item) => {
+        /*
+         * Si ya es acceso rápido, siempre permitimos quitarlo.
+         */
+        if (item.is_quick_link) {
+            router.patch(
+                `/admin/menu-items/${item.id}/quick-link`,
+                {},
+                {
+                    preserveScroll: true,
+                }
+            );
+
+            return;
+        }
+
+        /*
+         * Si ya hay 8, no permitimos agregar otro.
+         */
+        if (quickLinksLimitReached) {
+            return;
+        }
+
+        router.patch(
+            `/admin/menu-items/${item.id}/quick-link`,
+            {},
+            {
+                preserveScroll: true,
+            }
+        );
+    };
+
+    /*
+    |--------------------------------------------------------------------------
+    | Drag & drop
+    |--------------------------------------------------------------------------
+    */
+
+    const handleDragStart = (item) => {
+        setDraggedItem(item);
+    };
+
+    const handleDrop = (targetItem) => {
+        if (!draggedItem) {
+            return;
+        }
+
+        if (draggedItem.id === targetItem.id) {
+            setDraggedItem(null);
+            return;
+        }
+
+        router.patch(
+            "/admin/menu-items/reorder",
+            {
+                item_id: draggedItem.id,
+                target_id: targetItem.id,
+            },
+            {
+                preserveScroll: true,
+                onFinish: () => {
+                    setDraggedItem(null);
+                },
+            }
+        );
+    };
+
+    /*
+    |--------------------------------------------------------------------------
+    | Acciones del formulario
+    |--------------------------------------------------------------------------
+    */
+
+    // Crear botón principal
+    const handleCreate = () => {
+        setSelectedItem(null);
+        setParentItem(null);
+        setFormMode("create");
+    };
+
+    // Crear subbotón
+    const handleAddChild = (item) => {
+        setSelectedItem(null);
+        setParentItem(item);
+        setFormMode("child");
+    };
+
+    // Editar botón
+    const handleEdit = (item) => {
+        setSelectedItem(item);
+        setParentItem(null);
+        setFormMode("edit");
+    };
+
+    // Cerrar formulario
+    const handleCloseForm = () => {
+        setFormMode(null);
+        setSelectedItem(null);
+        setParentItem(null);
+    };
+
+    /*
+    |--------------------------------------------------------------------------
+    | Eliminar
+    |--------------------------------------------------------------------------
+    */
+
+    const handleDelete = (item) => {
+        setItemToDelete(item);
+    };
+
+    const confirmDelete = () => {
+        if (!itemToDelete) {
+            return;
+        }
+
+        router.delete(`/admin/menu-items/${itemToDelete.id}`, {
+            preserveScroll: true,
+            onFinish: () => {
+                setItemToDelete(null);
+            },
+        });
+    };
+
+    const cancelDelete = () => {
+        setItemToDelete(null);
+    };
+
+    /*
+    |--------------------------------------------------------------------------
+    | Render
+    |--------------------------------------------------------------------------
+    */
+
     return (
         <PanelLayout title="Botonera">
             <div className="botonera-page">
 
+                {/* HEADER */}
+
                 <div className="botonera-header">
                     <div>
                         <h1>Botonera</h1>
+
                         <p>
                             Administrá la estructura de navegación del portal.
                         </p>
                     </div>
+
+                    <button
+                        type="button"
+                        className="botonera-primary-button"
+                        onClick={handleCreate}
+                    >
+                        <span>+</span>
+                        Agregar botón
+                    </button>
                 </div>
+
+                {/* INFORMACIÓN DE ACCESOS RÁPIDOS */}
+
+                <div className="botonera-info">
+                    <span>Accesos rápidos</span>
+
+                    <strong>{quickLinksCount} / 8</strong>
+                </div>
+
+                {/* ÁRBOL */}
 
                 <div className="botonera-content">
                     {menuItems.length === 0 ? (
                         <div className="botonera-empty">
                             <h3>No hay botones cargados</h3>
+
                             <p>
                                 Todavía no hay elementos en la botonera.
                             </p>
                         </div>
                     ) : (
-                        <div className="menu-tree">
-                            {menuItems.map((item) => (
-                                <MenuItem
-                                    key={item.id}
-                                    item={item}
-                                    level={0}
-                                />
-                            ))}
-                        </div>
+                        <MenuTree
+                            items={menuItems}
+                            level={0}
+                            openItems={openItems}
+                            toggleItem={toggleItem}
+                            toggleStatus={toggleStatus}
+                            toggleQuickLink={toggleQuickLink}
+                            quickLinksLimitReached={
+                                quickLinksLimitReached
+                            }
+                            draggedItem={draggedItem}
+                            onDragStart={handleDragStart}
+                            onDrop={handleDrop}
+                            onAddChild={handleAddChild}
+                            onEdit={handleEdit}
+                            onDelete={handleDelete}
+                        />
                     )}
                 </div>
 
+                {/* =====================================================
+                    MODAL DEL FORMULARIO
+                    ===================================================== */}
+
+                {formMode && (
+                    <div
+                        className="botonera-form-modal-overlay"
+                        onMouseDown={(event) => {
+                            if (
+                                event.target === event.currentTarget
+                            ) {
+                                handleCloseForm();
+                            }
+                        }}
+                    >
+                        <div
+                            className="botonera-form-modal"
+                            role="dialog"
+                            aria-modal="true"
+                            aria-label={
+                                formMode === "edit"
+                                    ? "Editar botón"
+                                    : parentItem
+                                        ? "Agregar subbotón"
+                                        : "Crear botón principal"
+                            }
+                        >
+                            <button
+                                type="button"
+                                className="botonera-form-modal__close"
+                                onClick={handleCloseForm}
+                                aria-label="Cerrar"
+                            >
+                                ×
+                            </button>
+
+                            <div className="botonera-form-modal__content">
+                                <MenuItemForm
+                                    mode={
+                                        formMode === "edit"
+                                            ? "edit"
+                                            : "create"
+                                    }
+                                    menuItem={selectedItem}
+                                    parentItem={parentItem}
+                                    onCancel={handleCloseForm}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* =====================================================
+                    MODAL ELIMINAR
+                    ===================================================== */}
+
+                {itemToDelete && (
+                    <div
+                        className="delete-modal-overlay"
+                        onClick={cancelDelete}
+                    >
+                        <div
+                            className="delete-modal"
+                            onClick={(event) =>
+                                event.stopPropagation()
+                            }
+                        >
+                            <div className="delete-modal__content">
+                                <h2>Eliminar botón</h2>
+
+                                <p>
+                                    ¿Estás segura de que querés eliminar
+                                    <strong>
+                                        {` "${itemToDelete.title}"`}
+                                    </strong>
+                                    ?
+                                </p>
+
+                                <span>
+                                    Esta acción no se puede deshacer.
+                                </span>
+                            </div>
+
+                            <div className="delete-modal__actions">
+                                <button
+                                    type="button"
+                                    className="delete-modal__cancel"
+                                    onClick={cancelDelete}
+                                >
+                                    Cancelar
+                                </button>
+
+                                <button
+                                    type="button"
+                                    className="delete-modal__confirm"
+                                    onClick={confirmDelete}
+                                >
+                                    Eliminar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
         </PanelLayout>
     );
-}
-
-/**
- * Elemento recursivo de la botonera.
- * Permite manejar:
- * Principal
- *   └── Hijo
- *        └── Nieto
- *             └── etc.
- */
-function MenuItem({ item, level }) {
-    const [isOpen, setIsOpen] = useState(false);
-
-    const hasChildren =
-        Array.isArray(item.children) && item.children.length > 0;
-
-    const destination = getDestination(item);
-
-    return (
-        <div className={`menu-item-wrapper menu-level-${level}`}>
-            <div className="menu-item-card">
-                <div className="menu-item-main">
-                    {hasChildren && (
-                        <button
-                            type="button"
-                            className={`menu-expand-button ${
-                                isOpen ? "is-open" : ""
-                            }`}
-                            onClick={() => setIsOpen(!isOpen)}
-                            aria-label={
-                                isOpen
-                                    ? "Contraer elemento"
-                                    : "Expandir elemento"
-                            }
-                        >
-                            <span />
-                        </button>
-                    )}
-
-                    {!hasChildren && (
-                        <div className="menu-expand-placeholder" />
-                    )}
-
-                    <div className="menu-item-info">
-                        <div className="menu-item-title-row">
-                            <h3>{item.title}</h3>
-
-                            <span
-                                className={`menu-status ${
-                                    item.is_active
-                                        ? "status-active"
-                                        : "status-inactive"
-                                }`}
-                            >
-                                {item.is_active ? "Activo" : "Inactivo"}
-                            </span>
-
-                            {item.is_quick_link && (
-                                <span className="menu-quick-link">
-                                    Acceso rápido
-                                </span>
-                            )}
-                        </div>
-
-                        <div className="menu-item-meta">
-                            {hasChildren && (
-                                <span>
-                                    {item.children.length}{" "}
-                                    {item.children.length === 1
-                                        ? "elemento"
-                                        : "elementos"}
-                                </span>
-                            )}
-
-                            <span className="menu-destination">
-                                {destination}
-                            </span>
-                        </div>
-                    </div>
-
-                    <div className="menu-item-actions">
-                        <button type="button" className="menu-action-button">
-                            Editar
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            {hasChildren && isOpen && (
-                <div className="menu-children">
-                    {item.children.map((child) => (
-                        <MenuItem
-                            key={child.id}
-                            item={child}
-                            level={level + 1}
-                        />
-                    ))}
-                </div>
-            )}
-        </div>
-    );
-}
-
-/**
- * Determina qué mostrar como destino.
- */
-function getDestination(item) {
-    if (item.destination_type === "url" && item.url) {
-        return "URL";
-    }
-
-    if (item.destination_type === "pdf" && item.file_path) {
-        return "PDF";
-    }
-
-    return "Sin destino";
 }

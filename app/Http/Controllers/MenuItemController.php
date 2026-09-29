@@ -14,7 +14,11 @@ class MenuItemController extends Controller
     {
         $menuItems = MenuItem::query()
             ->whereNull('parent_id')
-            ->with('children')
+            ->with([
+                'children' => function ($query) {
+                    $query->orderBy('order');
+                },
+            ])
             ->orderBy('order')
             ->get();
 
@@ -25,10 +29,16 @@ class MenuItemController extends Controller
 
     public function create()
     {
-        $menuItems = MenuItem::orderBy('title')->get();
+        $parentId = request()->integer('parent_id');
+
+        $parentItem = null;
+
+        if ($parentId) {
+            $parentItem = MenuItem::findOrFail($parentId);
+        }
 
         return Inertia::render('Admin/MenuItems/Create', [
-            'menuItems' => $menuItems,
+            'parentItem' => $parentItem,
         ]);
     }
 
@@ -37,36 +47,53 @@ class MenuItemController extends Controller
         $filePath = null;
 
         if ($request->hasFile('file')) {
-            $filePath = $request->file('file')
+            $filePath = $request
+                ->file('file')
                 ->store('menu', 'public');
         }
 
+        $parentId = $request->parent_id;
+
+        $query = MenuItem::query();
+
+        if ($parentId === null) {
+            $query->whereNull('parent_id');
+        } else {
+            $query->where('parent_id', $parentId);
+        }
+
+        $nextOrder = ((int) $query->max('order')) + 1;
+
         MenuItem::create([
-            'parent_id' => $request->parent_id,
+            'parent_id' => $parentId,
             'title' => $request->title,
             'destination_type' => $request->destination_type,
             'url' => $request->url,
             'file_path' => $filePath,
-            'order' => $request->order,
-            'is_active' => $request->is_active,
-            'is_quick_link' => $request->boolean('is_quick_link'),
-            'quick_link_order' => $request->quick_link_order,
+            'order' => $nextOrder,
+            'is_active' => true,
+            'is_quick_link' => false,
+            'quick_link_order' => null,
         ]);
 
         return redirect()
-            ->route('admin.menu-items.index')
+            ->route('admin.botonera')
             ->with('success', 'Botón creado correctamente.');
     }
 
     public function edit(MenuItem $menuItem)
     {
-        $menuItems = MenuItem::where('id', '!=', $menuItem->id)
-            ->orderBy('title')
-            ->get();
+        $parentItem = null;
+
+        if ($menuItem->parent_id) {
+            $parentItem = MenuItem::find(
+                $menuItem->parent_id
+            );
+        }
 
         return Inertia::render('Admin/MenuItems/Edit', [
             'menuItem' => $menuItem,
-            'menuItems' => $menuItems,
+            'parentItem' => $parentItem,
         ]);
     }
 
@@ -80,7 +107,7 @@ class MenuItemController extends Controller
             'destination_type' => $request->destination_type,
             'url' => $request->url,
             'order' => $request->order,
-            'is_active' => $request->is_active,
+            'is_active' => $request->boolean('is_active'),
             'is_quick_link' => $request->boolean('is_quick_link'),
             'quick_link_order' => $request->quick_link_order,
         ];
@@ -92,7 +119,8 @@ class MenuItemController extends Controller
                     ->delete($menuItem->file_path);
             }
 
-            $data['file_path'] = $request->file('file')
+            $data['file_path'] = $request
+                ->file('file')
                 ->store('menu', 'public');
         }
 
@@ -113,7 +141,7 @@ class MenuItemController extends Controller
         $menuItem->update($data);
 
         return redirect()
-            ->route('admin.menu-items.index')
+            ->route('admin.botonera')
             ->with('success', 'Botón actualizado correctamente.');
     }
 
@@ -127,7 +155,7 @@ class MenuItemController extends Controller
         $menuItem->delete();
 
         return redirect()
-            ->route('admin.menu-items.index')
+            ->route('admin.botonera')
             ->with('success', 'Botón eliminado correctamente.');
     }
 }
