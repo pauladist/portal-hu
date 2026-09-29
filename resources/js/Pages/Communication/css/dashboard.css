@@ -1,0 +1,750 @@
+/* =========================================================
+   COMMUNICATION - NEWS DASHBOARD
+   ========================================================= */
+
+.communication-news {
+    width: 100%;
+    max-width: 1380px;
+    margin: 0 auto;
+    padding: 42px 48px 60px;
+    color: var(--hu-text, #59595b);
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.news-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 30px;
+    margin-bottom: 34px;
+}
+
+.news-header h1 {
+    margin: 0 0 8px;
+    color: var(--hu-primary, #003764);
+    font-size: 32px;
+    line-height: 1.2;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+.news-header p {
+    margin: 0;
+    color: #737b86;
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   BOTÓN CREAR NOTICIA
+   ========================================================= */
+
+.news-create-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    min-height: 44px;
+    padding: 0 18px;
+
+    border: 1px solid var(--hu-primary, #003764);
+    border-radius: 9px;
+
+    background: var(--hu-primary, #003764);
+    color: #ffffff;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    text-decoration: none;
+
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.news-create-button:hover {
+    background: var(--hu-primary-dark, #002b4d);
+    border-color: var(--hu-primary-dark, #002b4d);
+    box-shadow: 0 5px 14px rgba(0, 55, 100, 0.16);
+    transform: translateY(-1px);
+}
+
+.news-create-button:active {
+    transform: translateY(0);
+}
+
+.news-create-button .material-symbols-outlined {
+    font-size: 20px;
+    font-weight: 400;
+}
+
+
+/* =========================================================
+   TOOLBAR
+   ========================================================= */
+
+.news-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+
+/* =========================================================
+   BUSCADOR
+   ========================================================= */
+
+.news-search {
+    position: relative;
+    flex: 1;
+    max-width: 540px;
+}
+
+.news-search .material-symbols-outlined {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    color: #7b8794;
+    font-size: 21px;
+
+    pointer-events: none;
+}
+
+.news-search input {
+    width: 100%;
+    height: 44px;
+
+    padding: 0 16px 0 44px;
+
+    border: 1px solid var(--hu-border, #dfe4ea);
+    border-radius: 9px;
+
+    background: #ffffff;
+
+    color: var(--hu-text, #59595b);
+    font-size: 14px;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.news-search input::placeholder {
+    color: #9aa4b2;
+}
+
+.news-search input:focus {
+    border-color: var(--hu-primary, #003764);
+    box-shadow: 0 0 0 3px rgba(0, 55, 100, 0.08);
+}
+
+
+/* =========================================================
+   FILTROS
+   ========================================================= */
+
+.news-filter {
+    height: 44px;
+    min-width: 130px;
+
+    padding: 0 36px 0 14px;
+
+    border: 1px solid var(--hu-border, #dfe4ea);
+    border-radius: 9px;
+
+    background-color: #ffffff;
+    color: #555f6b;
+
+    font-size: 14px;
+
+    outline: none;
+
+    cursor: pointer;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.news-filter:focus {
+    border-color: var(--hu-primary, #003764);
+    box-shadow: 0 0 0 3px rgba(0, 55, 100, 0.08);
+}
+
+
+/* =========================================================
+   TABS DE ESTADO
+   ========================================================= */
+
+.news-status-tabs {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    margin-bottom: 18px;
+
+    border-bottom: 1px solid var(--hu-border, #dfe4ea);
+}
+
+.news-status-tabs button {
+    position: relative;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    min-height: 45px;
+    padding: 0 16px;
+
+    border: 0;
+    background: transparent;
+
+    color: #707b87;
+
+    font-size: 14px;
+    font-weight: 500;
+
+    cursor: pointer;
+
+    transition:
+        color 0.2s ease,
+        background-color 0.2s ease;
+}
+
+.news-status-tabs button:hover {
+    color: var(--hu-primary, #003764);
+    background: rgba(0, 55, 100, 0.035);
+}
+
+.news-status-tabs button.active {
+    color: var(--hu-primary, #003764);
+    font-weight: 700;
+}
+
+.news-status-tabs button.active::after {
+    content: "";
+
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    bottom: -1px;
+
+    height: 2px;
+
+    border-radius: 2px 2px 0 0;
+
+    background: var(--hu-primary, #003764);
+}
+
+.news-status-tabs button span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 22px;
+    height: 22px;
+
+    padding: 0 6px;
+
+    border-radius: 20px;
+
+    background: #eef2f5;
+
+    color: #6f7b87;
+
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.news-status-tabs button.active span {
+    background: rgba(0, 55, 100, 0.1);
+    color: var(--hu-primary, #003764);
+}
+
+
+/* =========================================================
+   LISTADO
+   ========================================================= */
+
+.news-list {
+    width: 100%;
+
+    overflow: hidden;
+
+    border: 1px solid var(--hu-border, #dfe4ea);
+    border-radius: 12px;
+
+    background: #ffffff;
+
+    box-shadow: 0 2px 8px rgba(20, 40, 60, 0.035);
+}
+
+
+/* =========================================================
+   CABECERA DE TABLA
+   ========================================================= */
+
+.news-list-header {
+    display: grid;
+    grid-template-columns:
+        minmax(300px, 2.2fr)
+        minmax(150px, 1fr)
+        minmax(110px, 0.8fr)
+        minmax(125px, 0.8fr)
+        105px;
+
+    align-items: center;
+
+    min-height: 48px;
+
+    padding: 0 22px;
+
+    border-bottom: 1px solid var(--hu-border, #dfe4ea);
+
+    background: #f8fafc;
+
+    color: #7a8590;
+
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+}
+
+
+/* =========================================================
+   FILA
+   ========================================================= */
+
+.news-row {
+    display: grid;
+    grid-template-columns:
+        minmax(300px, 2.2fr)
+        minmax(150px, 1fr)
+        minmax(110px, 0.8fr)
+        minmax(125px, 0.8fr)
+        105px;
+
+    align-items: center;
+
+    min-height: 78px;
+
+    padding: 12px 22px;
+
+    border-bottom: 1px solid #edf0f3;
+
+    background: #ffffff;
+
+    transition:
+        background-color 0.2s ease;
+}
+
+.news-row:last-child {
+    border-bottom: 0;
+}
+
+.news-row:hover {
+    background: #fbfcfd;
+}
+
+
+/* =========================================================
+   NOTICIA
+   ========================================================= */
+
+.news-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+
+    min-width: 0;
+}
+
+.news-thumbnail {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex: 0 0 58px;
+
+    width: 58px;
+    height: 46px;
+
+    overflow: hidden;
+
+    border-radius: 7px;
+
+    background: #edf1f5;
+
+    color: #94a0ac;
+}
+
+.news-thumbnail img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+}
+
+.news-thumbnail .material-symbols-outlined {
+    font-size: 22px;
+}
+
+.news-item-title {
+    min-width: 0;
+
+    overflow: hidden;
+
+    color: #36404b;
+
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.45;
+
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+
+/* =========================================================
+   USUARIO
+   ========================================================= */
+
+.news-user {
+    min-width: 0;
+
+    overflow: hidden;
+
+    color: #626d78;
+
+    font-size: 13px;
+    line-height: 1.4;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   FECHA
+   ========================================================= */
+
+.news-date {
+    color: #737e89;
+
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   ESTADOS
+   ========================================================= */
+
+.news-status {
+    display: flex;
+    align-items: center;
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 27px;
+
+    padding: 0 10px;
+
+    border-radius: 20px;
+
+    font-size: 11px;
+    font-weight: 600;
+}
+
+
+/* Publicada */
+
+.status-published {
+    background: #eaf5ed;
+    color: #28733a;
+}
+
+
+/* Programada */
+
+.status-scheduled {
+    background: #fff5df;
+    color: #9a6500;
+}
+
+
+/* Borrador */
+
+.status-draft {
+    background: #edf0f3;
+    color: #697581;
+}
+
+
+/* =========================================================
+   ACCIONES
+   ========================================================= */
+
+.news-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 4px;
+}
+
+.news-action-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 34px;
+    height: 34px;
+
+    border: 0;
+    border-radius: 7px;
+
+    background: transparent;
+
+    color: #71808e;
+
+    text-decoration: none;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease;
+}
+
+.news-action-button:hover {
+    background: #edf3f7;
+    color: var(--hu-primary, #003764);
+}
+
+.news-action-button.delete:hover {
+    background: #fbecec;
+    color: var(--hu-danger, #b42318);
+}
+
+.news-action-button .material-symbols-outlined {
+    font-size: 20px;
+}
+
+
+/* =========================================================
+   ESTADO VACÍO
+   ========================================================= */
+
+.news-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 230px;
+
+    padding: 40px 20px;
+
+    color: #8995a1;
+
+    text-align: center;
+}
+
+.news-empty .material-symbols-outlined {
+    margin-bottom: 12px;
+
+    color: #b1bbc5;
+
+    font-size: 38px;
+}
+
+.news-empty p {
+    margin: 0;
+
+    color: #7e8995;
+
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   PAGINACIÓN
+   ========================================================= */
+
+.news-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 5px;
+
+    margin-top: 18px;
+}
+
+.news-pagination a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 34px;
+    height: 34px;
+
+    padding: 0 10px;
+
+    border: 1px solid var(--hu-border, #dfe4ea);
+    border-radius: 7px;
+
+    background: #ffffff;
+
+    color: #687581;
+
+    font-size: 12px;
+    font-weight: 500;
+
+    text-decoration: none;
+
+    transition:
+        border-color 0.2s ease,
+        background-color 0.2s ease,
+        color 0.2s ease;
+}
+
+.news-pagination a:hover {
+    border-color: var(--hu-primary, #003764);
+    color: var(--hu-primary, #003764);
+}
+
+.news-pagination a.active {
+    border-color: var(--hu-primary, #003764);
+    background: var(--hu-primary, #003764);
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1200px) {
+
+    .communication-news {
+        padding: 36px 32px 50px;
+    }
+
+    .news-list-header,
+    .news-row {
+        grid-template-columns:
+            minmax(260px, 2fr)
+            minmax(130px, 1fr)
+            100px
+            115px
+            95px;
+    }
+
+}
+
+
+@media (max-width: 960px) {
+
+    .communication-news {
+        padding: 32px 24px 45px;
+    }
+
+    .news-list {
+        overflow-x: auto;
+    }
+
+    .news-list-header,
+    .news-row {
+        min-width: 850px;
+    }
+
+}
+
+
+@media (max-width: 700px) {
+
+    .communication-news {
+        padding: 26px 18px 40px;
+    }
+
+    .news-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 18px;
+        margin-bottom: 26px;
+    }
+
+    .news-header h1 {
+        font-size: 28px;
+    }
+
+    .news-create-button {
+        align-self: flex-start;
+    }
+
+    .news-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .news-search {
+        max-width: none;
+    }
+
+    .news-filter {
+        width: 100%;
+    }
+
+    .news-status-tabs {
+        overflow-x: auto;
+        margin-right: -18px;
+        padding-right: 18px;
+    }
+
+    .news-status-tabs button {
+        flex: 0 0 auto;
+        padding: 0 13px;
+    }
+
+}
+
+
+@media (max-width: 480px) {
+
+    .communication-news {
+        padding: 22px 16px 35px;
+    }
+
+    .news-header h1 {
+        font-size: 25px;
+    }
+
+    .news-header p {
+        font-size: 14px;
+    }
+
+    .news-create-button {
+        width: 100%;
+    }
+
+}

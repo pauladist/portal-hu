@@ -37,7 +37,7 @@ class LoginController extends Controller
         }
 
         if ($user->role->name === 'Comunicación') {
-            return redirect()->intended('/comunicacion');
+            return redirect()->intended('/news');
         }
 
         Auth::logout();

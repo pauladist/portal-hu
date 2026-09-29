@@ -16,7 +16,8 @@ use Inertia\Inertia;
 |--------------------------------------------------------------------------
 */
 
-Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/', [HomeController::class, 'index'])
+    ->name('home');
 
 Route::get('/noticias/{news:slug}', [NewsController::class, 'show'])
     ->name('news.show');
@@ -42,6 +43,7 @@ Route::post('/logout', [LoginController::class, 'destroy'])
 | Administración
 |--------------------------------------------------------------------------
 */
+
 Route::middleware(['auth', 'role:Administrador'])
     ->prefix('admin')
     ->name('admin.')
@@ -61,27 +63,47 @@ Route::middleware(['auth', 'role:Administrador'])
             ->except(['show']);
     });
 
+
 /*
 |--------------------------------------------------------------------------
-| Comunicación
+| Noticias
 |--------------------------------------------------------------------------
 */
 
 Route::middleware(['auth', 'role:Administrador,Comunicación'])
-    ->prefix('comunicacion')
-    ->name('communication.')
+    ->prefix('news')
+    ->name('news.')
     ->group(function () {
 
-        Route::get('/', function () {
-            return Inertia::render('Communication/Dashboard');
-        });
+        // Dashboard principal
+        Route::get('/', [NewsController::class, 'index'])
+            ->name('dashboard');
 
-        Route::resource('news', NewsController::class)
-            ->except(['show']);
+        // Crear noticia
+        Route::get('/create', [NewsController::class, 'create'])
+            ->name('create');
 
+        // Guardar noticia
+        Route::post('/', [NewsController::class, 'store'])
+            ->name('store');
+
+        // Editar noticia
+        Route::get('/{news}/edit', [NewsController::class, 'edit'])
+            ->name('edit');
+
+        // Actualizar noticia
+        Route::put('/{news}', [NewsController::class, 'update'])
+            ->name('update');
+
+        // Eliminar noticia
+        Route::delete('/{news}', [NewsController::class, 'destroy'])
+            ->name('destroy');
+
+        // Categorías
         Route::resource('categories', CategoryController::class)
             ->except(['show']);
 
+        // Tags
         Route::resource('tags', TagController::class)
             ->except(['show']);
     });

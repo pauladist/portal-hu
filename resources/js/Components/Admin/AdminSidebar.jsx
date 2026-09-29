@@ -30,10 +30,10 @@ export default function AdminSidebar({ onNavigate }) {
 
             {(isAdmin || isCommunication) && (
                 <Link
-                    href="/comunicacion/news"
+                    href="/news"
                     onClick={onNavigate}
                     className={`panel-sidebar-item ${
-                        isActive('/comunicacion/news')
+                        isActive('/news')
                             ? 'is-active'
                             : ''
                     }`}

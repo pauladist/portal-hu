@@ -11,18 +11,60 @@ use App\Models\Tag;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class NewsController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $news = News::with(['categories', 'tags', 'media'])
-            ->orderByDesc('created_at')
-            ->get();
+        $query = News::query()
+            ->with([
+                'user:id,name,last_name',
+                'media',
+            ])
+            ->orderByDesc('created_at');
 
-        return Inertia::render('Communication/News/Index', [
+        // Buscar por título
+        $query->when($request->filled('search'), function ($query) use ($request) {
+            $query->where('title', 'like', '%' . $request->search . '%');
+        });
+
+        // Filtrar por estado
+        $query->when($request->filled('status') && $request->status !== 'all', function ($query) use ($request) {
+            $query->where('status', $request->status);
+        });
+
+        // Filtrar por año
+        $query->when($request->filled('year'), function ($query) use ($request) {
+            $query->whereYear('created_at', $request->year);
+        });
+
+        // Filtrar por mes
+        $query->when($request->filled('month'), function ($query) use ($request) {
+            $query->whereMonth('created_at', $request->month);
+        });
+
+        $news = $query
+            ->paginate(10)
+            ->withQueryString();
+
+        $counts = [
+            'all' => News::count(),
+            'published' => News::where('status', 'published')->count(),
+            'scheduled' => News::where('status', 'scheduled')->count(),
+            'draft' => News::where('status', 'draft')->count(),
+        ];
+
+        return Inertia::render('Communication/Dashboard', [
             'news' => $news,
+            'counts' => $counts,
+            'filters' => [
+                'search' => $request->search,
+                'status' => $request->status ?? 'all',
+                'month' => $request->month,
+                'year' => $request->year,
+            ],
         ]);
     }
 
@@ -51,6 +93,7 @@ class NewsController extends Controller
             }
 
             $news = News::create([
+                'user_id' => auth()->id(),
                 'title' => $request->title,
                 'slug' => $slug,
                 'subtitle' => $request->subtitle,
@@ -69,7 +112,7 @@ class NewsController extends Controller
         });
 
         return redirect()
-            ->route('communication.news.index')
+            ->route('news.dashboard')
             ->with('success', 'Noticia creada correctamente.');
     }
 
@@ -232,7 +275,7 @@ class NewsController extends Controller
         });
 
         return redirect()
-            ->route('communication.news.index')
+            ->route('news.index')
             ->with('success', 'Noticia actualizada correctamente.');
     }
 
@@ -245,7 +288,7 @@ class NewsController extends Controller
         $news->delete();
 
         return redirect()
-            ->route('communication.news.index')
+            ->route('news.index')
             ->with('success', 'Noticia eliminada correctamente.');
     }
 

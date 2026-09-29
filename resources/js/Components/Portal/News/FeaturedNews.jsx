@@ -1,18 +1,21 @@
 import React from 'react';
 
 export default function FeaturedNews({ news }) {
+
     if (!news) {
         return null;
     }
 
-    const featuredImage = news.media?.[0];
+    const featuredImage =
+        news.media?.find(media => media.is_featured)
+        ?? news.media?.[0];
 
     return (
         <article className="portal-featured-news">
 
             {featuredImage && (
                 <img
-                    src={featuredImage.path}
+                    src={`/storage/${featuredImage.path}`}
                     alt={featuredImage.title || news.title}
                     className="portal-featured-news__image"
                 />
@@ -21,7 +24,9 @@ export default function FeaturedNews({ news }) {
             <div className="portal-featured-news__content">
 
                 <span className="portal-featured-news__date">
-                    {new Date(news.published_at).toLocaleDateString(
+                    {new Date(
+                        news.published_at
+                    ).toLocaleDateString(
                         'es-AR',
                         {
                             day: 'numeric',

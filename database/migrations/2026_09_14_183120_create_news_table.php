@@ -14,15 +14,15 @@ return new class extends Migration
         Schema::create('news', function (Blueprint $table) {
             $table->id();
 
+            $table->foreignId('user_id')
+                ->constrained('users')
+                ->cascadeOnDelete();
+
             $table->string('title')->nullable();
             $table->string('subtitle')->nullable();
-
             $table->string('image')->nullable();
-
             $table->longText('content');
-
             $table->unsignedBigInteger('views')->default(0);
-
             $table->dateTime('published_at')->nullable();
 
             $table->enum('status', [
