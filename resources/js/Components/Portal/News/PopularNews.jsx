@@ -17,21 +17,26 @@ export default function PopularNews({ news = [] }) {
             <div className="portal-popular-news__list">
 
                 {news.map((item, index) => {
-                    const featuredImage = item.media?.[0];
+
+                    const featuredImage =
+                        item.media?.find(media => media.is_featured)
+                        ?? item.media?.[0];
 
                     return (
                         <article
                             key={item.id}
                             className="portal-popular-news__item"
                         >
+
                             <span className="portal-popular-news__number">
                                 {String(index + 1).padStart(2, '0')}
                             </span>
 
                             <div className="portal-popular-news__image-wrapper">
+
                                 {featuredImage && (
                                     <img
-                                        src={featuredImage.path}
+                                        src={`/storage/${featuredImage.path}`}
                                         alt={
                                             featuredImage.title ||
                                             item.title
@@ -39,9 +44,11 @@ export default function PopularNews({ news = [] }) {
                                         className="portal-popular-news__image"
                                     />
                                 )}
+
                             </div>
 
                             <div className="portal-popular-news__content">
+
                                 <h4>
                                     {item.title}
                                 </h4>
@@ -58,13 +65,14 @@ export default function PopularNews({ news = [] }) {
                                         }
                                     )}
                                 </span>
+
                             </div>
+
                         </article>
                     );
                 })}
 
             </div>
-
         </aside>
     );
 }

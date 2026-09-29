@@ -20,6 +20,7 @@ class UserSeeder extends Seeder
             ],
             [
                 'name' => 'Administrador',
+                'last_name' => 'Portal',
                 'password' => Hash::make('password'),
                 'role_id' => $adminRole->id,
             ]
@@ -31,6 +32,7 @@ class UserSeeder extends Seeder
             ],
             [
                 'name' => 'Comunicación',
+                'last_name' => 'Portal',
                 'password' => Hash::make('password'),
                 'role_id' => $communicationRole->id,
             ]

@@ -115,13 +115,13 @@ class StoreNewsRequest extends FormRequest
     {
         $validator->after(function ($validator) {
 
-            $media = $this->input('media', []);
+            $media = $this->all()['media'] ?? [];
 
             /*
-        |--------------------------------------------------------------------------
-        | Validar imagen principal
-        |--------------------------------------------------------------------------
-        */
+            |--------------------------------------------------------------------------
+            | Validar imagen principal
+            |--------------------------------------------------------------------------
+            */
 
             $featuredImages = collect($media)
                 ->filter(function ($item) {
@@ -140,16 +140,17 @@ class StoreNewsRequest extends FormRequest
             }
 
             /*
-        |--------------------------------------------------------------------------
-        | Validar archivos y videos
-        |--------------------------------------------------------------------------
-        */
+            |--------------------------------------------------------------------------
+            | Validar archivos y videos
+            |--------------------------------------------------------------------------
+            */
 
             foreach ($media as $index => $item) {
 
                 $type = $item['type'] ?? null;
 
                 if ($type === 'image' || $type === 'pdf') {
+
                     if (!isset($item['file']) || !$item['file']) {
                         $validator->errors()->add(
                             "media.$index.file",
@@ -159,6 +160,7 @@ class StoreNewsRequest extends FormRequest
                 }
 
                 if ($type === 'video') {
+
                     if (empty($item['url'])) {
                         $validator->errors()->add(
                             "media.$index.url",
