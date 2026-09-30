@@ -13,6 +13,26 @@ export default function Botonera({ menuItems = [] }) {
 
     /*
     |--------------------------------------------------------------------------
+    | Notificación
+    |--------------------------------------------------------------------------
+    */
+
+    const [toast, setToast] = useState(null);
+
+    useEffect(() => {
+        if (!toast) {
+            return;
+        }
+
+        const timer = setTimeout(() => {
+            setToast(null);
+        }, 4000);
+
+        return () => clearTimeout(timer);
+    }, [toast]);
+
+    /*
+    |--------------------------------------------------------------------------
     | Formulario
     |--------------------------------------------------------------------------
     */
@@ -20,28 +40,7 @@ export default function Botonera({ menuItems = [] }) {
     const [formMode, setFormMode] = useState(null);
     const [selectedItem, setSelectedItem] = useState(null);
     const [parentItem, setParentItem] = useState(null);
-
     const [itemToDelete, setItemToDelete] = useState(null);
-
-    /*
-    |--------------------------------------------------------------------------
-    | Bloquear scroll cuando hay un modal abierto
-    |--------------------------------------------------------------------------
-    */
-
-    useEffect(() => {
-        if (!formMode && !itemToDelete) {
-            return;
-        }
-
-        const originalOverflow = document.body.style.overflow;
-
-        document.body.style.overflow = "hidden";
-
-        return () => {
-            document.body.style.overflow = originalOverflow;
-        };
-    }, [formMode, itemToDelete]);
 
     /*
     |--------------------------------------------------------------------------
@@ -94,7 +93,7 @@ export default function Botonera({ menuItems = [] }) {
             },
             {
                 preserveScroll: true,
-            }
+            },
         );
     };
 
@@ -114,7 +113,7 @@ export default function Botonera({ menuItems = [] }) {
                 {},
                 {
                     preserveScroll: true,
-                }
+                },
             );
 
             return;
@@ -132,7 +131,7 @@ export default function Botonera({ menuItems = [] }) {
             {},
             {
                 preserveScroll: true,
-            }
+            },
         );
     };
 
@@ -164,10 +163,30 @@ export default function Botonera({ menuItems = [] }) {
             },
             {
                 preserveScroll: true,
+
+                onSuccess: () => {
+                    setDraggedItem(null);
+
+                    setToast({
+                        type: "success",
+                        message: "Orden actualizado correctamente.",
+                    });
+                },
+
+                onError: () => {
+                    setDraggedItem(null);
+
+                    setToast({
+                        type: "error",
+                        message:
+                            "No se puede modificar la jerarquía establecida. Solo podés reordenar elementos dentro del mismo nivel.",
+                    });
+                },
+
                 onFinish: () => {
                     setDraggedItem(null);
                 },
-            }
+            },
         );
     };
 
@@ -222,6 +241,7 @@ export default function Botonera({ menuItems = [] }) {
 
         router.delete(`/admin/menu-items/${itemToDelete.id}`, {
             preserveScroll: true,
+
             onFinish: () => {
                 setItemToDelete(null);
             },
@@ -241,6 +261,39 @@ export default function Botonera({ menuItems = [] }) {
     return (
         <PanelLayout title="Botonera">
             <div className="botonera-page">
+
+                {/* TOAST */}
+
+                {toast && (
+                    <div
+                        className={`botonera-toast botonera-toast--${toast.type}`}
+                    >
+                        <div className="botonera-toast__content">
+                            <div className="botonera-toast__icon">
+                                {toast.type === "success" ? "✓" : "!"}
+                            </div>
+
+                            <div className="botonera-toast__text">
+                                <strong>
+                                    {toast.type === "success"
+                                        ? "Orden actualizado"
+                                        : "Acción no permitida"}
+                                </strong>
+
+                                <p>{toast.message}</p>
+                            </div>
+                        </div>
+
+                        <button
+                            type="button"
+                            className="botonera-toast__close"
+                            onClick={() => setToast(null)}
+                            aria-label="Cerrar"
+                        >
+                            ×
+                        </button>
+                    </div>
+                )}
 
                 {/* HEADER */}
 
@@ -263,12 +316,57 @@ export default function Botonera({ menuItems = [] }) {
                     </button>
                 </div>
 
+                {/* FORMULARIO */}
+
+                {formMode && (
+                    <div
+                        className="botonera-form-modal-overlay"
+                        onMouseDown={(event) => {
+                            if (
+                                event.target === event.currentTarget
+                            ) {
+                                handleCloseForm();
+                            }
+                        }}
+                    >
+                        <div
+                            className="botonera-form-modal"
+                            role="dialog"
+                            aria-modal="true"
+                        >
+                            <button
+                                type="button"
+                                className="botonera-form-modal__close"
+                                onClick={handleCloseForm}
+                                aria-label="Cerrar"
+                            >
+                                ×
+                            </button>
+
+                            <div className="botonera-form-modal__content">
+                                <MenuItemForm
+                                    mode={
+                                        formMode === "edit"
+                                            ? "edit"
+                                            : "create"
+                                    }
+                                    menuItem={selectedItem}
+                                    parentItem={parentItem}
+                                    onCancel={handleCloseForm}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                )}
+
                 {/* INFORMACIÓN DE ACCESOS RÁPIDOS */}
 
                 <div className="botonera-info">
                     <span>Accesos rápidos</span>
 
-                    <strong>{quickLinksCount} / 8</strong>
+                    <strong>
+                        {quickLinksCount} / 8
+                    </strong>
                 </div>
 
                 {/* ÁRBOL */}
@@ -303,61 +401,7 @@ export default function Botonera({ menuItems = [] }) {
                     )}
                 </div>
 
-                {/* =====================================================
-                    MODAL DEL FORMULARIO
-                    ===================================================== */}
-
-                {formMode && (
-                    <div
-                        className="botonera-form-modal-overlay"
-                        onMouseDown={(event) => {
-                            if (
-                                event.target === event.currentTarget
-                            ) {
-                                handleCloseForm();
-                            }
-                        }}
-                    >
-                        <div
-                            className="botonera-form-modal"
-                            role="dialog"
-                            aria-modal="true"
-                            aria-label={
-                                formMode === "edit"
-                                    ? "Editar botón"
-                                    : parentItem
-                                        ? "Agregar subbotón"
-                                        : "Crear botón principal"
-                            }
-                        >
-                            <button
-                                type="button"
-                                className="botonera-form-modal__close"
-                                onClick={handleCloseForm}
-                                aria-label="Cerrar"
-                            >
-                                ×
-                            </button>
-
-                            <div className="botonera-form-modal__content">
-                                <MenuItemForm
-                                    mode={
-                                        formMode === "edit"
-                                            ? "edit"
-                                            : "create"
-                                    }
-                                    menuItem={selectedItem}
-                                    parentItem={parentItem}
-                                    onCancel={handleCloseForm}
-                                />
-                            </div>
-                        </div>
-                    </div>
-                )}
-
-                {/* =====================================================
-                    MODAL ELIMINAR
-                    ===================================================== */}
+                {/* MODAL DE ELIMINACIÓN */}
 
                 {itemToDelete && (
                     <div
@@ -370,6 +414,10 @@ export default function Botonera({ menuItems = [] }) {
                                 event.stopPropagation()
                             }
                         >
+                            <div className="delete-modal__icon">
+                                !
+                            </div>
+
                             <div className="delete-modal__content">
                                 <h2>Eliminar botón</h2>
 

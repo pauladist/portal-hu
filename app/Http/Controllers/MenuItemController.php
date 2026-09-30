@@ -5,11 +5,18 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreMenuItemRequest;
 use App\Http\Requests\UpdateMenuItemRequest;
 use App\Models\MenuItem;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class MenuItemController extends Controller
 {
+    /*
+    |--------------------------------------------------------------------------
+    | Listado de la botonera
+    |--------------------------------------------------------------------------
+    */
+
     public function index()
     {
         $menuItems = MenuItem::query()
@@ -27,6 +34,12 @@ class MenuItemController extends Controller
         ]);
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | Formulario de creación
+    |--------------------------------------------------------------------------
+    */
+
     public function create()
     {
         $parentId = request()->integer('parent_id');
@@ -42,14 +55,18 @@ class MenuItemController extends Controller
         ]);
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | Crear botón
+    |--------------------------------------------------------------------------
+    */
+
     public function store(StoreMenuItemRequest $request)
     {
         $filePath = null;
 
         if ($request->hasFile('file')) {
-            $filePath = $request
-                ->file('file')
-                ->store('menu', 'public');
+            $filePath = $request->file('file')->store('menu', 'public');
         }
 
         $parentId = $request->parent_id;
@@ -81,14 +98,18 @@ class MenuItemController extends Controller
             ->with('success', 'Botón creado correctamente.');
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | Formulario de edición
+    |--------------------------------------------------------------------------
+    */
+
     public function edit(MenuItem $menuItem)
     {
         $parentItem = null;
 
         if ($menuItem->parent_id) {
-            $parentItem = MenuItem::find(
-                $menuItem->parent_id
-            );
+            $parentItem = MenuItem::find($menuItem->parent_id);
         }
 
         return Inertia::render('Admin/MenuItems/Edit', [
@@ -96,6 +117,12 @@ class MenuItemController extends Controller
             'parentItem' => $parentItem,
         ]);
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Actualizar botón
+    |--------------------------------------------------------------------------
+    */
 
     public function update(
         UpdateMenuItemRequest $request,
@@ -112,11 +139,17 @@ class MenuItemController extends Controller
             'quick_link_order' => $request->quick_link_order,
         ];
 
-        if ($request->hasFile('file')) {
+        /*
+        |--------------------------------------------------------------------------
+        | Nuevo PDF
+        |--------------------------------------------------------------------------
+        */
 
+        if ($request->hasFile('file')) {
             if ($menuItem->file_path) {
-                Storage::disk('public')
-                    ->delete($menuItem->file_path);
+                Storage::disk('public')->delete(
+                    $menuItem->file_path
+                );
             }
 
             $data['file_path'] = $request
@@ -124,15 +157,27 @@ class MenuItemController extends Controller
                 ->store('menu', 'public');
         }
 
-        if ($request->destination_type !== 'pdf') {
+        /*
+        |--------------------------------------------------------------------------
+        | Si deja de ser PDF, eliminamos el archivo anterior
+        |--------------------------------------------------------------------------
+        */
 
+        if ($request->destination_type !== 'pdf') {
             if ($menuItem->file_path) {
-                Storage::disk('public')
-                    ->delete($menuItem->file_path);
+                Storage::disk('public')->delete(
+                    $menuItem->file_path
+                );
             }
 
             $data['file_path'] = null;
         }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Si deja de ser URL, eliminamos la URL
+        |--------------------------------------------------------------------------
+        */
 
         if ($request->destination_type !== 'url') {
             $data['url'] = null;
@@ -145,11 +190,241 @@ class MenuItemController extends Controller
             ->with('success', 'Botón actualizado correctamente.');
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | Activar / desactivar
+    |--------------------------------------------------------------------------
+    */
+
+    public function toggleStatus(MenuItem $menuItem)
+    {
+        $menuItem->update([
+            'is_active' => ! $menuItem->is_active,
+        ]);
+
+        return redirect()
+            ->route('admin.botonera');
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Acceso rápido
+    |--------------------------------------------------------------------------
+    */
+
+    public function toggleQuickLink(MenuItem $menuItem)
+    {
+        /*
+        |--------------------------------------------------------------------------
+        | Si ya es acceso rápido, lo quitamos.
+        |--------------------------------------------------------------------------
+        */
+
+        if ($menuItem->is_quick_link) {
+            $menuItem->update([
+                'is_quick_link' => false,
+                'quick_link_order' => null,
+            ]);
+
+            return redirect()
+                ->route('admin.botonera');
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Verificar límite de 8 accesos rápidos
+        |--------------------------------------------------------------------------
+        */
+
+        $quickLinksCount = MenuItem::query()
+            ->where('is_quick_link', true)
+            ->count();
+
+        if ($quickLinksCount >= 8) {
+            return redirect()
+                ->route('admin.botonera')
+                ->withErrors([
+                    'quick_link' =>
+                    'No podés agregar más accesos rápidos. El límite es de 8.',
+                ]);
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Asignar posición siguiente
+        |--------------------------------------------------------------------------
+        */
+
+        $nextQuickLinkOrder = (
+            (int) MenuItem::query()
+                ->where('is_quick_link', true)
+                ->max('quick_link_order')
+        ) + 1;
+
+        $menuItem->update([
+            'is_quick_link' => true,
+            'quick_link_order' => $nextQuickLinkOrder,
+        ]);
+
+        return redirect()
+            ->route('admin.botonera');
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Reordenar elementos
+    |--------------------------------------------------------------------------
+    */
+    public function reorder(Request $request)
+    {
+        $data = $request->validate([
+            'item_id' => [
+                'required',
+                'integer',
+                'exists:menu_items,id',
+            ],
+            'target_id' => [
+                'required',
+                'integer',
+                'exists:menu_items,id',
+            ],
+        ]);
+
+        $item = MenuItem::findOrFail($data['item_id']);
+        $target = MenuItem::findOrFail($data['target_id']);
+
+        /*
+    |--------------------------------------------------------------------------
+    | No se puede modificar la jerarquía
+    |--------------------------------------------------------------------------
+    */
+
+        if ($item->parent_id !== $target->parent_id) {
+            return back()->withErrors([
+                'reorder' =>
+                'No se puede modificar la jerarquía establecida. Solo podés reordenar elementos dentro del mismo nivel.',
+            ]);
+        }
+
+        /*
+    |--------------------------------------------------------------------------
+    | Mismo elemento
+    |--------------------------------------------------------------------------
+    */
+
+        if ($item->id === $target->id) {
+            return back();
+        }
+
+        /*
+    |--------------------------------------------------------------------------
+    | Obtener hermanos
+    |--------------------------------------------------------------------------
+    */
+
+        $siblings = MenuItem::query()
+            ->where('parent_id', $item->parent_id)
+            ->orderBy('order')
+            ->orderBy('id')
+            ->get();
+
+        $orderedIds = $siblings
+            ->pluck('id')
+            ->values()
+            ->all();
+
+        $itemIndex = array_search(
+            $item->id,
+            $orderedIds,
+            true
+        );
+
+        $targetIndex = array_search(
+            $target->id,
+            $orderedIds,
+            true
+        );
+
+        if (
+            $itemIndex === false ||
+            $targetIndex === false
+        ) {
+            return back()->withErrors([
+                'reorder' =>
+                'No se pudo determinar el orden de los elementos.',
+            ]);
+        }
+
+        /*
+    |--------------------------------------------------------------------------
+    | Sacar el elemento de su posición actual
+    |--------------------------------------------------------------------------
+    */
+
+        array_splice(
+            $orderedIds,
+            $itemIndex,
+            1
+        );
+
+        /*
+    |--------------------------------------------------------------------------
+    | Buscar nuevamente la posición del destino
+    |--------------------------------------------------------------------------
+    */
+
+        $targetIndex = array_search(
+            $target->id,
+            $orderedIds,
+            true
+        );
+
+        /*
+    |--------------------------------------------------------------------------
+    | Insertar en la nueva posición
+    |--------------------------------------------------------------------------
+    */
+
+        array_splice(
+            $orderedIds,
+            $targetIndex,
+            0,
+            [$item->id]
+        );
+
+        /*
+    |--------------------------------------------------------------------------
+    | Guardar nuevo orden
+    |--------------------------------------------------------------------------
+    */
+
+        foreach ($orderedIds as $index => $id) {
+            MenuItem::whereKey($id)->update([
+                'order' => $index + 1,
+            ]);
+        }
+
+        /*
+    |--------------------------------------------------------------------------
+    | Volver sin recargar la página
+    |--------------------------------------------------------------------------
+    */
+
+        return back();
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Eliminar botón
+    |--------------------------------------------------------------------------
+    */
+
     public function destroy(MenuItem $menuItem)
     {
         if ($menuItem->file_path) {
-            Storage::disk('public')
-                ->delete($menuItem->file_path);
+            Storage::disk('public')->delete(
+                $menuItem->file_path
+            );
         }
 
         $menuItem->delete();

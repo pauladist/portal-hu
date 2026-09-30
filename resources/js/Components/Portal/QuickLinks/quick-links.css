@@ -1,71 +1,165 @@
+/* =========================================================
+   ACCESOS RÁPIDOS
+========================================================= */
+
 .portal-quick-links {
     position: relative;
     z-index: 5;
 
     margin-top: -45px;
-    padding: 0 30px /* 10px */;
+    padding: 0 30px;
 }
+
+
+/* =========================================================
+   CONTENEDOR
+========================================================= */
 
 .portal-quick-links__container {
     width: 100%;
-    max-width: 1120px;
+    max-width: 1220px;
 
     margin: 0 auto;
 
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    grid-template-columns: repeat(8, minmax(0, 1fr));
     gap: 10px;
 }
 
-.portal-quick-link {
-    min-height: 105px;
+
+/* =========================================================
+   CARD
+========================================================= */
+
+.portal-quick-link-card {
+    position: relative;
+    overflow: hidden;
+
+    min-height: 82px;
 
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
 
-    gap: 9px;
+    gap: 7px;
 
-    padding: 15px 8px;
+    padding: 10px 7px;
 
-    background-color: var(--hu-surface);
+    background: var(--hu-surface);
     color: var(--hu-primary);
 
-    border-radius: var(--hu-radius-md);
+    border-radius: 9px;
 
-    box-shadow: 0 7px 20px rgba(0, 0, 0, 0.10);
+    border: 1px solid rgba(0, 55, 100, 0.06);
+
+    box-shadow:
+        0 5px 14px rgba(0, 0, 0, 0.11);
 
     text-decoration: none;
 
     transition:
         transform 0.2s ease,
-        background-color 0.2s ease,
-        color 0.2s ease,
         box-shadow 0.2s ease;
 }
 
-.portal-quick-link .material-symbols-outlined {
-    font-size: 27px;
-    font-weight: 400;
+
+/* =========================================================
+   DETALLE DORADO
+   Línea fina lateral + pequeño tramo inferior
+========================================================= */
+
+.portal-quick-link-card::before {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    top: 0;
+
+    width: 3px;
+    height: 100%;
+
+    background: var(--hu-secondary);
+
+    border-radius: 9px 0 0 9px;
 }
 
-.portal-quick-link__title {
+.portal-quick-link-card::after {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    bottom: 0;
+
+    width: 55%;
+    height: 3px;
+
+    background: var(--hu-secondary);
+
+    border-radius: 0 0 0 9px;
+}
+
+
+/* =========================================================
+   ÍCONO
+========================================================= */
+
+.portal-quick-link-card .material-symbols-outlined {
+    position: relative;
+    z-index: 1;
+
+    font-size: 25px;
+    font-weight: 500;
+
+    color: var(--hu-primary);
+
+    text-shadow:
+        0 1px 2px rgba(0, 0, 0, 0.13);
+}
+
+
+/* =========================================================
+   TÍTULO
+========================================================= */
+
+.portal-quick-link-card__title {
+    position: relative;
+    z-index: 1;
+
     font-family: var(--hu-font);
-    font-size: 11px;
+
+    font-size: 12px;
     font-weight: 700;
+
     line-height: 1.2;
+
     text-align: center;
+
+    color: var(--hu-primary);
+
+    text-shadow:
+        0 1px 2px rgba(0, 0, 0, 0.12);
 }
 
-.portal-quick-link:hover {
-    transform: translateY(-5px);
 
-    background-color: var(--hu-primary);
-    color: var(--hu-surface);
+/* =========================================================
+   HOVER
+========================================================= */
 
-    box-shadow: 0 12px 30px rgba(0, 55, 100, 0.18);
+.portal-quick-link-card:hover {
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 8px 18px rgba(0, 0, 0, 0.15);
 }
+
+.portal-quick-link-card:hover::before,
+.portal-quick-link-card:hover::after {
+    background: var(--hu-secondary);
+}
+
 
 /* =========================================================
    TABLET
@@ -80,8 +174,18 @@
 
     .portal-quick-links__container {
         grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+    }
+
+    .portal-quick-link-card {
+        min-height: 88px;
+    }
+
+    .portal-quick-link-card__title {
+        font-size: 12px;
     }
 }
+
 
 /* =========================================================
    MOBILE
@@ -99,10 +203,21 @@
         gap: 12px;
     }
 
-    .portal-quick-link {
-        min-height: 115px;
+    .portal-quick-link-card {
+        min-height: 96px;
+
+        padding: 12px 8px;
+    }
+
+    .portal-quick-link-card .material-symbols-outlined {
+        font-size: 25px;
+    }
+
+    .portal-quick-link-card__title {
+        font-size: 12px;
     }
 }
+
 
 /* =========================================================
    SMALL MOBILE
@@ -119,16 +234,28 @@
         gap: 10px;
     }
 
-    .portal-quick-link {
-        min-height: 105px;
-        padding: 16px 8px;
+    .portal-quick-link-card {
+        min-height: 92px;
+
+        padding: 11px 6px;
+
+        border-radius: 8px;
     }
 
-    .portal-quick-link .material-symbols-outlined {
-        font-size: 28px;
+    .portal-quick-link-card::before {
+        width: 3px;
     }
 
-    .portal-quick-link__title {
-        font-size: 12px;
+    .portal-quick-link-card::after {
+        width: 55%;
+        height: 3px;
+    }
+
+    .portal-quick-link-card .material-symbols-outlined {
+        font-size: 24px;
+    }
+
+    .portal-quick-link-card__title {
+        font-size: 11px;
     }
 }

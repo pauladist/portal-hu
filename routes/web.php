@@ -56,6 +56,21 @@ Route::middleware(['auth', 'role:Administrador'])
         Route::get('/botonera', [MenuItemController::class, 'index'])
             ->name('botonera');
 
+        Route::patch(
+            '/menu-items/reorder',
+            [MenuItemController::class, 'reorder']
+        )->name('menu-items.reorder');
+
+        Route::patch(
+            '/menu-items/{menuItem}/status',
+            [MenuItemController::class, 'toggleStatus']
+        )->name('menu-items.status');
+
+        Route::patch(
+            '/menu-items/{menuItem}/quick-link',
+            [MenuItemController::class, 'toggleQuickLink']
+        )->name('menu-items.quick-link');
+
         Route::resource('users', UserController::class)
             ->except(['show']);
 
