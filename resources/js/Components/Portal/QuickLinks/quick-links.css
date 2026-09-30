@@ -6,7 +6,7 @@
     position: relative;
     z-index: 5;
 
-    margin-top: -45px;
+    margin-top: -48px;
     padding: 0 30px;
 }
 
@@ -17,13 +17,13 @@
 
 .portal-quick-links__container {
     width: 100%;
-    max-width: 1220px;
+    max-width: 1240px;
 
     margin: 0 auto;
 
     display: grid;
     grid-template-columns: repeat(8, minmax(0, 1fr));
-    gap: 10px;
+    gap: 9px;
 }
 
 
@@ -35,26 +35,23 @@
     position: relative;
     overflow: hidden;
 
-    min-height: 82px;
+    min-height: 72px;
 
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
 
-    gap: 7px;
-
-    padding: 10px 7px;
+    padding: 9px 12px;
 
     background: var(--hu-surface);
     color: var(--hu-primary);
 
-    border-radius: 9px;
+    border-radius: 8px;
 
     border: 1px solid rgba(0, 55, 100, 0.06);
 
     box-shadow:
-        0 5px 14px rgba(0, 0, 0, 0.11);
+        0 5px 14px rgba(0, 0, 0, 0.12);
 
     text-decoration: none;
 
@@ -65,8 +62,7 @@
 
 
 /* =========================================================
-   DETALLE DORADO
-   Línea fina lateral + pequeño tramo inferior
+   LÍNEA LATERAL
 ========================================================= */
 
 .portal-quick-link-card::before {
@@ -77,7 +73,7 @@
     left: 0;
     top: 0;
 
-    width: 3px;
+    width: 4px;
     height: 100%;
 
     background: var(--hu-secondary);
@@ -85,39 +81,13 @@
     border-radius: 9px 0 0 9px;
 }
 
-.portal-quick-link-card::after {
-    content: "";
 
-    position: absolute;
+/* Alternar dorado / azul */
 
-    left: 0;
-    bottom: 0;
-
-    width: 55%;
-    height: 3px;
-
-    background: var(--hu-secondary);
-
-    border-radius: 0 0 0 9px;
+.portal-quick-link-card:nth-child(even)::before {
+    background: var(--hu-primary);
 }
 
-
-/* =========================================================
-   ÍCONO
-========================================================= */
-
-.portal-quick-link-card .material-symbols-outlined {
-    position: relative;
-    z-index: 1;
-
-    font-size: 25px;
-    font-weight: 500;
-
-    color: var(--hu-primary);
-
-    text-shadow:
-        0 1px 2px rgba(0, 0, 0, 0.13);
-}
 
 
 /* =========================================================
@@ -128,21 +98,23 @@
     position: relative;
     z-index: 1;
 
+    width: 100%;
+    max-width: 100%;
+
     font-family: var(--hu-font);
 
-    font-size: 12px;
-    font-weight: 700;
+    font-size: 11px;
+    font-weight: 600;
 
-    line-height: 1.2;
+    line-height: 1.25;
 
     text-align: center;
 
     color: var(--hu-primary);
 
     text-shadow:
-        0 1px 2px rgba(0, 0, 0, 0.12);
+        0 1px 2px rgba(0, 0, 0, 0.10);
 }
-
 
 /* =========================================================
    HOVER
@@ -155,9 +127,8 @@
         0 8px 18px rgba(0, 0, 0, 0.15);
 }
 
-.portal-quick-link-card:hover::before,
 .portal-quick-link-card:hover::after {
-    background: var(--hu-secondary);
+    transform: translateX(3px);
 }
 
 
@@ -174,15 +145,25 @@
 
     .portal-quick-links__container {
         grid-template-columns: repeat(4, 1fr);
-        gap: 12px;
+        gap: 10px;
     }
 
     .portal-quick-link-card {
-        min-height: 88px;
+        min-height: 78px;
+
+        padding: 10px 12px 10px 15px;
+    }
+
+    .portal-quick-link-card::before {
+        width: 4px;
     }
 
     .portal-quick-link-card__title {
-        font-size: 12px;
+        font-size: 11px;
+    }
+
+    .portal-quick-link-card::after {
+        font-size: 19px;
     }
 }
 
@@ -195,26 +176,32 @@
 
     .portal-quick-links {
         margin-top: -35px;
-        padding: 0 18px 50px;
+        padding: 0 18px 45px;
     }
 
     .portal-quick-links__container {
         grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
+        gap: 10px;
     }
 
     .portal-quick-link-card {
-        min-height: 96px;
+        min-height: 82px;
 
-        padding: 12px 8px;
+        padding: 10px 12px 10px 14px;
+
+        border-radius: 8px;
     }
 
-    .portal-quick-link-card .material-symbols-outlined {
-        font-size: 25px;
+    .portal-quick-link-card::before {
+        width: 4px;
     }
 
     .portal-quick-link-card__title {
-        font-size: 12px;
+        font-size: 11px;
+    }
+
+    .portal-quick-link-card::after {
+        font-size: 19px;
     }
 }
 
@@ -226,36 +213,31 @@
 @media (max-width: 480px) {
 
     .portal-quick-links {
-        padding-left: 14px;
-        padding-right: 14px;
+        padding-left: 12px;
+        padding-right: 12px;
     }
 
     .portal-quick-links__container {
-        gap: 10px;
+        gap: 8px;
     }
 
     .portal-quick-link-card {
-        min-height: 92px;
+        min-height: 78px;
 
-        padding: 11px 6px;
+        padding: 9px 10px 9px 13px;
 
-        border-radius: 8px;
+        border-radius: 7px;
     }
 
     .portal-quick-link-card::before {
         width: 3px;
     }
 
-    .portal-quick-link-card::after {
-        width: 55%;
-        height: 3px;
-    }
-
-    .portal-quick-link-card .material-symbols-outlined {
-        font-size: 24px;
-    }
-
     .portal-quick-link-card__title {
-        font-size: 11px;
+        font-size: 10px;
+    }
+
+    .portal-quick-link-card::after {
+        font-size: 18px;
     }
 }
