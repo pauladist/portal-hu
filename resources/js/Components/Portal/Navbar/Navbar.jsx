@@ -4,9 +4,21 @@ import "./Navbar.css";
 function NavbarItem({ item, level = 0 }) {
     const hasChildren = item.children?.length > 0;
 
-    const [openDirection, setOpenDirection] = useState('center');
+    const [openDirection, setOpenDirection] = useState("center");
 
     const itemRef = React.useRef(null);
+
+    const getItemHref = () => {
+        if (hasChildren) {
+            return "#";
+        }
+
+        if (item.destination_type === "pdf" && item.file_path) {
+            return `/storage/${item.file_path}`;
+        }
+
+        return item.url ?? "#";
+    };
 
     const handleMouseEnter = () => {
         if (!hasChildren) {
@@ -31,11 +43,11 @@ function NavbarItem({ item, level = 0 }) {
             const spaceLeft = center;
 
             if (spaceRight < dropdownWidth / 2) {
-                setOpenDirection('edge-left');
+                setOpenDirection("edge-left");
             } else if (spaceLeft < dropdownWidth / 2) {
-                setOpenDirection('right');
+                setOpenDirection("right");
             } else {
-                setOpenDirection('center');
+                setOpenDirection("center");
             }
 
             return;
@@ -48,9 +60,9 @@ function NavbarItem({ item, level = 0 }) {
             spaceRight < dropdownWidth &&
             spaceLeft >= dropdownWidth
         ) {
-            setOpenDirection('left');
+            setOpenDirection("left");
         } else {
-            setOpenDirection('right');
+            setOpenDirection("right");
         }
     };
 
@@ -60,20 +72,20 @@ function NavbarItem({ item, level = 0 }) {
             onMouseEnter={handleMouseEnter}
             className={`portal-navbar__item-wrapper ${
                 hasChildren
-                    ? 'portal-navbar__item-wrapper--has-children'
-                    : ''
+                    ? "portal-navbar__item-wrapper--has-children"
+                    : ""
             } ${
                 level === 0
-                    ? openDirection !== 'center'
+                    ? openDirection !== "center"
                         ? `portal-navbar__item-wrapper--dropdown-${openDirection}`
-                        : ''
-                    : openDirection === 'left'
-                        ? 'portal-navbar__item-wrapper--dropdown-left'
-                        : ''
+                        : ""
+                    : openDirection === "left"
+                        ? "portal-navbar__item-wrapper--dropdown-left"
+                        : ""
             }`}
         >
             <a
-                href={hasChildren ? '#' : item.url ?? '#'}
+                href={getItemHref()}
                 className="portal-navbar__item"
             >
                 <span>{item.title}</span>
@@ -82,13 +94,13 @@ function NavbarItem({ item, level = 0 }) {
                     <span
                         className={`material-symbols-outlined portal-navbar__arrow ${
                             level > 0
-                                ? 'portal-navbar__arrow--right'
-                                : ''
+                                ? "portal-navbar__arrow--right"
+                                : ""
                         }`}
                     >
                         {level > 0
-                            ? 'chevron_right'
-                            : 'expand_more'}
+                            ? "chevron_right"
+                            : "expand_more"}
                     </span>
                 )}
             </a>
@@ -97,8 +109,8 @@ function NavbarItem({ item, level = 0 }) {
                 <div
                     className={`portal-navbar__dropdown ${
                         level > 0
-                            ? 'portal-navbar__dropdown--nested'
-                            : ''
+                            ? "portal-navbar__dropdown--nested"
+                            : ""
                     }`}
                 >
                     <div className="portal-navbar__dropdown-inner">
@@ -126,8 +138,10 @@ export default function Navbar({ menuItems = [] }) {
     return (
         <header className="portal-navbar">
             <div className="portal-navbar__container">
+
                 {/* FILA PRINCIPAL */}
                 <div className="portal-navbar__top">
+
                     <a href="/" className="portal-navbar__brand">
                         <img
                             src="/images/logo-hu.png"
@@ -137,7 +151,10 @@ export default function Navbar({ menuItems = [] }) {
 
                     <nav className="portal-navbar__menu">
                         {visibleItems.map((item) => (
-                            <NavbarItem key={item.id} item={item} />
+                            <NavbarItem
+                                key={item.id}
+                                item={item}
+                            />
                         ))}
 
                         {moreItems.length > 0 && (
@@ -152,11 +169,15 @@ export default function Navbar({ menuItems = [] }) {
                                     type="button"
                                     className="portal-navbar__more"
                                     onClick={() =>
-                                        setMoreOpen((current) => !current)
+                                        setMoreOpen(
+                                            (current) => !current
+                                        )
                                     }
                                     aria-expanded={moreOpen}
                                 >
-                                    <span>{moreOpen ? "Menos" : "Más"}</span>
+                                    <span>
+                                        {moreOpen ? "Menos" : "Más"}
+                                    </span>
 
                                     <span
                                         className={`material-symbols-outlined portal-navbar__more-arrow ${
@@ -194,8 +215,16 @@ export default function Navbar({ menuItems = [] }) {
                     <button
                         type="button"
                         className="portal-navbar__toggle"
-                        onClick={() => setMenuOpen((current) => !current)}
-                        aria-label={menuOpen ? "Cerrar menú" : "Abrir menú"}
+                        onClick={() =>
+                            setMenuOpen(
+                                (current) => !current
+                            )
+                        }
+                        aria-label={
+                            menuOpen
+                                ? "Cerrar menú"
+                                : "Abrir menú"
+                        }
                         aria-expanded={menuOpen}
                     >
                         <span className="material-symbols-outlined">
@@ -208,12 +237,17 @@ export default function Navbar({ menuItems = [] }) {
             {/* MOBILE */}
             <div
                 className={`portal-navbar__mobile ${
-                    menuOpen ? "portal-navbar__mobile--open" : ""
+                    menuOpen
+                        ? "portal-navbar__mobile--open"
+                        : ""
                 }`}
             >
                 <nav className="portal-navbar__mobile-menu">
                     {menuItems.map((item) => (
-                        <NavbarItem key={item.id} item={item} />
+                        <NavbarItem
+                            key={item.id}
+                            item={item}
+                        />
                     ))}
                 </nav>
             </div>

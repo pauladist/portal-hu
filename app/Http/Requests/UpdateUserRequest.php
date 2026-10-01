@@ -18,25 +18,53 @@ class UpdateUserRequest extends FormRequest
 
         return [
             'name' => ['required', 'string', 'max:255'],
+
+            'last_name' => [
+                'required',
+                'string',
+                'max:255',
+            ],
+
             'email' => [
                 'required',
                 'email',
                 'max:255',
-                Rule::unique('users', 'email')->ignore($user->id),
+                Rule::unique('users', 'email')
+                    ->ignore($user->id),
             ],
-            'password' => ['nullable', 'string', 'min:8', 'confirmed'],
+
+            'password' => [
+                'nullable',
+                'string',
+                'min:8',
+                'confirmed',
+            ],
         ];
     }
 
     public function messages(): array
     {
         return [
-            'name.required' => 'El nombre es obligatorio.',
-            'email.required' => 'El email es obligatorio.',
-            'email.email' => 'El email debe tener un formato válido.',
-            'email.unique' => 'Ya existe otro usuario con ese email.',
-            'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
-            'password.confirmed' => 'Las contraseñas no coinciden.',
+            'name.required' =>
+                'El nombre es obligatorio.',
+
+            'last_name.required' =>
+                'El apellido es obligatorio.',
+
+            'email.required' =>
+                'El email es obligatorio.',
+
+            'email.email' =>
+                'El email debe tener un formato válido.',
+
+            'email.unique' =>
+                'Ya existe otro usuario con ese email.',
+
+            'password.min' =>
+                'La contraseña debe tener al menos 8 caracteres.',
+
+            'password.confirmed' =>
+                'Las contraseñas no coinciden.',
         ];
     }
 }

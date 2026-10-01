@@ -15,6 +15,7 @@ class UserController extends Controller
     {
         $users = User::with('role')
             ->orderBy('name')
+            ->orderBy('last_name')
             ->get();
 
         return Inertia::render('Admin/Users/Index', [
@@ -29,10 +30,14 @@ class UserController extends Controller
 
     public function store(StoreUserRequest $request)
     {
-        $communicationRole = Role::where('name', 'Comunicación')->firstOrFail();
+        $communicationRole = Role::where(
+            'name',
+            'Comunicación'
+        )->firstOrFail();
 
         User::create([
             'name' => $request->name,
+            'last_name' => $request->last_name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role_id' => $communicationRole->id,
@@ -40,7 +45,10 @@ class UserController extends Controller
 
         return redirect()
             ->route('admin.users.index')
-            ->with('success', 'Usuario creado correctamente.');
+            ->with(
+                'success',
+                'Usuario creado correctamente.'
+            );
     }
 
     public function edit(User $user)
@@ -50,34 +58,48 @@ class UserController extends Controller
         ]);
     }
 
-    public function update(UpdateUserRequest $request, User $user)
-    {
+    public function update(
+        UpdateUserRequest $request,
+        User $user
+    ) {
         $data = [
             'name' => $request->name,
+            'last_name' => $request->last_name,
             'email' => $request->email,
         ];
 
         if ($request->filled('password')) {
-            $data['password'] = Hash::make($request->password);
+            $data['password'] = Hash::make(
+                $request->password
+            );
         }
 
         $user->update($data);
 
         return redirect()
             ->route('admin.users.index')
-            ->with('success', 'Usuario actualizado correctamente.');
+            ->with(
+                'success',
+                'Usuario actualizado correctamente.'
+            );
     }
 
     public function destroy(User $user)
     {
         if ($user->id === auth()->id()) {
-            abort(403, 'No podes eliminar tu propia cuenta de administrador.');
+            abort(
+                403,
+                'No podes eliminar tu propia cuenta de administrador.'
+            );
         }
 
         $user->delete();
 
         return redirect()
             ->route('admin.users.index')
-            ->with('success', 'Usuario eliminado correctamente.');
+            ->with(
+                'success',
+                'Usuario eliminado correctamente.'
+            );
     }
 }

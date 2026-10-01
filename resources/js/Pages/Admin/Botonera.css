@@ -331,11 +331,7 @@
     text-overflow: ellipsis;
 }
 
-.menu-tree
-    > .menu-item-wrapper
-    > .menu-item-card
-    .menu-item-title-row
-    strong {
+.menu-tree > .menu-item-wrapper > .menu-item-card .menu-item-title-row strong {
     font-size: 15px;
 }
 
@@ -586,12 +582,9 @@
    ========================================================= */
 
 .menu-item-dropdown {
-    position: absolute;
+    position: fixed;
 
-    top: calc(100% + 7px);
-    right: 0;
-
-    z-index: 100;
+    z-index: 9999;
 
     width: 205px;
 
@@ -728,7 +721,7 @@
     border-radius: 14px;
 
     box-shadow:
-        0 20px 50px rgba(0, 43, 77, 0.20),
+        0 20px 50px rgba(0, 43, 77, 0.2),
         0 5px 18px rgba(0, 0, 0, 0.08);
 
     animation: botonera-modal-slide-in 0.2s ease;

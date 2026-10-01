@@ -10,6 +10,7 @@ use App\Http\Controllers\MenuItemController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
+
 /*
 |--------------------------------------------------------------------------
 | Rutas públicas
@@ -17,6 +18,7 @@ use Inertia\Inertia;
 */
 
 Route::get('/', [HomeController::class, 'index'])
+    ->middleware('logout.public')
     ->name('home');
 
 Route::get('/noticias/{news:slug}', [NewsController::class, 'show'])
@@ -44,7 +46,11 @@ Route::post('/logout', [LoginController::class, 'destroy'])
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth', 'role:Administrador'])
+Route::middleware([
+    'auth',
+    'role:Administrador',
+    'no.cache.auth'
+])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
@@ -85,7 +91,11 @@ Route::middleware(['auth', 'role:Administrador'])
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth', 'role:Administrador,Comunicación'])
+Route::middleware([
+    'auth',
+    'role:Administrador,Comunicación',
+    'no.cache.auth'
+])
     ->prefix('news')
     ->name('news.')
     ->group(function () {

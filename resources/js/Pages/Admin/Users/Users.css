@@ -1,0 +1,997 @@
+/* =========================================================
+   USUARIOS
+   ========================================================= */
+
+.users-page {
+    width: 100%;
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.users-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 30px;
+    margin-bottom: 24px;
+}
+
+.users-header h1 {
+    margin: 0;
+    color: var(--hu-primary, #003764);
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.users-header p {
+    margin: 8px 0 0;
+    color: var(--hu-text-secondary, #657687);
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   BOTÓN NUEVO USUARIO
+   ========================================================= */
+
+.users-primary-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+
+    min-height: 44px;
+    padding: 0 18px;
+
+    border: 0;
+    border-radius: 8px;
+
+    background: var(--hu-primary, #003764);
+    color: var(--hu-white, #ffffff);
+
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    box-shadow: 0 5px 14px rgba(0, 55, 100, 0.14);
+
+    transition:
+        background-color 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.users-primary-button:hover {
+    background: var(--hu-primary-dark, #002b4d);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 18px rgba(0, 55, 100, 0.18);
+}
+
+.users-primary-button span {
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 1;
+}
+
+
+/* =========================================================
+   CONTENIDO
+   ========================================================= */
+
+.users-content {
+    width: 100%;
+}
+
+
+/* =========================================================
+   TABLA
+   ========================================================= */
+
+.users-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+
+    background: var(--hu-white, #ffffff);
+
+    border: 1px solid var(--hu-border, #e1e6eb);
+    border-radius: 12px;
+
+    box-shadow: 0 3px 14px rgba(0, 43, 77, 0.05);
+}
+
+.users-table {
+    width: 100%;
+
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.users-table thead {
+    background: #f8fafb;
+}
+
+.users-table th {
+    height: 50px;
+    padding: 0 18px;
+
+    border-bottom: 1px solid var(--hu-border, #e1e6eb);
+
+    color: #647582;
+
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 700;
+
+    text-align: left;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+}
+
+.users-table td {
+    height: 64px;
+    padding: 0 18px;
+
+    border-bottom: 1px solid #edf0f2;
+
+    color: #344451;
+
+    font-size: 13px;
+    line-height: 1.4;
+
+    vertical-align: middle;
+}
+
+.users-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.users-table tbody tr {
+    transition: background-color 0.15s ease;
+}
+
+.users-table tbody tr:hover {
+    background: #fafcfd;
+}
+
+
+/* =========================================================
+   ANCHO DE COLUMNAS
+   ========================================================= */
+
+.users-table th:nth-child(1),
+.users-table td:nth-child(1) {
+    width: 28%;
+}
+
+.users-table th:nth-child(2),
+.users-table td:nth-child(2) {
+    width: 30%;
+}
+
+.users-table th:nth-child(3),
+.users-table td:nth-child(3) {
+    width: 20%;
+}
+
+.users-table th:nth-child(4),
+.users-table td:nth-child(4) {
+    width: 22%;
+}
+
+
+/* =========================================================
+   NOMBRE
+   ========================================================= */
+
+.user-name {
+    min-width: 0;
+}
+
+.user-name strong {
+    display: block;
+
+    color: var(--hu-primary, #003764);
+
+    font-size: 13px;
+    font-weight: 700;
+
+    line-height: 1.4;
+}
+
+
+/* =========================================================
+   EMAIL
+   ========================================================= */
+
+.user-email {
+    display: block;
+
+    overflow: hidden;
+
+    color: #42515d;
+
+    font-size: 13px;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   ROL
+   ========================================================= */
+
+.user-role {
+    display: inline-flex;
+    align-items: center;
+
+    min-height: 28px;
+    padding: 0 10px;
+
+    border-radius: 6px;
+
+    background: #eef5f9;
+    color: #2474a8;
+
+    font-size: 11px;
+    font-weight: 600;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   ACCIONES
+   ========================================================= */
+
+.user-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.users-page button {
+    font-family: inherit;
+}
+
+.user-action-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 70px;
+    height: 34px;
+
+    padding: 0 12px;
+
+    border-radius: 6px;
+
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.15s ease;
+}
+
+
+/* =========================================================
+   EDITAR
+   ========================================================= */
+
+.user-action-edit {
+    border: 1px solid #c7dfee;
+    background: #ffffff;
+    color: #2474a8;
+}
+
+.user-action-edit:hover {
+    border-color: #9fc7df;
+    background: #eef7fc;
+    color: #003764;
+}
+
+.user-action-edit:active {
+    transform: translateY(1px);
+}
+
+
+/* =========================================================
+   ELIMINAR
+   ========================================================= */
+
+.user-action-delete {
+    border: 1px solid #edcaca;
+    background: #ffffff;
+    color: #b33b3b;
+}
+
+.user-action-delete:hover {
+    border-color: #dfa4a4;
+    background: #fff2f2;
+    color: #a52f2f;
+}
+
+.user-action-delete:active {
+    transform: translateY(1px);
+}
+
+
+/* =========================================================
+   ESTADO VACÍO
+   ========================================================= */
+
+.users-empty {
+    padding: 55px 30px;
+
+    text-align: center;
+
+    background: var(--hu-white, #ffffff);
+
+    border: 1px dashed var(--hu-border, #d1d9df);
+    border-radius: 12px;
+}
+
+.users-empty h3 {
+    margin: 0 0 8px;
+
+    color: var(--hu-primary, #003764);
+
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.users-empty p {
+    margin: 0;
+
+    color: var(--hu-text-secondary, #657687);
+
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   MODAL ELIMINAR
+   ========================================================= */
+
+.users-modal-overlay {
+    position: fixed;
+    inset: 0;
+
+    z-index: 9998;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 24px;
+
+    background: rgba(0, 43, 77, 0.35);
+
+    backdrop-filter: blur(2px);
+}
+
+.users-delete-modal {
+    width: min(100%, 480px);
+
+    padding: 30px;
+
+    background: #ffffff;
+
+    border: 1px solid #e1e6eb;
+    border-radius: 12px;
+
+    box-shadow: 0 18px 45px rgba(0, 43, 77, 0.18);
+
+    animation: users-modal-in 0.2s ease-out;
+}
+
+.users-delete-content h2 {
+    margin: 0 0 12px;
+
+    color: var(--hu-primary, #003764);
+
+    font-size: 21px;
+    font-weight: 700;
+    line-height: 1.3;
+}
+
+.users-delete-content p {
+    margin: 0;
+
+    color: #374151;
+
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.users-delete-content p strong {
+    color: var(--hu-primary, #003764);
+    font-weight: 700;
+}
+
+.users-delete-content > span {
+    display: block;
+
+    margin-top: 8px;
+
+    color: #7b8490;
+
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.users-delete-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    gap: 10px;
+    margin-top: 28px;
+}
+
+.users-delete-actions button {
+    min-width: 105px;
+    height: 40px;
+
+    padding: 0 18px;
+
+    border-radius: 7px;
+
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease;
+}
+
+.users-delete-cancel {
+    border: 1px solid #d5dce3;
+    background: #ffffff;
+    color: #4b5563;
+}
+
+.users-delete-cancel:hover {
+    border-color: #b8c2cc;
+    background: #f7f9fa;
+    color: #374151;
+}
+
+.users-delete-confirm {
+    border: 1px solid #c62828;
+    background: #c62828;
+    color: #ffffff;
+}
+
+.users-delete-confirm:hover {
+    border-color: #a91f1f;
+    background: #a91f1f;
+}
+
+
+/* =========================================================
+   MODAL CREAR / EDITAR USUARIO
+   ========================================================= */
+
+.users-form-overlay {
+    position: fixed;
+    inset: 0;
+
+    z-index: 9999;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 24px;
+
+    background: rgba(0, 43, 77, 0.38);
+
+    backdrop-filter: blur(3px);
+}
+
+
+/* =========================================================
+   MODAL
+   ========================================================= */
+
+.users-form-modal {
+    width: min(100%, 620px);
+
+    max-height: calc(100vh - 48px);
+
+    overflow-y: auto;
+
+    background: #ffffff;
+
+    border: 1px solid #e1e6eb;
+    border-radius: 14px;
+
+    box-shadow: 0 20px 50px rgba(0, 43, 77, 0.20);
+
+    animation: users-form-modal-in 0.2s ease-out;
+}
+
+
+/* =========================================================
+   HEADER DEL MODAL
+   ========================================================= */
+
+.users-form-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+
+    gap: 20px;
+
+    padding: 24px 26px 20px;
+
+    border-bottom: 1px solid #edf0f2;
+}
+
+.users-form-header h2 {
+    margin: 0;
+
+    color: var(--hu-primary, #003764);
+
+    font-size: 22px;
+    font-weight: 700;
+
+    line-height: 1.3;
+}
+
+.users-form-header p {
+    margin: 7px 0 0;
+
+    color: var(--hu-text-secondary, #657687);
+
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   CERRAR
+   ========================================================= */
+
+.users-form-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    width: 32px;
+    height: 32px;
+
+    padding: 0;
+
+    border: 1px solid #dce3e8;
+    border-radius: 7px;
+
+    background: #ffffff;
+    color: #657687;
+
+    font-family: inherit;
+    font-size: 21px;
+    font-weight: 400;
+    line-height: 1;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease;
+}
+
+.users-form-close:hover {
+    border-color: #c7d3dc;
+    background: #f5f8fa;
+    color: var(--hu-primary, #003764);
+}
+
+
+/* =========================================================
+   FORMULARIO
+   ========================================================= */
+
+.users-form {
+    padding: 24px 26px 26px;
+}
+
+
+/* =========================================================
+   FILA DE CAMPOS
+   ========================================================= */
+
+.users-form-row {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 16px;
+}
+
+
+/* =========================================================
+   CAMPO
+   ========================================================= */
+
+.users-form-field {
+    display: flex;
+    flex-direction: column;
+
+    margin-bottom: 18px;
+}
+
+.users-form-field label {
+    margin-bottom: 7px;
+
+    color: #42515d;
+
+    font-size: 12px;
+    font-weight: 700;
+
+    line-height: 1.3;
+}
+
+.users-form-field input {
+    box-sizing: border-box;
+
+    width: 100%;
+    height: 42px;
+
+    padding: 0 12px;
+
+    border: 1px solid #d5dde3;
+    border-radius: 7px;
+
+    outline: none;
+
+    background: #ffffff;
+    color: #344451;
+
+    font-family: inherit;
+    font-size: 13px;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background-color 0.2s ease;
+}
+
+.users-form-field input::placeholder {
+    color: #9aa6af;
+}
+
+.users-form-field input:hover {
+    border-color: #bcc9d2;
+}
+
+.users-form-field input:focus {
+    border-color: var(--hu-primary, #003764);
+
+    box-shadow: 0 0 0 3px rgba(0, 55, 100, 0.08);
+}
+
+
+/* =========================================================
+   ERROR
+   ========================================================= */
+
+.users-form-error {
+    display: block;
+
+    margin-top: 6px;
+
+    color: #b33b3b;
+
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+
+/* =========================================================
+   ROL
+   ========================================================= */
+
+.users-form-role {
+    display: flex;
+    align-items: center;
+
+    width: fit-content;
+    min-height: 36px;
+
+    padding: 0 12px;
+
+    border: 1px solid #c7dfee;
+    border-radius: 7px;
+
+    background: #eef5f9;
+    color: #2474a8;
+
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.users-form-help {
+    margin-top: 6px;
+
+    color: #8a969f;
+
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+
+/* =========================================================
+   ACCIONES DEL FORMULARIO
+   ========================================================= */
+
+.users-form-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    gap: 10px;
+
+    margin-top: 8px;
+    padding-top: 20px;
+
+    border-top: 1px solid #edf0f2;
+}
+
+.users-form-actions button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 120px;
+    height: 40px;
+
+    padding: 0 16px;
+
+    border-radius: 7px;
+
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.15s ease;
+}
+
+
+/* =========================================================
+   CANCELAR FORMULARIO
+   ========================================================= */
+
+.users-form-cancel {
+    border: 1px solid #d5dce3;
+
+    background: #ffffff;
+    color: #4b5563;
+}
+
+.users-form-cancel:hover {
+    border-color: #b8c2cc;
+
+    background: #f7f9fa;
+    color: #374151;
+}
+
+
+/* =========================================================
+   CREAR / GUARDAR FORMULARIO
+   ========================================================= */
+
+.users-form-submit {
+    border: 1px solid var(--hu-primary, #003764);
+
+    background: var(--hu-primary, #003764);
+    color: #ffffff;
+
+    box-shadow: 0 4px 10px rgba(0, 55, 100, 0.12);
+}
+
+.users-form-submit:hover {
+    border-color: var(--hu-primary-dark, #002b4d);
+
+    background: var(--hu-primary-dark, #002b4d);
+
+    box-shadow: 0 6px 14px rgba(0, 55, 100, 0.16);
+}
+
+.users-form-submit:active,
+.users-form-cancel:active {
+    transform: translateY(1px);
+}
+
+.users-form-actions button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+
+/* =========================================================
+   ANIMACIONES
+   ========================================================= */
+
+@keyframes users-modal-in {
+    from {
+        opacity: 0;
+        transform: translateY(-8px) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes users-form-modal-in {
+    from {
+        opacity: 0;
+        transform: translateY(-10px) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .users-header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 18px;
+    }
+
+    .users-primary-button {
+        width: 100%;
+    }
+
+    .users-table {
+        min-width: 760px;
+    }
+
+    .users-table-wrapper {
+        overflow-x: auto;
+    }
+}
+
+
+@media (max-width: 600px) {
+
+    .users-header h1 {
+        font-size: 26px;
+    }
+
+    .users-header p {
+        font-size: 14px;
+    }
+
+    .users-primary-button {
+        min-height: 42px;
+    }
+
+    .users-table th {
+        padding: 0 14px;
+    }
+
+    .users-table td {
+        padding: 0 14px;
+    }
+
+    .users-delete-modal {
+        padding: 24px;
+    }
+
+    .users-delete-actions {
+        flex-direction: column-reverse;
+        align-items: stretch;
+    }
+
+    .users-delete-actions button {
+        width: 100%;
+    }
+
+    /* FORMULARIO */
+
+    .users-form-overlay {
+        align-items: flex-end;
+        padding: 0;
+    }
+
+    .users-form-modal {
+        width: 100%;
+        max-height: 94vh;
+
+        border-right: 0;
+        border-bottom: 0;
+        border-left: 0;
+
+        border-radius: 16px 16px 0 0;
+    }
+
+    .users-form-header {
+        padding: 20px;
+    }
+
+    .users-form {
+        padding: 20px;
+    }
+
+    .users-form-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    .users-form-actions {
+        flex-direction: column-reverse;
+        align-items: stretch;
+    }
+
+    .users-form-actions button {
+        width: 100%;
+    }
+}
+
+
+@media (max-width: 480px) {
+
+    .users-modal-overlay {
+        align-items: flex-end;
+        padding: 0;
+    }
+
+    .users-delete-modal {
+        width: 100%;
+
+        border-right: 0;
+        border-bottom: 0;
+        border-left: 0;
+
+        border-radius: 16px 16px 0 0;
+    }
+
+    .users-form-header h2 {
+        font-size: 20px;
+    }
+
+    .users-form-header p {
+        font-size: 12px;
+    }
+}

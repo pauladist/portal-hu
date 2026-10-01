@@ -32,11 +32,10 @@ class LoginController extends Controller
 
         $user = Auth::user();
 
-        if ($user->role->name === 'Administrador') {
-            return redirect()->intended('/admin');
-        }
-
-        if ($user->role->name === 'Comunicación') {
+        if (
+            $user->role->name === 'Administrador' ||
+            $user->role->name === 'Comunicación'
+        ) {
             return redirect()->intended('/news');
         }
 

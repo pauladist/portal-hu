@@ -9,6 +9,7 @@ import "./Botonera.css";
 
 export default function Botonera({ menuItems = [] }) {
     const [openItems, setOpenItems] = useState({});
+    const [openActionId, setOpenActionId] = useState(null);
     const [draggedItem, setDraggedItem] = useState(null);
 
     /*
@@ -53,9 +54,7 @@ export default function Botonera({ menuItems = [] }) {
             return items.reduce((total, item) => {
                 const currentItem = item.is_quick_link ? 1 : 0;
 
-                const childrenCount = countQuickLinks(
-                    item.children || []
-                );
+                const childrenCount = countQuickLinks(item.children || []);
 
                 return total + currentItem + childrenCount;
             }, 0);
@@ -77,6 +76,13 @@ export default function Botonera({ menuItems = [] }) {
             ...current,
             [id]: !current[id],
         }));
+    };
+    const toggleActionMenu = (id) => {
+        setOpenActionId((current) => (current === id ? null : id));
+    };
+
+    const closeActionMenu = () => {
+        setOpenActionId(null);
     };
 
     /*
@@ -261,7 +267,6 @@ export default function Botonera({ menuItems = [] }) {
     return (
         <PanelLayout title="Botonera">
             <div className="botonera-page">
-
                 {/* TOAST */}
 
                 {toast && (
@@ -322,9 +327,7 @@ export default function Botonera({ menuItems = [] }) {
                     <div
                         className="botonera-form-modal-overlay"
                         onMouseDown={(event) => {
-                            if (
-                                event.target === event.currentTarget
-                            ) {
+                            if (event.target === event.currentTarget) {
                                 handleCloseForm();
                             }
                         }}
@@ -346,9 +349,7 @@ export default function Botonera({ menuItems = [] }) {
                             <div className="botonera-form-modal__content">
                                 <MenuItemForm
                                     mode={
-                                        formMode === "edit"
-                                            ? "edit"
-                                            : "create"
+                                        formMode === "edit" ? "edit" : "create"
                                     }
                                     menuItem={selectedItem}
                                     parentItem={parentItem}
@@ -364,9 +365,7 @@ export default function Botonera({ menuItems = [] }) {
                 <div className="botonera-info">
                     <span>Accesos rápidos</span>
 
-                    <strong>
-                        {quickLinksCount} / 8
-                    </strong>
+                    <strong>{quickLinksCount} / 8</strong>
                 </div>
 
                 {/* ÁRBOL */}
@@ -376,9 +375,7 @@ export default function Botonera({ menuItems = [] }) {
                         <div className="botonera-empty">
                             <h3>No hay botones cargados</h3>
 
-                            <p>
-                                Todavía no hay elementos en la botonera.
-                            </p>
+                            <p>Todavía no hay elementos en la botonera.</p>
                         </div>
                     ) : (
                         <MenuTree
@@ -388,15 +385,16 @@ export default function Botonera({ menuItems = [] }) {
                             toggleItem={toggleItem}
                             toggleStatus={toggleStatus}
                             toggleQuickLink={toggleQuickLink}
-                            quickLinksLimitReached={
-                                quickLinksLimitReached
-                            }
+                            quickLinksLimitReached={quickLinksLimitReached}
                             draggedItem={draggedItem}
                             onDragStart={handleDragStart}
                             onDrop={handleDrop}
                             onAddChild={handleAddChild}
                             onEdit={handleEdit}
                             onDelete={handleDelete}
+                            openActionId={openActionId}
+                            toggleActionMenu={toggleActionMenu}
+                            closeActionMenu={closeActionMenu}
                         />
                     )}
                 </div>
@@ -410,13 +408,9 @@ export default function Botonera({ menuItems = [] }) {
                     >
                         <div
                             className="delete-modal"
-                            onClick={(event) =>
-                                event.stopPropagation()
-                            }
+                            onClick={(event) => event.stopPropagation()}
                         >
-                            <div className="delete-modal__icon">
-                                !
-                            </div>
+                            <div className="delete-modal__icon">!</div>
 
                             <div className="delete-modal__content">
                                 <h2>Eliminar botón</h2>
@@ -429,9 +423,7 @@ export default function Botonera({ menuItems = [] }) {
                                     ?
                                 </p>
 
-                                <span>
-                                    Esta acción no se puede deshacer.
-                                </span>
+                                <span>Esta acción no se puede deshacer.</span>
                             </div>
 
                             <div className="delete-modal__actions">

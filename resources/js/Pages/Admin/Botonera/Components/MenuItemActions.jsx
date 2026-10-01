@@ -1,41 +1,195 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from "react";
 
 export default function MenuItemActions({
     item,
     onAddChild,
     onEdit,
     onDelete,
+    isOpen,
+    onToggle,
+    onClose,
 }) {
-    const [isOpen, setIsOpen] = useState(false);
+    const buttonRef = useRef(null);
+    const dropdownRef = useRef(null);
 
-    const closeMenu = () => {
-        setIsOpen(false);
+    const [dropdownPosition, setDropdownPosition] = useState({
+        top: 0,
+        left: 0,
+    });
+
+    const [openDirection, setOpenDirection] = useState("down");
+
+    const DROPDOWN_WIDTH = 205;
+    const DROPDOWN_HEIGHT = 150;
+    const OFFSET = 7;
+    const VIEWPORT_PADDING = 10;
+
+    const calculatePosition = () => {
+        if (!buttonRef.current) {
+            return;
+        }
+
+        const rect = buttonRef.current.getBoundingClientRect();
+
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+
+        /*
+         * ---------------------------------------------------------
+         * VERTICAL
+         * ---------------------------------------------------------
+         */
+
+        const spaceBelow = viewportHeight - rect.bottom;
+        const spaceAbove = rect.top;
+
+        const shouldOpenUp =
+            spaceBelow < DROPDOWN_HEIGHT + OFFSET &&
+            spaceAbove >= DROPDOWN_HEIGHT + OFFSET;
+
+        const direction = shouldOpenUp ? "up" : "down";
+
+        setOpenDirection(direction);
+
+        let top;
+
+        if (direction === "up") {
+            top = rect.top - DROPDOWN_HEIGHT - OFFSET;
+        } else {
+            top = rect.bottom + OFFSET;
+        }
+
+        /*
+         * ---------------------------------------------------------
+         * HORIZONTAL
+         * ---------------------------------------------------------
+         */
+
+        let left = rect.right - DROPDOWN_WIDTH;
+
+        if (left < VIEWPORT_PADDING) {
+            left = VIEWPORT_PADDING;
+        }
+
+        if (
+            left + DROPDOWN_WIDTH >
+            viewportWidth - VIEWPORT_PADDING
+        ) {
+            left =
+                viewportWidth -
+                DROPDOWN_WIDTH -
+                VIEWPORT_PADDING;
+        }
+
+        /*
+         * ---------------------------------------------------------
+         * SEGURIDAD
+         * ---------------------------------------------------------
+         */
+
+        top = Math.max(
+            VIEWPORT_PADDING,
+            Math.min(
+                top,
+                viewportHeight -
+                    DROPDOWN_HEIGHT -
+                    VIEWPORT_PADDING
+            )
+        );
+
+        setDropdownPosition({
+            top,
+            left,
+        });
     };
 
+    useEffect(() => {
+        if (!isOpen) {
+            return;
+        }
+
+        calculatePosition();
+
+        const handleResize = () => {
+            calculatePosition();
+        };
+
+        const handleScroll = () => {
+            calculatePosition();
+        };
+
+        window.addEventListener("resize", handleResize);
+        window.addEventListener("scroll", handleScroll, true);
+
+        return () => {
+            window.removeEventListener("resize", handleResize);
+            window.removeEventListener(
+                "scroll",
+                handleScroll,
+                true
+            );
+        };
+    }, [isOpen]);
+
+    useEffect(() => {
+        if (!isOpen) {
+            return;
+        }
+
+        const handleClickOutside = (event) => {
+            if (
+                buttonRef.current?.contains(event.target) ||
+                dropdownRef.current?.contains(event.target)
+            ) {
+                return;
+            }
+
+            onClose();
+        };
+
+        document.addEventListener(
+            "mousedown",
+            handleClickOutside
+        );
+
+        return () => {
+            document.removeEventListener(
+                "mousedown",
+                handleClickOutside
+            );
+        };
+    }, [isOpen, onClose]);
+
     const handleAddChild = () => {
-        closeMenu();
+        onClose();
         onAddChild(item);
     };
 
     const handleEdit = () => {
-        closeMenu();
+        onClose();
         onEdit(item);
     };
 
     const handleDelete = () => {
-        closeMenu();
+        onClose();
         onDelete(item);
+    };
+
+    const handleToggle = () => {
+        if (!isOpen) {
+            calculatePosition();
+        }
+
+        onToggle(item.id);
     };
 
     return (
         <div className="menu-item-actions-menu">
-
             <button
+                ref={buttonRef}
                 type="button"
                 className="menu-item-more-button"
-                onClick={() =>
-                    setIsOpen((current) => !current)
-                }
+                onClick={handleToggle}
                 aria-label="Más acciones"
                 aria-expanded={isOpen}
             >
@@ -45,8 +199,14 @@ export default function MenuItemActions({
             </button>
 
             {isOpen && (
-                <div className="menu-item-dropdown">
-
+                <div
+                    ref={dropdownRef}
+                    className={`menu-item-dropdown menu-item-dropdown--${openDirection}`}
+                    style={{
+                        top: `${dropdownPosition.top}px`,
+                        left: `${dropdownPosition.left}px`,
+                    }}
+                >
                     <button
                         type="button"
                         onClick={handleAddChild}
@@ -139,10 +299,8 @@ export default function MenuItemActions({
 
                         Eliminar
                     </button>
-
                 </div>
             )}
-
         </div>
     );
 }
