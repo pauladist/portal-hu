@@ -21,6 +21,9 @@ export default function MenuItemCard({
     toggleItem,
     toggleStatus,
     toggleQuickLink,
+    openActionId,
+    toggleActionMenu,
+    closeActionMenu,
 }) {
     const children = Array.isArray(item.children) ? item.children : [];
 
@@ -147,7 +150,8 @@ export default function MenuItemCard({
                                 strokeLinejoin="round"
                             />
                         </svg>
-                        <span>Acceso rápido</span>                    </button>
+                        <span>Acceso rápido</span>{" "}
+                    </button>
 
                     {/* MENÚ ⋮ */}
 
@@ -156,6 +160,9 @@ export default function MenuItemCard({
                         onAddChild={onAddChild}
                         onEdit={onEdit}
                         onDelete={onDelete}
+                        isOpen={openActionId === item.id}
+                        onToggle={toggleActionMenu}
+                        onClose={closeActionMenu}
                     />
                 </div>
             </div>
