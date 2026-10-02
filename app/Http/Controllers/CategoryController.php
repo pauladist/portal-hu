@@ -6,48 +6,28 @@ use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
 use App\Models\Category;
 use Illuminate\Support\Str;
-use Inertia\Inertia;
 
 class CategoryController extends Controller
 {
-    public function index()
-    {
-        $categories = Category::withCount('news')
-            ->orderBy('title')
-            ->get();
-
-        return Inertia::render('Communication/Categories/Index', [
-            'categories' => $categories,
-        ]);
-    }
-
-    public function create()
-    {
-        return Inertia::render('Communication/Categories/Create');
-    }
-
-    public function store(StoreCategoryRequest $request)
+    /**
+     * Crear una categoría rápidamente desde el formulario de noticia.
+     */
+    public function quickStore(StoreCategoryRequest $request)
     {
         $slug = $this->generateUniqueSlug($request->title);
 
-        Category::create([
+        $category = Category::create([
             'title' => $request->title,
             'slug' => $slug,
         ]);
 
-        return redirect()
-            ->route('communication.categories.index')
-            ->with('success', 'Categoría creada correctamente.');
+        return response()->json($category);
     }
 
-    public function edit(Category $category)
-    {
-        return Inertia::render('Communication/Categories/Edit', [
-            'category' => $category,
-        ]);
-    }
-
-    public function update(
+    /**
+     * Editar una categoría rápidamente desde el formulario de noticia.
+     */
+    public function quickUpdate(
         UpdateCategoryRequest $request,
         Category $category
     ) {
@@ -61,33 +41,34 @@ class CategoryController extends Controller
             'slug' => $slug,
         ]);
 
-        return redirect()
-            ->route('communication.categories.index')
-            ->with('success', 'Categoría actualizada correctamente.');
+        return response()->json(
+            $category->fresh()
+        );
     }
 
-    public function destroy(Category $category)
+    /**
+     * Eliminar una categoría desde el formulario de noticia.
+     */
+    public function quickDestroy(Category $category)
     {
+        // La categoría se elimina también de las noticias
+        // que la tengan asociada.
         $category->news()->detach();
 
         $category->delete();
 
-        return redirect()
-            ->route('communication.categories.index')
-            ->with('success', 'Categoría eliminada correctamente.');
+        return response()->json([
+            'success' => true,
+        ]);
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Helpers
-    |--------------------------------------------------------------------------
-    */
-
+    /**
+     * Generar un slug único.
+     */
     private function generateUniqueSlug(
         string $title,
         ?int $ignoreId = null
     ): string {
-
         $slug = Str::slug($title);
 
         $originalSlug = $slug;
@@ -97,7 +78,11 @@ class CategoryController extends Controller
             Category::where('slug', $slug)
                 ->when(
                     $ignoreId,
-                    fn ($query) => $query->where('id', '!=', $ignoreId)
+                    fn ($query) => $query->where(
+                        'id',
+                        '!=',
+                        $ignoreId
+                    )
                 )
                 ->exists()
         ) {
