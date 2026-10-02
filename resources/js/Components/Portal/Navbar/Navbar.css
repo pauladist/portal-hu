@@ -30,6 +30,13 @@
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
 
     overflow: visible;
+
+    transition: border-radius 0.2s ease;
+}
+
+/* Con la segunda fila abierta, la primera se une sin redondeo abajo */
+.portal-navbar__container--more-open {
+    border-radius: var(--hu-radius-lg) var(--hu-radius-lg) 0 0;
 }
 
 /* =========================================================
@@ -281,6 +288,7 @@
 /* =========================================================
    DROPDOWN ANIDADO
    ========================================================= */
+
 .portal-navbar__dropdown--nested {
     top: -8px;
     left: calc(100% + 6px);
@@ -289,14 +297,15 @@
 }
 
 .portal-navbar__item-wrapper--dropdown-left
-> .portal-navbar__dropdown--nested {
+    > .portal-navbar__dropdown--nested {
     left: auto;
     right: calc(100% + 6px);
 
     transform: translateX(8px);
 }
+
 .portal-navbar__item-wrapper--dropdown-left:hover
-> .portal-navbar__dropdown--nested {
+    > .portal-navbar__dropdown--nested {
     transform: translateX(0);
 }
 
@@ -395,26 +404,6 @@
 }
 
 /* Mostrar segunda fila */
-.portal-navbar__more-row {
-    position: absolute;
-
-    top: calc(100% - 1px);
-    left: 0;
-    right: 0;
-
-    z-index: 1050;
-
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-
-    transform: translateY(-4px);
-
-    transition:
-        opacity 0.2s ease,
-        transform 0.2s ease,
-        visibility 0.2s ease;
-}
 
 .portal-navbar__more-row--open {
     opacity: 1;
@@ -423,6 +412,7 @@
 
     transform: translateY(0);
 }
+
 .portal-navbar__more-arrow {
     transition: transform 0.2s ease;
 }
@@ -503,7 +493,7 @@
 }
 
 /* =========================================================
-   MOBILE
+   MOBILE (base)
    ========================================================= */
 
 .portal-navbar__mobile {
@@ -549,6 +539,11 @@
         border-radius: var(--hu-radius-md);
     }
 
+    /* Por si se abrió "Más" en desktop y luego se achica la ventana */
+    .portal-navbar__container--more-open {
+        border-radius: var(--hu-radius-md);
+    }
+
     .portal-navbar__top {
         min-height: 62px;
 
@@ -575,73 +570,90 @@
         display: flex;
     }
 
-    /* Mobile */
+    /* Panel del menú mobile (dentro de la tarjeta blanca) */
 
     .portal-navbar__mobile {
         display: block;
 
         max-height: 0;
-
         overflow: hidden;
+
+        border-radius: 0 0 var(--hu-radius-md) var(--hu-radius-md);
 
         transition: max-height 0.3s ease;
     }
 
     .portal-navbar__mobile--open {
-        max-height: 1000px;
+        max-height: calc(100vh - 100px);
+        overflow-y: auto;
+
+        border-top: 1px solid var(--hu-border);
     }
 
     .portal-navbar__mobile-menu {
         display: flex;
         flex-direction: column;
 
-        padding: 0 12px 12px;
+        padding: 8px 12px 12px;
     }
 
-    /* Items */
+    /* Items (link o botón con +/-) */
 
-    .portal-navbar__mobile .portal-navbar__item-wrapper {
-        width: 100%;
-    }
-
-    .portal-navbar__mobile .portal-navbar__item {
-        width: 100%;
-
+    .portal-navbar__mobile-link {
+        display: flex;
+        align-items: center;
         justify-content: space-between;
 
+        width: 100%;
         min-height: 46px;
 
         padding: 10px 12px;
 
+        border: 0;
+        border-radius: var(--hu-radius-sm);
+
+        background: transparent;
+        color: var(--hu-text);
+
+        font-family: inherit;
         font-size: 14px;
+        font-weight: 600;
+        text-align: left;
+
+        cursor: pointer;
     }
 
-    /*
-     * En mobile los dropdowns no se comportan
-     * como desktop.
-     */
-
-    .portal-navbar__mobile .portal-navbar__dropdown {
-        position: static;
-
-        width: 100%;
-        min-width: 0;
-
-        padding-left: 14px;
-
-        opacity: 1;
-        visibility: visible;
-        pointer-events: auto;
-
-        transform: none;
-
-        display: none;
+    .portal-navbar__mobile-link:hover,
+    .portal-navbar__mobile-link:active,
+    .portal-navbar__mobile-link.is-open {
+        background: #f1f4f7;
+        color: var(--hu-primary);
     }
 
-    .portal-navbar__mobile
-        .portal-navbar__item-wrapper:hover
-        > .portal-navbar__dropdown {
-        display: block;
+    .portal-navbar__mobile-icon {
+        flex-shrink: 0;
+
+        margin-left: 12px;
+
+        font-size: 22px;
+
+        color: var(--hu-primary);
+    }
+
+    /* Hijos (se indentan solos a cada nivel) */
+
+    .portal-navbar__mobile-children {
+        margin: 2px 0 6px 14px;
+        padding-left: 8px;
+
+        border-left: 2px solid var(--hu-border);
+    }
+
+    .portal-navbar__mobile-children .portal-navbar__mobile-link {
+        min-height: 42px;
+
+        font-size: 13px;
+        font-weight: 500;
     }
 
     /* Ocultar Más desktop */
