@@ -70,8 +70,7 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
-
+    'timezone' => 'America/Argentina/Mendoza',
     /*
     |--------------------------------------------------------------------------
     | Application Locale Configuration

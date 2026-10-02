@@ -1,0 +1,1007 @@
+/* =========================================================
+   RICH TEXT EDITOR
+========================================================= */
+
+.rich-text-editor {
+    width: 100%;
+    border: 1px solid var(--hu-border);
+    border-radius: var(--hu-radius-md);
+    background: var(--hu-surface);
+    overflow: visible;
+}
+
+
+/* =========================================================
+   TOOLBAR
+========================================================= */
+
+.rich-text-toolbar {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+
+    gap: 3px;
+
+    padding: 8px 10px;
+
+    min-height: 52px;
+
+    background: #fafbfc;
+
+    border-bottom: 1px solid var(--hu-border);
+
+    border-radius: var(--hu-radius-md) var(--hu-radius-md) 0 0;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   SELECTS
+   IMPORTANTE:
+   anulamos los estilos globales del formulario
+========================================================= */
+
+.rich-text-toolbar .rich-text-select {
+    flex: 0 0 auto;
+
+    width: auto;
+    max-width: none;
+
+    height: 34px;
+
+    margin: 0;
+
+    padding: 0 28px 0 10px;
+
+    border: 1px solid var(--hu-border);
+    border-radius: 7px;
+
+    background-color: var(--hu-surface);
+
+    color: var(--hu-text);
+
+    font-family: var(--hu-font);
+    font-size: 12px;
+    line-height: 1;
+
+    cursor: pointer;
+
+    outline: none;
+
+    box-sizing: border-box;
+
+    transition:
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
+}
+
+.rich-text-toolbar .rich-text-select:hover {
+    border-color: #c5ced8;
+}
+
+.rich-text-toolbar .rich-text-select:focus {
+    border-color: var(--hu-primary);
+
+    box-shadow: 0 0 0 2px rgba(0, 55, 100, 0.08);
+}
+
+
+/* FORMATO */
+
+.rich-text-toolbar .format-select {
+    width: 110px;
+    min-width: 110px;
+}
+
+
+/* FUENTE */
+
+.rich-text-toolbar .rich-text-select:not(.format-select):not(.size-select) {
+    width: 105px;
+    min-width: 105px;
+}
+
+
+/* TAMAÑO */
+
+.rich-text-toolbar .size-select {
+    width: 82px;
+    min-width: 82px;
+}
+
+
+/* =========================================================
+   DIVISORES
+========================================================= */
+
+.toolbar-divider {
+    width: 1px;
+    height: 24px;
+
+    margin: 0 5px;
+
+    background: var(--hu-border);
+
+    flex: 0 0 auto;
+}
+
+
+/* =========================================================
+   TOOLBAR BUTTONS
+========================================================= */
+
+.rich-text-toolbar .toolbar-button {
+    position: relative;
+
+    width: 34px;
+    height: 34px;
+
+    min-width: 34px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    flex: 0 0 34px;
+
+    margin: 0;
+    padding: 0;
+
+    border: 1px solid transparent;
+    border-radius: 6px;
+
+    background: transparent;
+
+    color: var(--hu-text);
+
+    cursor: pointer;
+
+    box-sizing: border-box;
+
+    transition:
+        background 0.15s ease,
+        color 0.15s ease,
+        border-color 0.15s ease;
+}
+
+.rich-text-toolbar .toolbar-button:hover {
+    background: #eef2f6;
+
+    color: var(--hu-primary);
+}
+
+.rich-text-toolbar .toolbar-button.is-active {
+    background: rgba(0, 55, 100, 0.09);
+
+    border-color: rgba(0, 55, 100, 0.12);
+
+    color: var(--hu-primary);
+}
+
+.rich-text-toolbar .toolbar-button:disabled {
+    opacity: 0.35;
+
+    cursor: not-allowed;
+}
+
+.rich-text-toolbar .toolbar-button:disabled:hover {
+    background: transparent;
+
+    color: var(--hu-text);
+}
+
+.rich-text-toolbar .toolbar-button .material-symbols-outlined {
+    font-size: 20px;
+
+    line-height: 1;
+}
+
+
+/* =========================================================
+   LINK WRAPPER
+========================================================= */
+
+.rich-text-link-wrapper {
+    position: relative;
+
+    display: inline-flex;
+
+    flex: 0 0 auto;
+}
+
+
+/* =========================================================
+   ATTACHMENT WRAPPER
+========================================================= */
+
+.rich-text-attachment-wrapper {
+    position: relative;
+
+    display: inline-flex;
+
+    flex: 0 0 auto;
+}
+
+
+/* =========================================================
+   ATTACHMENT MENU
+========================================================= */
+
+.attachment-menu {
+    position: absolute;
+
+    top: calc(100% + 7px);
+    left: 0;
+
+    z-index: 1000;
+
+    width: 155px;
+    min-width: 155px;
+
+    padding: 6px;
+
+    background: var(--hu-surface);
+
+    border: 1px solid var(--hu-border);
+
+    border-radius: 9px;
+
+    box-shadow:
+        0 8px 24px rgba(0, 0, 0, 0.10),
+        0 2px 6px rgba(0, 0, 0, 0.05);
+
+    box-sizing: border-box;
+}
+
+.attachment-menu button {
+    width: 100%;
+
+    min-height: 36px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 9px;
+
+    margin: 0;
+    padding: 8px 10px;
+
+    border: none;
+    border-radius: 6px;
+
+    background: transparent;
+
+    color: var(--hu-text);
+
+    font-family: var(--hu-font);
+    font-size: 13px;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    box-sizing: border-box;
+
+    transition:
+        background 0.15s ease,
+        color 0.15s ease;
+}
+
+.attachment-menu button:hover {
+    background: #f1f4f7;
+
+    color: var(--hu-primary);
+}
+
+.attachment-menu .material-symbols-outlined {
+    font-size: 19px;
+
+    color: var(--hu-primary);
+}
+
+
+/* =========================================================
+   GENERIC POPOVER
+========================================================= */
+
+.rich-text-popover {
+    position: absolute;
+
+    z-index: 2000;
+
+    background: var(--hu-surface);
+
+    border: 1px solid var(--hu-border);
+
+    border-radius: 10px;
+
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.12),
+        0 3px 8px rgba(0, 0, 0, 0.06);
+
+    font-family: var(--hu-font);
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   LINK POPOVER
+========================================================= */
+
+.link-popover {
+    top: calc(100% + 7px);
+    left: 0;
+
+    width: 280px;
+
+    padding: 10px;
+}
+
+.link-popover input {
+    width: 100%;
+    height: 36px;
+
+    box-sizing: border-box;
+
+    margin: 0;
+
+    padding: 0 10px;
+
+    border: 1px solid var(--hu-border);
+
+    border-radius: 6px;
+
+    outline: none;
+
+    color: var(--hu-text);
+
+    font-family: var(--hu-font);
+    font-size: 12px;
+
+    background: #fff;
+}
+
+.link-popover input:focus {
+    border-color: var(--hu-primary);
+
+    box-shadow: 0 0 0 2px rgba(0, 55, 100, 0.08);
+}
+
+.link-popover > button {
+    width: 100%;
+
+    min-height: 34px;
+
+    margin: 7px 0 0;
+    padding: 0 10px;
+
+    border: none;
+
+    border-radius: 6px;
+
+    background: var(--hu-primary);
+
+    color: #fff;
+
+    font-family: var(--hu-font);
+    font-size: 12px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    box-sizing: border-box;
+}
+
+.link-popover > button:hover {
+    background: var(--hu-primary-dark);
+}
+
+
+/* =========================================================
+   QUITAR ENLACE
+========================================================= */
+
+.link-popover .popover-danger-button {
+    background: transparent;
+
+    color: var(--hu-danger);
+
+    border: 1px solid #ead3d1;
+}
+
+.link-popover .popover-danger-button:hover {
+    background: #fff5f4;
+
+    color: var(--hu-danger);
+}
+
+
+/* =========================================================
+   VIDEO POPOVER
+========================================================= */
+
+.video-popover {
+    top: calc(100% + 7px);
+    left: 0;
+
+    width: 330px;
+
+    padding: 13px;
+}
+
+.popover-title {
+    margin: 0 0 10px;
+
+    color: var(--hu-primary);
+
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.video-popover input {
+    width: 100%;
+    height: 37px;
+
+    box-sizing: border-box;
+
+    margin: 0 0 8px;
+
+    padding: 0 10px;
+
+    border: 1px solid var(--hu-border);
+
+    border-radius: 6px;
+
+    outline: none;
+
+    background: #fff;
+
+    color: var(--hu-text);
+
+    font-family: var(--hu-font);
+    font-size: 12px;
+}
+
+.video-popover input:focus {
+    border-color: var(--hu-primary);
+
+    box-shadow: 0 0 0 2px rgba(0, 55, 100, 0.08);
+}
+
+.popover-actions {
+    display: flex;
+
+    justify-content: flex-end;
+
+    gap: 7px;
+
+    margin-top: 4px;
+}
+
+.popover-actions button {
+    min-height: 34px;
+
+    padding: 0 13px;
+
+    border-radius: 6px;
+
+    border: none;
+
+    font-family: var(--hu-font);
+    font-size: 12px;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.popover-actions button:not(.popover-secondary-button) {
+    background: var(--hu-primary);
+
+    color: #fff;
+}
+
+.popover-actions button:not(.popover-secondary-button):hover {
+    background: var(--hu-primary-dark);
+}
+
+.popover-secondary-button {
+    background: #f0f2f5;
+
+    border: 1px solid var(--hu-border) !important;
+
+    color: var(--hu-text);
+}
+
+.popover-secondary-button:hover {
+    background: #e7eaee;
+}
+
+
+/* =========================================================
+   EDITOR CONTENT
+========================================================= */
+
+.rich-text-editor .rich-text-content {
+    height: 450px;
+    min-height: 450px;
+    max-height: 450px;
+
+    padding: 24px;
+
+    outline: none;
+
+    color: var(--hu-text);
+
+    font-family: var(--hu-font);
+
+    font-size: 15px;
+
+    line-height: 1.7;
+
+    box-sizing: border-box;
+
+    background: var(--hu-surface);
+
+    border-radius: 0 0 var(--hu-radius-md) var(--hu-radius-md);
+
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* =========================================================
+   SCROLLBAR
+========================================================= */
+
+.rich-text-editor .rich-text-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.rich-text-editor .rich-text-content::-webkit-scrollbar-track {
+    background: #f4f6f8;
+}
+
+.rich-text-editor .rich-text-content::-webkit-scrollbar-thumb {
+    background: #cbd2da;
+
+    border-radius: 10px;
+}
+
+.rich-text-editor .rich-text-content::-webkit-scrollbar-thumb:hover {
+    background: #adb7c2;
+}
+
+
+/* =========================================================
+   PARAGRAPHS
+========================================================= */
+
+.rich-text-editor .rich-text-content p {
+    margin: 0 0 14px;
+}
+
+.rich-text-editor .rich-text-content p:last-child {
+    margin-bottom: 0;
+}
+
+
+/* =========================================================
+   HEADINGS
+========================================================= */
+
+.rich-text-editor .rich-text-content h1,
+.rich-text-editor .rich-text-content h2,
+.rich-text-editor .rich-text-content h3 {
+    margin-top: 24px;
+    margin-bottom: 12px;
+
+    color: var(--hu-primary);
+
+    font-weight: 700;
+
+    line-height: 1.3;
+}
+
+.rich-text-editor .rich-text-content h1 {
+    font-size: 30px;
+}
+
+.rich-text-editor .rich-text-content h2 {
+    font-size: 24px;
+}
+
+.rich-text-editor .rich-text-content h3 {
+    font-size: 20px;
+}
+
+
+/* =========================================================
+   LINKS
+========================================================= */
+
+.rich-text-editor .rich-text-content a {
+    color: var(--hu-primary);
+
+    text-decoration: underline;
+
+    text-underline-offset: 2px;
+}
+
+.rich-text-editor .rich-text-content a:hover {
+    color: var(--hu-primary-dark);
+}
+
+
+/* =========================================================
+   LISTAS
+========================================================= */
+
+.rich-text-editor .rich-text-content ul,
+.rich-text-editor .rich-text-content ol {
+    margin-top: 8px;
+    margin-bottom: 16px;
+
+    padding-left: 28px;
+}
+
+.rich-text-editor .rich-text-content li {
+    margin-bottom: 5px;
+}
+
+
+/* =========================================================
+   CITA
+========================================================= */
+
+.rich-text-editor .rich-text-content blockquote {
+    margin: 18px 0;
+
+    padding: 12px 18px;
+
+    border-left: 4px solid var(--hu-secondary);
+
+    background: #f7f8fa;
+
+    color: var(--hu-text-light);
+
+    font-style: italic;
+}
+
+
+/* =========================================================
+   LÍNEA HORIZONTAL
+========================================================= */
+
+.rich-text-editor .rich-text-content hr {
+    margin: 24px 0;
+
+    border: none;
+
+    border-top: 1px solid var(--hu-border);
+}
+
+
+/* =========================================================
+   IMÁGENES
+========================================================= */
+
+.rich-text-editor .rich-text-content img[data-news-image] {
+    display: block;
+
+    max-width: 100%;
+    height: auto;
+
+    margin: 18px auto;
+
+    border-radius: 8px;
+
+    object-fit: contain;
+}
+
+.rich-text-editor
+    > .ProseMirror
+    img[data-news-image].ProseMirror-selectednode {
+    outline: 2px solid var(--hu-primary);
+
+    outline-offset: 3px;
+}
+
+
+/* =========================================================
+   ARCHIVOS / PDF
+========================================================= */
+
+.rich-text-editor .rich-text-content [data-pdf-file] {
+    display: flex;
+    align-items: center;
+
+    width: fit-content;
+    max-width: 100%;
+
+    margin: 18px 0;
+
+    padding: 11px 14px;
+
+    border: 1px solid var(--hu-border);
+
+    border-radius: 8px;
+
+    background: #f8fafc;
+}
+
+.rich-text-editor .rich-text-content [data-pdf-file]::before {
+    content: "description";
+
+    margin-right: 8px;
+
+    font-family: "Material Symbols Outlined";
+
+    font-size: 20px;
+
+    color: var(--hu-primary);
+}
+
+.rich-text-editor .rich-text-content [data-pdf-file] a {
+    color: var(--hu-primary);
+
+    font-size: 13px;
+    font-weight: 600;
+
+    text-decoration: none;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+}
+
+.rich-text-editor .rich-text-content [data-pdf-file] a:hover {
+    text-decoration: underline;
+}
+
+.news-video-wrapper {
+    width: 100%;
+    margin: 24px 0;
+    position: relative;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border-radius: 8px;
+}
+
+.news-video-wrapper iframe {
+    width: 100%;
+    height: 100%;
+    display: block;
+    border: 0;
+}
+
+/* =========================================================
+   VIDEO
+========================================================= */
+
+.rich-text-editor .rich-text-content [data-news-video] {
+    width: 100%;
+
+    max-width: 800px;
+
+    aspect-ratio: 16 / 9;
+
+    margin: 22px auto;
+
+    border-radius: 10px;
+
+    overflow: hidden;
+
+    background: #101010;
+}
+
+.rich-text-editor .rich-text-content [data-news-video] iframe {
+    width: 100%;
+    height: 100%;
+
+    display: block;
+
+    border: none;
+}
+
+
+/* =========================================================
+   SELECCIÓN
+========================================================= */
+
+.rich-text-editor .rich-text-content ::selection {
+    background: rgba(0, 55, 100, 0.16);
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 900px) {
+
+    .rich-text-toolbar {
+        gap: 2px;
+
+        padding: 7px 8px;
+    }
+
+    .rich-text-toolbar .rich-text-select {
+        height: 32px;
+
+        font-size: 11px;
+    }
+
+    .rich-text-toolbar .format-select {
+        width: 100px;
+        min-width: 100px;
+    }
+
+    .rich-text-toolbar .rich-text-select:not(.format-select):not(.size-select) {
+        width: 95px;
+        min-width: 95px;
+    }
+
+    .rich-text-toolbar .size-select {
+        width: 72px;
+        min-width: 72px;
+    }
+
+    .rich-text-toolbar .toolbar-button {
+        width: 32px;
+        min-width: 32px;
+        height: 32px;
+
+        flex-basis: 32px;
+    }
+
+    .rich-text-toolbar .toolbar-button .material-symbols-outlined {
+        font-size: 19px;
+    }
+
+    .toolbar-divider {
+        height: 22px;
+
+        margin: 0 3px;
+    }
+
+    .rich-text-editor .rich-text-content {
+        padding: 17px;
+
+        font-size: 14px;
+    }
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 600px) {
+
+    .rich-text-toolbar {
+        gap: 2px;
+
+        padding: 7px;
+
+        overflow: visible;
+    }
+
+    .rich-text-toolbar .rich-text-select {
+        height: 32px;
+    }
+
+    .rich-text-toolbar .format-select {
+        width: 92px;
+        min-width: 92px;
+    }
+
+    .rich-text-toolbar .rich-text-select:not(.format-select):not(.size-select) {
+        width: 90px;
+        min-width: 90px;
+    }
+
+    .rich-text-toolbar .size-select {
+        width: 65px;
+        min-width: 65px;
+    }
+
+    .toolbar-divider {
+        display: none;
+    }
+
+    .rich-text-toolbar .toolbar-button {
+        width: 31px;
+        min-width: 31px;
+        height: 31px;
+
+        flex-basis: 31px;
+    }
+
+    .rich-text-toolbar .toolbar-button .material-symbols-outlined {
+        font-size: 18px;
+    }
+
+    .rich-text-editor .rich-text-content {
+        height: 400px;
+        min-height: 400px;
+        max-height: 400px;
+
+        padding: 15px;
+
+        font-size: 14px;
+
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .link-popover {
+        left: auto;
+        right: 0;
+
+        width: 260px;
+    }
+
+    .video-popover {
+        left: auto;
+        right: 0;
+
+        width: min(320px, calc(100vw - 30px));
+    }
+
+    .attachment-menu {
+        left: auto;
+        right: 0;
+    }
+}
+
+
+/* =========================================================
+   VERY SMALL SCREENS
+========================================================= */
+
+@media (max-width: 420px) {
+
+    .rich-text-toolbar {
+        padding: 6px;
+    }
+
+    .rich-text-toolbar .rich-text-select {
+        font-size: 11px;
+    }
+
+    .rich-text-toolbar .format-select {
+        width: 85px;
+        min-width: 85px;
+    }
+
+    .rich-text-toolbar .rich-text-select:not(.format-select):not(.size-select) {
+        width: 82px;
+        min-width: 82px;
+    }
+
+    .rich-text-toolbar .size-select {
+        width: 60px;
+        min-width: 60px;
+    }
+
+    .rich-text-toolbar .toolbar-button {
+        width: 29px;
+        min-width: 29px;
+        height: 29px;
+
+        flex-basis: 29px;
+    }
+
+    .rich-text-toolbar .toolbar-button .material-symbols-outlined {
+        font-size: 17px;
+    }
+
+    .rich-text-editor .rich-text-content {
+        padding: 13px;
+    }
+}
