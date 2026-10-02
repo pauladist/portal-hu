@@ -7,7 +7,67 @@ import MenuItemForm from "./Botonera/Form/MenuItemForm";
 
 import "./Botonera.css";
 
-export default function Botonera({ menuItems = [] }) {
+/*
+|--------------------------------------------------------------------------
+| Helpers para actualizar el árbol localmente (optimistic UI)
+|--------------------------------------------------------------------------
+*/
+
+const updateItem = (items, id, changes) =>
+    items.map((item) => {
+        if (item.id === id) {
+            return { ...item, ...changes };
+        }
+
+        if (item.children?.length) {
+            return {
+                ...item,
+                children: updateItem(item.children, id, changes),
+            };
+        }
+
+        return item;
+    });
+
+// Misma lógica que el backend: saca el item y lo inserta antes del destino
+const reorderSiblings = (items, itemId, targetId) => {
+    const hasItem = items.some((i) => i.id === itemId);
+    const hasTarget = items.some((i) => i.id === targetId);
+
+    if (hasItem && hasTarget) {
+        const moved = items.find((i) => i.id === itemId);
+        const rest = items.filter((i) => i.id !== itemId);
+        const index = rest.findIndex((i) => i.id === targetId);
+
+        return [...rest.slice(0, index), moved, ...rest.slice(index)];
+    }
+
+    return items.map((item) =>
+        item.children?.length
+            ? {
+                  ...item,
+                  children: reorderSiblings(item.children, itemId, targetId),
+              }
+            : item,
+    );
+};
+
+// Sin barra de progreso, sin perder scroll ni estado, y recargando solo lo necesario
+const silentVisit = {
+    preserveScroll: true,
+    preserveState: true,
+    showProgress: false,
+    only: ["menuItems", "errors"],
+};
+
+export default function Botonera({ menuItems: serverItems = [] }) {
+    const [menuItems, setMenuItems] = useState(serverItems);
+
+    // Cuando el servidor responde, se sincroniza con lo real
+    useEffect(() => {
+        setMenuItems(serverItems);
+    }, [serverItems]);
+
     const [openItems, setOpenItems] = useState({});
     const [openActionId, setOpenActionId] = useState(null);
     const [draggedItem, setDraggedItem] = useState(null);
@@ -77,6 +137,7 @@ export default function Botonera({ menuItems = [] }) {
             [id]: !current[id],
         }));
     };
+
     const toggleActionMenu = (id) => {
         setOpenActionId((current) => (current === id ? null : id));
     };
@@ -92,13 +153,18 @@ export default function Botonera({ menuItems = [] }) {
     */
 
     const toggleStatus = (item) => {
+        const previous = menuItems;
+
+        setMenuItems((current) =>
+            updateItem(current, item.id, { is_active: !item.is_active }),
+        );
+
         router.patch(
             `/admin/menu-items/${item.id}/status`,
+            { is_active: !item.is_active },
             {
-                is_active: !item.is_active,
-            },
-            {
-                preserveScroll: true,
+                ...silentVisit,
+                onError: () => setMenuItems(previous),
             },
         );
     };
@@ -110,33 +176,25 @@ export default function Botonera({ menuItems = [] }) {
     */
 
     const toggleQuickLink = (item) => {
-        /*
-         * Si ya es acceso rápido, siempre permitimos quitarlo.
-         */
-        if (item.is_quick_link) {
-            router.patch(
-                `/admin/menu-items/${item.id}/quick-link`,
-                {},
-                {
-                    preserveScroll: true,
-                },
-            );
-
+        // Si no es acceso rápido y ya hay 8, no se permite agregar
+        if (!item.is_quick_link && quickLinksLimitReached) {
             return;
         }
 
-        /*
-         * Si ya hay 8, no permitimos agregar otro.
-         */
-        if (quickLinksLimitReached) {
-            return;
-        }
+        const previous = menuItems;
+
+        setMenuItems((current) =>
+            updateItem(current, item.id, {
+                is_quick_link: !item.is_quick_link,
+            }),
+        );
 
         router.patch(
             `/admin/menu-items/${item.id}/quick-link`,
             {},
             {
-                preserveScroll: true,
+                ...silentVisit,
+                onError: () => setMenuItems(previous),
             },
         );
     };
@@ -161,18 +219,25 @@ export default function Botonera({ menuItems = [] }) {
             return;
         }
 
+        const previous = menuItems;
+        const draggedId = draggedItem.id;
+
+        // Si son de distinto nivel, reorderSiblings no cambia nada
+        // y el backend devuelve el error de jerarquía.
+        setMenuItems((current) =>
+            reorderSiblings(current, draggedId, targetItem.id),
+        );
+
         router.patch(
             "/admin/menu-items/reorder",
             {
-                item_id: draggedItem.id,
+                item_id: draggedId,
                 target_id: targetItem.id,
             },
             {
-                preserveScroll: true,
+                ...silentVisit,
 
                 onSuccess: () => {
-                    setDraggedItem(null);
-
                     setToast({
                         type: "success",
                         message: "Orden actualizado correctamente.",
@@ -180,7 +245,7 @@ export default function Botonera({ menuItems = [] }) {
                 },
 
                 onError: () => {
-                    setDraggedItem(null);
+                    setMenuItems(previous);
 
                     setToast({
                         type: "error",
@@ -410,7 +475,6 @@ export default function Botonera({ menuItems = [] }) {
                             className="delete-modal"
                             onClick={(event) => event.stopPropagation()}
                         >
-                            <div className="delete-modal__icon">!</div>
 
                             <div className="delete-modal__content">
                                 <h2>Eliminar botón</h2>
