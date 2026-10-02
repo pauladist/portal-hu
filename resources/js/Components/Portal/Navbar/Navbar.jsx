@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import "./Navbar.css";
 
+/* =========================================================
+   ITEM DESKTOP
+   ========================================================= */
+
 function NavbarItem({ item, level = 0 }) {
     const hasChildren = item.children?.length > 0;
 
@@ -56,10 +60,7 @@ function NavbarItem({ item, level = 0 }) {
         const spaceRight = window.innerWidth - rect.right;
         const spaceLeft = rect.left;
 
-        if (
-            spaceRight < dropdownWidth &&
-            spaceLeft >= dropdownWidth
-        ) {
+        if (spaceRight < dropdownWidth && spaceLeft >= dropdownWidth) {
             setOpenDirection("left");
         } else {
             setOpenDirection("right");
@@ -71,36 +72,27 @@ function NavbarItem({ item, level = 0 }) {
             ref={itemRef}
             onMouseEnter={handleMouseEnter}
             className={`portal-navbar__item-wrapper ${
-                hasChildren
-                    ? "portal-navbar__item-wrapper--has-children"
-                    : ""
+                hasChildren ? "portal-navbar__item-wrapper--has-children" : ""
             } ${
                 level === 0
                     ? openDirection !== "center"
                         ? `portal-navbar__item-wrapper--dropdown-${openDirection}`
                         : ""
                     : openDirection === "left"
-                        ? "portal-navbar__item-wrapper--dropdown-left"
-                        : ""
+                      ? "portal-navbar__item-wrapper--dropdown-left"
+                      : ""
             }`}
         >
-            <a
-                href={getItemHref()}
-                className="portal-navbar__item"
-            >
+            <a href={getItemHref()} className="portal-navbar__item">
                 <span>{item.title}</span>
 
                 {hasChildren && (
                     <span
                         className={`material-symbols-outlined portal-navbar__arrow ${
-                            level > 0
-                                ? "portal-navbar__arrow--right"
-                                : ""
+                            level > 0 ? "portal-navbar__arrow--right" : ""
                         }`}
                     >
-                        {level > 0
-                            ? "chevron_right"
-                            : "expand_more"}
+                        {level > 0 ? "chevron_right" : "expand_more"}
                     </span>
                 )}
             </a>
@@ -108,9 +100,7 @@ function NavbarItem({ item, level = 0 }) {
             {hasChildren && (
                 <div
                     className={`portal-navbar__dropdown ${
-                        level > 0
-                            ? "portal-navbar__dropdown--nested"
-                            : ""
+                        level > 0 ? "portal-navbar__dropdown--nested" : ""
                     }`}
                 >
                     <div className="portal-navbar__dropdown-inner">
@@ -128,6 +118,61 @@ function NavbarItem({ item, level = 0 }) {
     );
 }
 
+/* =========================================================
+   ITEM MOBILE (con + / − para abrir hijos)
+   ========================================================= */
+
+function MobileNavItem({ item }) {
+    const [open, setOpen] = useState(false);
+
+    const children = item.children ?? [];
+    const hasChildren = children.length > 0;
+
+    const href =
+        item.destination_type === "pdf" && item.file_path
+            ? `/storage/${item.file_path}`
+            : (item.url ?? "#");
+
+    if (!hasChildren) {
+        return (
+            <a href={href} className="portal-navbar__mobile-link">
+                <span>{item.title}</span>
+            </a>
+        );
+    }
+
+    return (
+        <div className="portal-navbar__mobile-item">
+            <button
+                type="button"
+                className={`portal-navbar__mobile-link ${
+                    open ? "is-open" : ""
+                }`}
+                onClick={() => setOpen((current) => !current)}
+                aria-expanded={open}
+            >
+                <span>{item.title}</span>
+
+                <span className="material-symbols-outlined portal-navbar__mobile-icon">
+                    {open ? "remove" : "add"}
+                </span>
+            </button>
+
+            {open && (
+                <div className="portal-navbar__mobile-children">
+                    {children.map((child) => (
+                        <MobileNavItem key={child.id} item={child} />
+                    ))}
+                </div>
+            )}
+        </div>
+    );
+}
+
+/* =========================================================
+   NAVBAR
+   ========================================================= */
+
 export default function Navbar({ menuItems = [] }) {
     const [menuOpen, setMenuOpen] = useState(false);
     const [moreOpen, setMoreOpen] = useState(false);
@@ -137,11 +182,13 @@ export default function Navbar({ menuItems = [] }) {
 
     return (
         <header className="portal-navbar">
-            <div className="portal-navbar__container">
-
+            <div
+                className={`portal-navbar__container ${
+                    moreOpen ? "portal-navbar__container--more-open" : ""
+                }`}
+            >
                 {/* FILA PRINCIPAL */}
                 <div className="portal-navbar__top">
-
                     <a href="/" className="portal-navbar__brand">
                         <img
                             src="/images/logo-hu.png"
@@ -151,10 +198,7 @@ export default function Navbar({ menuItems = [] }) {
 
                     <nav className="portal-navbar__menu">
                         {visibleItems.map((item) => (
-                            <NavbarItem
-                                key={item.id}
-                                item={item}
-                            />
+                            <NavbarItem key={item.id} item={item} />
                         ))}
 
                         {moreItems.length > 0 && (
@@ -169,15 +213,11 @@ export default function Navbar({ menuItems = [] }) {
                                     type="button"
                                     className="portal-navbar__more"
                                     onClick={() =>
-                                        setMoreOpen(
-                                            (current) => !current
-                                        )
+                                        setMoreOpen((current) => !current)
                                     }
                                     aria-expanded={moreOpen}
                                 >
-                                    <span>
-                                        {moreOpen ? "Menos" : "Más"}
-                                    </span>
+                                    <span>{moreOpen ? "Menos" : "Más"}</span>
 
                                     <span
                                         className={`material-symbols-outlined portal-navbar__more-arrow ${
@@ -215,16 +255,8 @@ export default function Navbar({ menuItems = [] }) {
                     <button
                         type="button"
                         className="portal-navbar__toggle"
-                        onClick={() =>
-                            setMenuOpen(
-                                (current) => !current
-                            )
-                        }
-                        aria-label={
-                            menuOpen
-                                ? "Cerrar menú"
-                                : "Abrir menú"
-                        }
+                        onClick={() => setMenuOpen((current) => !current)}
+                        aria-label={menuOpen ? "Cerrar menú" : "Abrir menú"}
                         aria-expanded={menuOpen}
                     >
                         <span className="material-symbols-outlined">
@@ -232,24 +264,19 @@ export default function Navbar({ menuItems = [] }) {
                         </span>
                     </button>
                 </div>
-            </div>
 
-            {/* MOBILE */}
-            <div
-                className={`portal-navbar__mobile ${
-                    menuOpen
-                        ? "portal-navbar__mobile--open"
-                        : ""
-                }`}
-            >
-                <nav className="portal-navbar__mobile-menu">
-                    {menuItems.map((item) => (
-                        <NavbarItem
-                            key={item.id}
-                            item={item}
-                        />
-                    ))}
-                </nav>
+                {/* MOBILE */}
+                <div
+                    className={`portal-navbar__mobile ${
+                        menuOpen ? "portal-navbar__mobile--open" : ""
+                    }`}
+                >
+                    <nav className="portal-navbar__mobile-menu">
+                        {menuItems.map((item) => (
+                            <MobileNavItem key={item.id} item={item} />
+                        ))}
+                    </nav>
+                </div>
             </div>
         </header>
     );
