@@ -12,8 +12,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        $schedule->command('news:publish-scheduled')->everyFiveMinutes(); //luego consultar cada cuanto tiempo se hace la consulta 
-    }
+        $schedule->command('news:publish-scheduled')->everyMinute();    }
 
     /**
      * Register the commands for the application.

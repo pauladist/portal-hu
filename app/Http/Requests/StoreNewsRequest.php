@@ -15,6 +15,12 @@ class StoreNewsRequest extends FormRequest
     public function rules(): array
     {
         return [
+            /*
+            |--------------------------------------------------------------------------
+            | Información principal
+            |--------------------------------------------------------------------------
+            */
+
             'title' => [
                 'required',
                 'string',
@@ -24,7 +30,7 @@ class StoreNewsRequest extends FormRequest
             'subtitle' => [
                 'nullable',
                 'string',
-                'max:255',
+                'max:500',
             ],
 
             'content' => [
@@ -32,15 +38,44 @@ class StoreNewsRequest extends FormRequest
                 'string',
             ],
 
+            /*
+            |--------------------------------------------------------------------------
+            | Estado
+            |--------------------------------------------------------------------------
+            */
+
             'status' => [
                 'required',
-                Rule::in(['draft', 'scheduled', 'published']),
+                Rule::in([
+                    'draft',
+                    'scheduled',
+                    'published',
+                ]),
             ],
 
             'published_at' => [
                 'nullable',
                 'date',
             ],
+
+            /*
+            |--------------------------------------------------------------------------
+            | Portada
+            |--------------------------------------------------------------------------
+            */
+
+            'cover' => [
+                'required',
+                'image',
+                'mimes:jpg,jpeg,png,webp',
+                'max:10240',
+            ],
+
+            /*
+            |--------------------------------------------------------------------------
+            | Categorías
+            |--------------------------------------------------------------------------
+            */
 
             'categories' => [
                 'nullable',
@@ -51,6 +86,12 @@ class StoreNewsRequest extends FormRequest
                 'integer',
                 'exists:categories,id',
             ],
+
+            /*
+            |--------------------------------------------------------------------------
+            | Tags
+            |--------------------------------------------------------------------------
+            */
 
             'tags' => [
                 'nullable',
@@ -64,49 +105,31 @@ class StoreNewsRequest extends FormRequest
 
             /*
             |--------------------------------------------------------------------------
-            | Medios
+            | Archivos insertados dentro del editor
             |--------------------------------------------------------------------------
             */
 
-            'media' => [
-                'required',
-                'array',
-                'min:1',
-            ],
-
-            'media.*.type' => [
-                'required',
-                Rule::in(['image', 'pdf', 'video']),
-            ],
-
-            'media.*.title' => [
+            'editor_media' => [
                 'nullable',
+                'array',
+            ],
+
+            'editor_media.*.id' => [
+                'required',
                 'string',
                 'max:255',
             ],
 
-            'media.*.is_featured' => [
-                'nullable',
-                'boolean',
+            'editor_media.*.type' => [
+                'required',
+                'string',
+                'max:100',
             ],
 
-            'media.*.order' => [
-                'nullable',
-                'integer',
-                'min:0',
-            ],
-
-            'media.*.file' => [
-                'nullable',
+            'editor_media.*.file' => [
+                'required',
                 'file',
-                'mimes:jpeg,jpg,png,webp,pdf',
-                'max:10240',
-            ],
-
-            'media.*.url' => [
-                'nullable',
-                'url',
-                'max:2048',
+                'max:20480',
             ],
         ];
     }
@@ -114,104 +137,45 @@ class StoreNewsRequest extends FormRequest
     public function withValidator($validator): void
     {
         $validator->after(function ($validator) {
-
-            $media = $this->all()['media'] ?? [];
-
-            /*
-            |--------------------------------------------------------------------------
-            | Validar imagen principal
-            |--------------------------------------------------------------------------
-            */
-
-            $featuredImages = collect($media)
-                ->filter(function ($item) {
-                    return ($item['type'] ?? null) === 'image'
-                        && filter_var(
-                            $item['is_featured'] ?? false,
-                            FILTER_VALIDATE_BOOLEAN
-                        );
-                });
-
-            if ($featuredImages->count() !== 1) {
-                $validator->errors()->add(
-                    'media',
-                    'La noticia debe tener exactamente una imagen principal.'
-                );
-            }
-
-            /*
-            |--------------------------------------------------------------------------
-            | Validar archivos y videos
-            |--------------------------------------------------------------------------
-            */
-
-            foreach ($media as $index => $item) {
-
-                $type = $item['type'] ?? null;
-
-                if ($type === 'image' || $type === 'pdf') {
-
-                    if (!isset($item['file']) || !$item['file']) {
-                        $validator->errors()->add(
-                            "media.$index.file",
-                            'Este medio requiere un archivo.'
-                        );
-                    }
-                }
-
-                if ($type === 'video') {
-
-                    if (empty($item['url'])) {
-                        $validator->errors()->add(
-                            "media.$index.url",
-                            'El video requiere una URL.'
-                        );
-                    }
-                }
-
-                if (
-                    ($item['is_featured'] ?? false)
-                    && $type !== 'image'
-                ) {
-                    $validator->errors()->add(
-                        "media.$index.is_featured",
-                        'Solo una imagen puede ser marcada como principal.'
-                    );
-                }
-            }
-
-            /*
-        |--------------------------------------------------------------------------
-        | Validar fecha según estado
-        |--------------------------------------------------------------------------
-        */
-
             $status = $this->input('status');
             $publishedAt = $this->input('published_at');
 
-            if ($status === 'scheduled') {
-
-                if (!$publishedAt) {
-
-                    $validator->errors()->add(
-                        'published_at',
-                        'Una noticia programada debe tener una fecha de publicación.'
-                    );
-                } elseif (strtotime($publishedAt) <= now()->timestamp) {
-
-                    $validator->errors()->add(
-                        'published_at',
-                        'La fecha de publicación debe ser futura.'
-                    );
-                }
-            }
+            /*
+            |--------------------------------------------------------------------------
+            | Borrador
+            |--------------------------------------------------------------------------
+            */
 
             if ($status === 'draft' && $publishedAt) {
-
                 $validator->errors()->add(
                     'published_at',
                     'Una noticia en borrador no puede tener fecha de publicación.'
                 );
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Programada
+            |--------------------------------------------------------------------------
+            */
+
+            if ($status === 'scheduled') {
+                if (!$publishedAt) {
+                    $validator->errors()->add(
+                        'published_at',
+                        'Una noticia programada debe tener una fecha de publicación.'
+                    );
+                } else {
+                    $scheduledAt = \Carbon\Carbon::parse($publishedAt);
+                    $currentMinute = now()->startOfMinute();
+
+                    if ($scheduledAt->lte($currentMinute)) {
+                        $validator->errors()->add(
+                            'published_at',
+                            'Seleccioná una fecha y hora posteriores a la actual.'
+                        );
+                    }
+                }
             }
         });
     }
@@ -219,30 +183,53 @@ class StoreNewsRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'title.required' => 'El título es obligatorio.',
-            'title.max' => 'El título no puede superar los 255 caracteres.',
+            'title.required' =>
+                'El título es obligatorio.',
 
-            'content.required' => 'El contenido es obligatorio.',
+            'title.max' =>
+                'El título no puede superar los 255 caracteres.',
 
-            'status.required' => 'El estado es obligatorio.',
-            'status.in' => 'El estado seleccionado no es válido.',
+            'subtitle.max' =>
+                'El subtítulo no puede superar los 500 caracteres.',
 
-            'published_at.date' => 'La fecha de publicación no es válida.',
+            'content.required' =>
+                'El contenido es obligatorio.',
 
-            'categories.*.exists' => 'Una de las categorías seleccionadas no existe.',
-            'tags.*.exists' => 'Una de las etiquetas seleccionadas no existe.',
+            'status.required' =>
+                'El estado de la noticia es obligatorio.',
 
-            'media.required' => 'La noticia debe tener una imagen principal.',
-            'media.min' => 'La noticia debe tener al menos un medio.',
+            'status.in' =>
+                'El estado seleccionado no es válido.',
 
-            'media.*.type.required' => 'Cada medio debe tener un tipo.',
-            'media.*.type.in' => 'El tipo de medio no es válido.',
+            'published_at.date' =>
+                'La fecha de publicación no es válida.',
 
-            'media.*.file.file' => 'El archivo enviado no es válido.',
-            'media.*.file.mimes' => 'El archivo debe ser una imagen o un PDF.',
-            'media.*.file.max' => 'El archivo no puede superar los 10 MB.',
+            'cover.required' =>
+                'La imagen principal es obligatoria.',
 
-            'media.*.url.url' => 'La URL del video no es válida.',
+            'cover.image' =>
+                'La imagen principal debe ser una imagen válida.',
+
+            'cover.mimes' =>
+                'La imagen principal debe ser JPG, JPEG, PNG o WEBP.',
+
+            'cover.max' =>
+                'La imagen principal no puede superar los 10 MB.',
+
+            'categories.*.exists' =>
+                'Una de las categorías seleccionadas no existe.',
+
+            'tags.*.exists' =>
+                'Uno de los tags seleccionados no existe.',
+
+            'editor_media.*.file.required' =>
+                'Uno de los archivos del contenido no fue recibido.',
+
+            'editor_media.*.file.file' =>
+                'Uno de los archivos del contenido no es válido.',
+
+            'editor_media.*.file.max' =>
+                'Uno de los archivos del contenido supera el tamaño máximo permitido.',
         ];
     }
 }

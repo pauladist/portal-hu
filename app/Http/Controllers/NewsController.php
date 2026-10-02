@@ -92,6 +92,12 @@ class NewsController extends Controller
                 $publishedAt = now();
             }
 
+            /*
+            |--------------------------------------------------------------------------
+            | Crear noticia
+            |--------------------------------------------------------------------------
+            */
+
             $news = News::create([
                 'user_id' => auth()->id(),
                 'title' => $request->title,
@@ -103,12 +109,166 @@ class NewsController extends Controller
                 'status' => $request->status,
             ]);
 
-            $news->categories()->sync($request->categories ?? []);
-            $news->tags()->sync($request->tags ?? []);
+            /*
+            |--------------------------------------------------------------------------
+            | Categorías y tags
+            |--------------------------------------------------------------------------
+            */
 
-            foreach ($request->media as $media) {
-                $this->createMedia($news, $media);
+            $news->categories()->sync(
+                $request->categories ?? []
+            );
+
+            $news->tags()->sync(
+                $request->tags ?? []
+            );
+
+            /*
+            |--------------------------------------------------------------------------
+            | Imagen principal / portada
+            |--------------------------------------------------------------------------
+            */
+
+            if ($request->hasFile('cover')) {
+
+                $coverPath = $request
+                    ->file('cover')
+                    ->store('news', 'public');
+
+                $news->media()->create([
+                    'type' => 'image',
+                    'path' => $coverPath,
+                    'title' => $request->title,
+                    'is_featured' => true,
+                    'order' => 0,
+                ]);
             }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Archivos insertados dentro del editor
+            |--------------------------------------------------------------------------
+            */
+
+            $content = $request->content;
+
+            foreach ($request->editor_media ?? [] as $mediaData) {
+
+                $mediaId = $mediaData['id'];
+
+                $file = $mediaData['file'];
+
+                $mimeType = $file->getMimeType();
+
+                /*
+                | Guardar archivo
+                */
+
+                $path = $file->store('news', 'public');
+
+                /*
+                | Determinar tipo
+                */
+
+                if (str_starts_with($mimeType, 'image/')) {
+                    $type = 'image';
+                } else {
+                    $type = 'pdf';
+                }
+
+                /*
+                | Crear registro de media
+                */
+
+                $media = $news->media()->create([
+                    'type' => $type,
+                    'path' => $path,
+                    'title' => $mediaData['file']->getClientOriginalName(),
+                    'is_featured' => false,
+                    'order' => $news->media()->count(),
+                ]);
+
+                /*
+                |--------------------------------------------------------------------------
+                | URL pública definitiva
+                |--------------------------------------------------------------------------
+                */
+
+                $publicUrl = Storage::disk('public')->url($path);
+
+                /*
+                |--------------------------------------------------------------------------
+                | Reemplazar blob URL del editor
+                |--------------------------------------------------------------------------
+                |
+                | El RichTextEditor guarda temporalmente:
+                |
+                | blob:http://localhost/...
+                |
+                | junto con:
+                |
+                | mediaId="..."
+                |
+                */
+
+                $content = str_replace(
+                    $mediaId,
+                    (string) $media->id,
+                    $content
+                );
+
+                /*
+                | Imagen
+                */
+
+                if ($type === 'image') {
+
+                    /*
+                    | Reemplazamos el src blob por la URL definitiva.
+                    */
+
+                    $content = preg_replace(
+                        '/(<img[^>]*mediaId="' .
+                        preg_quote($mediaId, '/') .
+                        '"[^>]*src=")[^"]*(")/',
+                        '$1' . $publicUrl . '$2',
+                        $content
+                    );
+
+                    /*
+                    | También puede aparecer media-id con otra variante.
+                    */
+
+                    $content = preg_replace(
+                        '/(<img[^>]*src=")[^"]*(".*?data-news-image)/',
+                        '$1' . $publicUrl . '$2',
+                        $content
+                    );
+                }
+
+                /*
+                | PDF / archivo
+                */
+
+                if ($type === 'pdf') {
+
+                    $content = preg_replace(
+                        '/(<div[^>]*data-pdf-file[^>]*>.*?<a[^>]*href=")[^"]*(")/s',
+                        '$1' . $publicUrl . '$2',
+                        $content
+                    );
+                }
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Guardar HTML definitivo
+            |--------------------------------------------------------------------------
+            */
+
+            $news->update([
+                'content' => $content,
+            ]);
         });
 
         return redirect()

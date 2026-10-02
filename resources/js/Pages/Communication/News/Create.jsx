@@ -1,32 +1,32 @@
-import React, { useState } from 'react';
-import { Head, Link, useForm } from '@inertiajs/react';
-import PanelLayout from '@/Layouts/PanelLayout';
+import React, { useCallback, useState } from "react";
+import { Head, Link, useForm } from "@inertiajs/react";
+import PanelLayout from "@/Layouts/PanelLayout";
+import RichTextEditor from "@/Components/Communication/RichTextEditor";
+import "../css/create.css";
 
-import '../css/create.css';
-
-export default function Create({
-    categories = [],
-    tags = [],
-}) {
-    const {
-        data,
-        setData,
-        post,
-        processing,
-        errors,
-    } = useForm({
-        title: '',
-        subtitle: '',
-        content: '',
-        status: 'draft',
-        published_at: '',
+export default function Create({ categories = [], tags = [] }) {
+    const { data, setData, post, processing, errors } = useForm({
+        title: "",
+        subtitle: "",
+        content: "",
+        status: "draft",
+        published_at: "",
         categories: [],
         tags: [],
-        media: [],
+        cover: null,
+        editor_media: [],
     });
 
-    const [mediaPreviews, setMediaPreviews] = useState([]);
+    const handleEditorMediaChange = useCallback(
+        (mediaFiles) => {
+            setData("editor_media", mediaFiles);
+        },
+        [setData]
+    );
+    const [coverPreview, setCoverPreview] = useState(null);
 
+    const [showSchedule, setShowSchedule] = useState(false);
+    const [showStatusMenu, setShowStatusMenu] = useState(false);
 
     /*
     |--------------------------------------------------------------------------
@@ -36,13 +36,12 @@ export default function Create({
 
     const toggleCategory = (categoryId) => {
         setData(
-            'categories',
+            "categories",
             data.categories.includes(categoryId)
-                ? data.categories.filter(id => id !== categoryId)
-                : [...data.categories, categoryId]
+                ? data.categories.filter((id) => id !== categoryId)
+                : [...data.categories, categoryId],
         );
     };
-
 
     /*
     |--------------------------------------------------------------------------
@@ -52,44 +51,99 @@ export default function Create({
 
     const toggleTag = (tagId) => {
         setData(
-            'tags',
+            "tags",
             data.tags.includes(tagId)
-                ? data.tags.filter(id => id !== tagId)
-                : [...data.tags, tagId]
+                ? data.tags.filter((id) => id !== tagId)
+                : [...data.tags, tagId],
         );
     };
 
-
     /*
     |--------------------------------------------------------------------------
-    | Imagen
+    | Portada
     |--------------------------------------------------------------------------
     */
 
-    const handleImageChange = (event) => {
-        const files = Array.from(event.target.files || []);
+    const handleCoverChange = (event) => {
+        const file = event.target.files?.[0];
 
-        const media = files.map((file, index) => ({
-            type: 'image',
-            file: file,
-            title: '',
-            is_featured: index === 0,
-            order: index,
-        }));
+        if (!file) {
+            return;
+        }
 
-        setData('media', media);
+        // Liberar preview anterior
+        if (coverPreview) {
+            URL.revokeObjectURL(coverPreview);
+        }
 
-        const previews = media.map(mediaItem => ({
-            file: mediaItem.file,
-            url: URL.createObjectURL(mediaItem.file),
-        }));
+        const previewUrl = URL.createObjectURL(file);
 
-        setMediaPreviews(previews);
+        setData("cover", file);
+        setCoverPreview(previewUrl);
+
+        // Permite volver a seleccionar el mismo archivo
+        event.target.value = "";
+    };
+
+    const removeCover = () => {
+        if (coverPreview) {
+            URL.revokeObjectURL(coverPreview);
+        }
+
+        setCoverPreview(null);
+        setData("cover", null);
     };
 
     /*
     |--------------------------------------------------------------------------
-    | Guardar
+    | Publicación
+    |--------------------------------------------------------------------------
+    */
+
+    const submitWithStatus = (status) => {
+        setData("status", status);
+
+        setTimeout(() => {
+            document
+                .querySelector(".news-create-form")
+                ?.requestSubmit();
+        }, 0);
+    };
+
+    const handlePublish = () => {
+        setData("published_at", "");
+        setShowSchedule(false);
+        setShowStatusMenu(false);
+
+        submitWithStatus("published");
+    };
+
+    const handleDraft = () => {
+        setData("published_at", "");
+        setShowSchedule(false);
+        setShowStatusMenu(false);
+
+        submitWithStatus("draft");
+    };
+
+    const handleSchedule = () => {
+        if (showSchedule) {
+            // Volver a publicación normal
+            setData("status", "published");
+            setData("published_at", "");
+            setShowSchedule(false);
+        } else {
+            // Activar programación
+            setData("status", "scheduled");
+            setShowSchedule(true);
+        }
+
+        setShowStatusMenu(false);
+    };
+
+    /*
+    |--------------------------------------------------------------------------
+    | Enviar formulario
     |--------------------------------------------------------------------------
     */
 
@@ -98,69 +152,102 @@ export default function Create({
 
         const formData = new FormData();
 
-        formData.append('title', data.title);
-        formData.append('subtitle', data.subtitle || '');
-        formData.append('content', data.content);
-        formData.append('status', data.status);
-        formData.append('published_at', data.published_at || '');
+        formData.append("title", data.title);
+        formData.append("subtitle", data.subtitle || "");
+        formData.append("content", data.content);
+        formData.append("status", data.status);
+        formData.append("published_at", data.published_at || "");
+
+        /*
+        |----------------------------------------------------------------------
+        | Portada
+        |----------------------------------------------------------------------
+        */
+
+        if (data.cover) {
+            formData.append("cover", data.cover);
+        }
+
+        /*
+        |----------------------------------------------------------------------
+        | Categorías
+        |----------------------------------------------------------------------
+        */
 
         data.categories.forEach((categoryId, index) => {
             formData.append(`categories[${index}]`, categoryId);
         });
 
+        /*
+        |----------------------------------------------------------------------
+        | Tags
+        |----------------------------------------------------------------------
+        */
+
         data.tags.forEach((tagId, index) => {
             formData.append(`tags[${index}]`, tagId);
         });
 
-        data.media.forEach((media, index) => {
-            formData.append(`media[${index}][type]`, media.type);
-            formData.append(`media[${index}][title]`, media.title || '');
-            formData.append(
-                `media[${index}][is_featured]`,
-                media.is_featured ? '1' : '0'
-            );
-            formData.append(`media[${index}][order]`, media.order ?? index);
+        /*
+        |----------------------------------------------------------------------
+        | Archivos insertados desde el editor
+        |
+        | Cada elemento tiene:
+        | id
+        | file
+        | type
+        | name
+        | url
+        |----------------------------------------------------------------------
+        */
 
-            if (media.file) {
-                formData.append(
-                    `media[${index}][file]`,
-                    media.file
-                );
-            }
+        data.editor_media.forEach((media, index) => {
+            formData.append(
+                `editor_media[${index}][id]`,
+                media.id,
+            );
+
+            formData.append(
+                `editor_media[${index}][type]`,
+                media.type || "",
+            );
+
+            formData.append(
+                `editor_media[${index}][file]`,
+                media.file,
+            );
         });
 
-        console.log('FORM DATA PREPARADO');
+        console.log("FORM DATA PREPARADO");
 
-        post(route('news.store'), {
+        post(route("news.store"), {
             data: formData,
             forceFormData: true,
 
             onError: (errors) => {
-                console.log('ERRORES DE LARAVEL:', errors);
+                console.log("ERRORES DE LARAVEL:", errors);
             },
 
             onSuccess: () => {
-                console.log('NOTICIA GUARDADA CORRECTAMENTE');
+                console.log("NOTICIA GUARDADA CORRECTAMENTE");
             },
         });
     };
 
-
     return (
         <PanelLayout>
-
             <Head title="Crear noticia" />
 
             <div className="news-create">
 
-                {/* HEADER */}
+                {/* =====================================================
+                    HEADER
+                ====================================================== */}
 
                 <div className="news-create-header">
-
                     <div>
-
                         <Link
-                            href={route('news.dashboard')}
+                            href={route("news.dashboard")}
                             className="news-back"
                         >
                             <span className="material-symbols-outlined">
@@ -170,18 +257,13 @@ export default function Create({
                             Volver a noticias
                         </Link>
 
-                        <h1>
-                            Crear noticia
-                        </h1>
+                        <h1>Crear noticia</h1>
 
                         <p>
                             Completá los datos para publicar una nueva noticia.
                         </p>
-
                     </div>
-
                 </div>
-
 
                 <form
                     onSubmit={handleSubmit}
@@ -195,22 +277,16 @@ export default function Create({
                     <section className="news-form-section">
 
                         <div className="news-section-heading">
-
-                            <h2>
-                                Información de la noticia
-                            </h2>
+                            <h2>Información de la noticia</h2>
 
                             <p>
                                 Ingresá el contenido principal de la noticia.
                             </p>
-
                         </div>
-
 
                         {/* TÍTULO */}
 
                         <div className="news-form-field">
-
                             <label htmlFor="title">
                                 Título
                             </label>
@@ -219,8 +295,11 @@ export default function Create({
                                 id="title"
                                 type="text"
                                 value={data.title}
-                                onChange={event =>
-                                    setData('title', event.target.value)
+                                onChange={(event) =>
+                                    setData(
+                                        "title",
+                                        event.target.value,
+                                    )
                                 }
                                 placeholder="Ingresá el título de la noticia"
                             />
@@ -230,14 +309,11 @@ export default function Create({
                                     {errors.title}
                                 </span>
                             )}
-
                         </div>
-
 
                         {/* SUBTÍTULO */}
 
                         <div className="news-form-field">
-
                             <label htmlFor="subtitle">
                                 Subtítulo
                             </label>
@@ -246,8 +322,11 @@ export default function Create({
                                 id="subtitle"
                                 type="text"
                                 value={data.subtitle}
-                                onChange={event =>
-                                    setData('subtitle', event.target.value)
+                                onChange={(event) =>
+                                    setData(
+                                        "subtitle",
+                                        event.target.value,
+                                    )
                                 }
                                 placeholder="Ingresá un subtítulo"
                             />
@@ -257,11 +336,90 @@ export default function Create({
                                     {errors.subtitle}
                                 </span>
                             )}
+                        </div>
+
+                        {/* =================================================
+                            PORTADA
+                        ================================================== */}
+
+                        <div className="news-form-field">
+
+                            <label>
+                                Imagen de portada
+                            </label>
+
+                            <p className="news-field-description">
+                                Esta imagen se utilizará como imagen principal
+                                de la noticia.
+                            </p>
+
+                            {!coverPreview ? (
+                                <>
+                                    <label
+                                        htmlFor="cover"
+                                        className="news-upload"
+                                    >
+                                        <span className="material-symbols-outlined">
+                                            cloud_upload
+                                        </span>
+
+                                        <strong>
+                                            Seleccionar imagen de portada
+                                        </strong>
+
+                                        <span>
+                                            JPG, PNG o WEBP
+                                        </span>
+                                    </label>
+
+                                    <input
+                                        id="cover"
+                                        type="file"
+                                        accept="image/jpeg,image/png,image/webp"
+                                        onChange={handleCoverChange}
+                                        className="news-file-input"
+                                    />
+                                </>
+                            ) : (
+                                <div className="news-cover-preview">
+
+                                    <img
+                                        src={coverPreview}
+                                        alt="Vista previa de portada"
+                                    />
+
+                                    <div className="news-cover-preview-actions">
+
+                                        <span>
+                                            Imagen de portada
+                                        </span>
+
+                                        <button
+                                            type="button"
+                                            onClick={removeCover}
+                                            className="news-preview-remove"
+                                            aria-label="Eliminar portada"
+                                        >
+                                            <span className="material-symbols-outlined">
+                                                delete
+                                            </span>
+                                        </button>
+
+                                    </div>
+                                </div>
+                            )}
+
+                            {errors.cover && (
+                                <span className="news-form-error">
+                                    {errors.cover}
+                                </span>
+                            )}
 
                         </div>
 
-
-                        {/* CONTENIDO */}
+                        {/* =================================================
+                            CONTENIDO
+                        ================================================== */}
 
                         <div className="news-form-field">
 
@@ -269,14 +427,10 @@ export default function Create({
                                 Contenido
                             </label>
 
-                            <textarea
-                                id="content"
-                                rows="12"
+                            <RichTextEditor
                                 value={data.content}
-                                onChange={event =>
-                                    setData('content', event.target.value)
-                                }
-                                placeholder="Escribí el contenido de la noticia..."
+                                onChange={(value) => setData("content", value)}
+                                onMediaChange={handleEditorMediaChange}
                             />
 
                             {errors.content && (
@@ -285,101 +439,15 @@ export default function Create({
                                 </span>
                             )}
 
-                        </div>
-
-                    </section>
-
-
-                    {/* =====================================================
-                        PUBLICACIÓN
-                    ====================================================== */}
-
-                    <section className="news-form-section">
-
-                        <div className="news-section-heading">
-
-                            <h2>
-                                Publicación
-                            </h2>
-
-                            <p>
-                                Definí cuándo y cómo se publicará la noticia.
-                            </p>
-
-                        </div>
-
-
-                        <div className="news-form-grid">
-
-                            {/* ESTADO */}
-
-                            <div className="news-form-field">
-
-                                <label htmlFor="status">
-                                    Estado
-                                </label>
-
-                                <select
-                                    id="status"
-                                    value={data.status}
-                                    onChange={event =>
-                                        setData('status', event.target.value)
-                                    }
-                                >
-                                    <option value="draft">
-                                        Borrador
-                                    </option>
-
-                                    <option value="scheduled">
-                                        Programada
-                                    </option>
-
-                                    <option value="published">
-                                        Publicada
-                                    </option>
-                                </select>
-
-                                {errors.status && (
-                                    <span className="news-form-error">
-                                        {errors.status}
-                                    </span>
-                                )}
-
-                            </div>
-
-
-                            {/* FECHA */}
-
-                            <div className="news-form-field">
-
-                                <label htmlFor="published_at">
-                                    Fecha de publicación
-                                </label>
-
-                                <input
-                                    id="published_at"
-                                    type="datetime-local"
-                                    value={data.published_at}
-                                    onChange={event =>
-                                        setData(
-                                            'published_at',
-                                            event.target.value
-                                        )
-                                    }
-                                />
-
-                                {errors.published_at && (
-                                    <span className="news-form-error">
-                                        {errors.published_at}
-                                    </span>
-                                )}
-
-                            </div>
+                            {errors.editor_media && (
+                                <span className="news-form-error">
+                                    {errors.editor_media}
+                                </span>
+                            )}
 
                         </div>
 
                     </section>
-
 
                     {/* =====================================================
                         CATEGORÍAS
@@ -399,18 +467,18 @@ export default function Create({
 
                         </div>
 
-
                         <div className="news-chip-list">
 
-                            {categories.map(category => (
-
+                            {categories.map((category) => (
                                 <button
                                     key={category.id}
                                     type="button"
                                     className={
-                                        data.categories.includes(category.id)
-                                            ? 'news-chip selected'
-                                            : 'news-chip'
+                                        data.categories.includes(
+                                            category.id,
+                                        )
+                                            ? "news-chip selected"
+                                            : "news-chip"
                                     }
                                     onClick={() =>
                                         toggleCategory(category.id)
@@ -418,7 +486,6 @@ export default function Create({
                                 >
                                     {category.title}
                                 </button>
-
                             ))}
 
                         </div>
@@ -430,7 +497,6 @@ export default function Create({
                         )}
 
                     </section>
-
 
                     {/* =====================================================
                         TAGS
@@ -450,18 +516,16 @@ export default function Create({
 
                         </div>
 
-
                         <div className="news-chip-list">
 
-                            {tags.map(tag => (
-
+                            {tags.map((tag) => (
                                 <button
                                     key={tag.id}
                                     type="button"
                                     className={
                                         data.tags.includes(tag.id)
-                                            ? 'news-chip selected'
-                                            : 'news-chip'
+                                            ? "news-chip selected"
+                                            : "news-chip"
                                     }
                                     onClick={() =>
                                         toggleTag(tag.id)
@@ -469,7 +533,6 @@ export default function Create({
                                 >
                                     {tag.title}
                                 </button>
-
                             ))}
 
                         </div>
@@ -482,125 +545,144 @@ export default function Create({
 
                     </section>
 
-
                     {/* =====================================================
-                        IMAGEN
+                        ACCIONES DE PUBLICACIÓN
                     ====================================================== */}
 
-                    <section className="news-form-section">
+                    <div className="news-publication-actions">
 
-                        <div className="news-section-heading">
+                        {/* PROGRAMACIÓN */}
 
-                            <h2>
-                                Imagen
-                            </h2>
+                        {showSchedule && (
+                            <div className="news-schedule-field">
 
-                            <p>
-                                Agregá una imagen para acompañar la noticia.
-                            </p>
+                                <label htmlFor="published_at">
+                                    Fecha y hora de publicación
+                                </label>
 
-                        </div>
+                                <input
+                                    id="published_at"
+                                    type="datetime-local"
+                                    value={data.published_at}
+                                    onChange={(event) =>
+                                        setData(
+                                            "published_at",
+                                            event.target.value,
+                                        )
+                                    }
+                                />
 
+                                {errors.published_at && (
+                                    <span className="news-form-error">
+                                        {errors.published_at}
+                                    </span>
+                                )}
 
-                        <label
-                            htmlFor="media"
-                            className="news-upload"
-                        >
+                            </div>
+                        )}
 
-                            <span className="material-symbols-outlined">
-                                cloud_upload
-                            </span>
+                        <div className="news-publication-buttons">
 
-                            <strong>
-                                Seleccionar imagen
-                            </strong>
+                            {/* CANCELAR */}
 
-                            <span>
-                                JPG, PNG o WEBP
-                            </span>
+                            <Link
+                                href={route("news.dashboard")}
+                                className="news-cancel-button"
+                            >
+                                Cancelar
+                            </Link>
 
-                        </label>
+                            {/* PROGRAMAR */}
 
-                        <input
-                            id="media"
-                            type="file"
-                            accept="image/*"
-                            multiple
-                            onChange={handleImageChange}
-                            className="news-file-input"
-                        />
+                            <button
+                                type="button"
+                                className={`news-schedule-button ${
+                                    showSchedule ? "active" : ""
+                                }`}
+                                onClick={handleSchedule}
+                                title="Programar publicación"
+                            >
+                                <span className="material-symbols-outlined">
+                                    schedule
+                                </span>
+                            </button>
 
+                            {/* PUBLICAR */}
 
-                        {mediaPreviews.length > 0 && (
+                            <div className="news-publish-group">
 
-                            <div className="news-media-preview">
+                                <button
+                                    type="button"
+                                    className="news-publish-button"
+                                    disabled={processing}
+                                    onClick={
+                                        showSchedule
+                                            ? () => {
+                                                  setData(
+                                                      "status",
+                                                      "scheduled",
+                                                  );
 
-                                {mediaPreviews.map((media, index) => (
+                                                  setTimeout(() => {
+                                                      document
+                                                          .querySelector(
+                                                              ".news-create-form",
+                                                          )
+                                                          ?.requestSubmit();
+                                                  }, 0);
+                                              }
+                                            : handlePublish
+                                    }
+                                >
+                                    {processing
+                                        ? "Guardando..."
+                                        : showSchedule
+                                          ? "Programar"
+                                          : "Publicar"}
+                                </button>
 
-                                    <div
-                                        key={index}
-                                        className="news-preview-item"
-                                    >
+                                <button
+                                    type="button"
+                                    className="news-publish-dropdown"
+                                    onClick={() =>
+                                        setShowStatusMenu(
+                                            !showStatusMenu,
+                                        )
+                                    }
+                                    aria-label="Más opciones"
+                                >
+                                    <span className="material-symbols-outlined">
+                                        expand_more
+                                    </span>
+                                </button>
 
-                                        <img
-                                            src={media.url}
-                                            alt="Vista previa"
-                                        />
+                                {showStatusMenu && (
+                                    <div className="news-status-menu">
+
+                                        <button
+                                            type="button"
+                                            onClick={handleDraft}
+                                            disabled={processing}
+                                        >
+                                            <span className="material-symbols-outlined">
+                                                draft
+                                            </span>
+
+                                            Guardar como borrador
+                                        </button>
 
                                     </div>
-
-                                ))}
+                                )}
 
                             </div>
 
-                        )}
-
-                        {errors.media && (
-                            <span className="news-form-error">
-                                {errors.media}
-                            </span>
-                        )}
-
-                    </section>
-
-
-                    {/* =====================================================
-                        ACCIONES
-                    ====================================================== */}
-
-                    <div className="news-form-actions">
-
-                        <Link
-                            href={route('news.dashboard')}
-                            className="news-cancel-button"
-                        >
-                            Cancelar
-                        </Link>
-
-
-                        <button
-                            type="submit"
-                            className="news-save-button"
-                            disabled={processing}
-                        >
-
-                            <span className="material-symbols-outlined">
-                                save
-                            </span>
-
-                            {processing
-                                ? 'Guardando...'
-                                : 'Guardar noticia'
-                            }
-
-                        </button>
+                        </div>
 
                     </div>
 
                 </form>
 
             </div>
-
         </PanelLayout>
     );
 }

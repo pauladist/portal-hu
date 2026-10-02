@@ -48,7 +48,6 @@ class HomeController extends Controller
                 'media' => fn ($query) => $query
                     ->where('type', 'image')
                     ->where('is_featured', true)
-                    ->limit(1),
             ])
             ->orderByDesc('views')
             ->limit(5)
