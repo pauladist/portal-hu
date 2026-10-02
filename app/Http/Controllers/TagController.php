@@ -6,48 +6,28 @@ use App\Http\Requests\StoreTagRequest;
 use App\Http\Requests\UpdateTagRequest;
 use App\Models\Tag;
 use Illuminate\Support\Str;
-use Inertia\Inertia;
 
 class TagController extends Controller
 {
-    public function index()
-    {
-        $tags = Tag::withCount('news')
-            ->orderBy('title')
-            ->get();
-
-        return Inertia::render('Communication/Tags/Index', [
-            'tags' => $tags,
-        ]);
-    }
-
-    public function create()
-    {
-        return Inertia::render('Communication/Tags/Create');
-    }
-
-    public function store(StoreTagRequest $request)
+    /**
+     * Crear un tag rápidamente desde el formulario de noticia.
+     */
+    public function quickStore(StoreTagRequest $request)
     {
         $slug = $this->generateUniqueSlug($request->title);
 
-        Tag::create([
+        $tag = Tag::create([
             'title' => $request->title,
             'slug' => $slug,
         ]);
 
-        return redirect()
-            ->route('communication.tags.index')
-            ->with('success', 'Etiqueta creada correctamente.');
+        return response()->json($tag);
     }
 
-    public function edit(Tag $tag)
-    {
-        return Inertia::render('Communication/Tags/Edit', [
-            'tag' => $tag,
-        ]);
-    }
-
-    public function update(
+    /**
+     * Editar un tag rápidamente desde el formulario de noticia.
+     */
+    public function quickUpdate(
         UpdateTagRequest $request,
         Tag $tag
     ) {
@@ -61,27 +41,34 @@ class TagController extends Controller
             'slug' => $slug,
         ]);
 
-        return redirect()
-            ->route('communication.tags.index')
-            ->with('success', 'Etiqueta actualizada correctamente.');
+        return response()->json(
+            $tag->fresh()
+        );
     }
 
-    public function destroy(Tag $tag)
+    /**
+     * Eliminar un tag desde el formulario de noticia.
+     */
+    public function quickDestroy(Tag $tag)
     {
+        // El tag se elimina también de las noticias
+        // que lo tengan asociado.
         $tag->news()->detach();
 
         $tag->delete();
 
-        return redirect()
-            ->route('communication.tags.index')
-            ->with('success', 'Etiqueta eliminada correctamente.');
+        return response()->json([
+            'success' => true,
+        ]);
     }
 
+    /**
+     * Generar un slug único.
+     */
     private function generateUniqueSlug(
         string $title,
         ?int $ignoreId = null
     ): string {
-
         $slug = Str::slug($title);
 
         $originalSlug = $slug;
@@ -91,7 +78,11 @@ class TagController extends Controller
             Tag::where('slug', $slug)
                 ->when(
                     $ignoreId,
-                    fn ($query) => $query->where('id', '!=', $ignoreId)
+                    fn ($query) => $query->where(
+                        'id',
+                        '!=',
+                        $ignoreId
+                    )
                 )
                 ->exists()
         ) {

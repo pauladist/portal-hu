@@ -59,6 +59,12 @@ Route::middleware([
             return Inertia::render('Admin/Dashboard');
         })->name('dashboard');
 
+        /*
+        |--------------------------------------------------------------------------
+        | Botonera
+        |--------------------------------------------------------------------------
+        */
+
         Route::get('/botonera', [MenuItemController::class, 'index'])
             ->name('botonera');
 
@@ -77,8 +83,20 @@ Route::middleware([
             [MenuItemController::class, 'toggleQuickLink']
         )->name('menu-items.quick-link');
 
+        /*
+        |--------------------------------------------------------------------------
+        | Usuarios
+        |--------------------------------------------------------------------------
+        */
+
         Route::resource('users', UserController::class)
             ->except(['show']);
+
+        /*
+        |--------------------------------------------------------------------------
+        | Menu items
+        |--------------------------------------------------------------------------
+        */
 
         Route::resource('menu-items', MenuItemController::class)
             ->except(['show']);
@@ -100,35 +118,107 @@ Route::middleware([
     ->name('news.')
     ->group(function () {
 
-        // Dashboard principal
+        /*
+        |--------------------------------------------------------------------------
+        | Dashboard
+        |--------------------------------------------------------------------------
+        */
+
         Route::get('/', [NewsController::class, 'index'])
             ->name('dashboard');
 
-        // Crear noticia
+        /*
+        |--------------------------------------------------------------------------
+        | Crear noticia
+        |--------------------------------------------------------------------------
+        */
+
         Route::get('/create', [NewsController::class, 'create'])
             ->name('create');
 
-        // Guardar noticia
+        /*
+        |--------------------------------------------------------------------------
+        | Guardar noticia
+        |--------------------------------------------------------------------------
+        */
+
         Route::post('/', [NewsController::class, 'store'])
             ->name('store');
 
-        // Editar noticia
+        /*
+        |--------------------------------------------------------------------------
+        | Categorías
+        |--------------------------------------------------------------------------
+        |
+        | Las categorías se administran directamente desde el
+        | formulario de crear/editar noticia.
+        |
+        */
+
+        Route::post(
+            '/categories/quick-store',
+            [CategoryController::class, 'quickStore']
+        )->name('categories.quickStore');
+
+        Route::put(
+            '/categories/{category}/quick-update',
+            [CategoryController::class, 'quickUpdate']
+        )->name('categories.quickUpdate');
+
+        Route::delete(
+            '/categories/{category}/quick-destroy',
+            [CategoryController::class, 'quickDestroy']
+        )->name('categories.quickDestroy');
+
+        /*
+        |--------------------------------------------------------------------------
+        | Tags
+        |--------------------------------------------------------------------------
+        |
+        | Los tags se administran directamente desde el
+        | formulario de crear/editar noticia.
+        |
+        */
+
+        Route::post(
+            '/tags/quick-store',
+            [TagController::class, 'quickStore']
+        )->name('tags.quickStore');
+
+        Route::put(
+            '/tags/{tag}/quick-update',
+            [TagController::class, 'quickUpdate']
+        )->name('tags.quickUpdate');
+
+        Route::delete(
+            '/tags/{tag}/quick-destroy',
+            [TagController::class, 'quickDestroy']
+        )->name('tags.quickDestroy');
+
+        /*
+        |--------------------------------------------------------------------------
+        | Editar noticia
+        |--------------------------------------------------------------------------
+        */
+
         Route::get('/{news}/edit', [NewsController::class, 'edit'])
             ->name('edit');
 
-        // Actualizar noticia
+        /*
+        |--------------------------------------------------------------------------
+        | Actualizar noticia
+        |--------------------------------------------------------------------------
+        */
+
         Route::put('/{news}', [NewsController::class, 'update'])
             ->name('update');
 
-        // Eliminar noticia
+        /*
+        |--------------------------------------------------------------------------
+        | Eliminar noticia
+        |--------------------------------------------------------------------------
+        */
+
         Route::delete('/{news}', [NewsController::class, 'destroy'])
             ->name('destroy');
-
-        // Categorías
-        Route::resource('categories', CategoryController::class)
-            ->except(['show']);
-
-        // Tags
-        Route::resource('tags', TagController::class)
-            ->except(['show']);
     });

@@ -71,8 +71,15 @@ class NewsController extends Controller
     public function create()
     {
         return Inertia::render('Communication/News/Create', [
-            'categories' => Category::orderBy('title')->get(),
-            'tags' => Tag::orderBy('title')->get(),
+            'categories' => Category::withCount('news')
+                ->orderByDesc('news_count')
+                ->orderBy('title')
+                ->get(),
+
+            'tags' => Tag::withCount('news')
+                ->orderByDesc('news_count')
+                ->orderBy('title')
+                ->get(),
         ]);
     }
 

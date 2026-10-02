@@ -1,0 +1,598 @@
+/* =========================================================
+   SELECTOR DE CATEGORÍAS / TAGS
+   ========================================================= */
+
+.news-taxonomy-selector {
+    position: relative;
+    width: 100%;
+}
+
+
+/* =========================================================
+   POPOVER
+   ========================================================= */
+
+.news-taxonomy-popover {
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 0;
+    z-index: 1000;
+
+    width: 360px;
+    max-width: 100%;
+
+    padding: 14px;
+
+    background: var(--hu-surface);
+    border: 1px solid var(--hu-border);
+    border-radius: var(--hu-radius-md);
+
+    box-shadow:
+        0 12px 30px rgba(0, 0, 0, 0.12),
+        0 3px 8px rgba(0, 0, 0, 0.06);
+}
+
+
+/* =========================================================
+   BUSCADOR
+   ========================================================= */
+
+.news-taxonomy-search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    width: 100%;
+
+    padding: 0 12px;
+
+    background: var(--hu-surface);
+    border: 1px solid var(--hu-border);
+    border-radius: var(--hu-radius-sm);
+
+    transition:
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
+}
+
+.news-taxonomy-search:focus-within {
+    border-color: var(--hu-primary);
+
+    box-shadow:
+        0 0 0 3px rgba(0, 55, 100, 0.08);
+}
+
+.news-taxonomy-search .material-symbols-outlined {
+    flex-shrink: 0;
+
+    color: var(--hu-text-light);
+    font-size: 21px;
+}
+
+.news-taxonomy-search input {
+    width: 100%;
+    height: 42px;
+
+    padding: 0;
+
+    border: 0;
+    outline: none;
+
+    background: transparent;
+
+    color: var(--hu-text);
+
+    font-family: var(--hu-font);
+    font-size: 14px;
+}
+
+.news-taxonomy-search input::placeholder {
+    color: var(--hu-text-muted);
+}
+
+
+/* =========================================================
+   LISTA DE OPCIONES
+   ========================================================= */
+
+.news-taxonomy-options {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+
+    max-height: 220px;
+
+    margin-top: 10px;
+    padding-right: 3px;
+
+    overflow-y: auto;
+}
+
+
+/* =========================================================
+   FILA COMPLETA
+   ========================================================= */
+
+.news-taxonomy-option {
+    position: relative;
+
+    width: 100%;
+    min-height: 42px;
+
+    display: flex;
+    align-items: center;
+
+    border-radius: var(--hu-radius-sm);
+
+    background: transparent;
+
+    transition:
+        background 0.15s ease;
+}
+
+
+/*
+ * IMPORTANTE:
+ * El hover pertenece a TODA la fila.
+ *
+ * Texto + tres puntos = una sola zona hover.
+ */
+
+.news-taxonomy-option:hover {
+    background: var(--hu-background);
+}
+
+
+/* =========================================================
+   BOTÓN PRINCIPAL DE LA OPCIÓN
+   ========================================================= */
+
+.news-taxonomy-option-main {
+    flex: 1;
+
+    min-width: 0;
+    height: 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 10px;
+
+    border: 0;
+    border-radius: var(--hu-radius-sm);
+
+    background: transparent;
+
+    color: var(--hu-text);
+
+    font-family: var(--hu-font);
+    font-size: 14px;
+    font-weight: 500;
+
+    text-align: left;
+
+    cursor: pointer;
+}
+
+.news-taxonomy-option-main:hover {
+    background: transparent;
+}
+
+
+/* =========================================================
+   OPCIÓN SELECCIONADA
+   ========================================================= */
+
+.news-taxonomy-option.selected
+    .news-taxonomy-option-main {
+    color: var(--hu-primary);
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   CHECK DE SELECCIÓN
+   ========================================================= */
+
+.news-taxonomy-check {
+    flex-shrink: 0;
+
+    color: var(--hu-primary);
+
+    font-size: 18px;
+}
+
+
+/* =========================================================
+   ZONA DE ACCIONES
+   ========================================================= */
+
+.news-taxonomy-option-actions {
+    width: 38px;
+    height: 42px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-right: 3px;
+}
+
+
+/* =========================================================
+   TRES PUNTITOS
+   ========================================================= */
+
+.news-taxonomy-more {
+    width: 30px;
+    height: 30px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border: 0;
+    border-radius: 6px;
+
+    background: transparent;
+
+    color: var(--hu-text-light);
+
+    cursor: pointer;
+
+    opacity: 0;
+    pointer-events: none;
+
+    transition:
+        opacity 0.15s ease,
+        background 0.15s ease;
+}
+
+
+/*
+ * Los tres puntos aparecen cuando hacemos hover
+ * sobre CUALQUIER PARTE de la fila.
+ */
+
+.news-taxonomy-option:hover
+    .news-taxonomy-more {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.news-taxonomy-more:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.news-taxonomy-more .material-symbols-outlined {
+    font-size: 20px;
+}
+
+
+/* =========================================================
+   ACCIONES: EDITAR / ELIMINAR
+   ========================================================= */
+
+.news-taxonomy-action {
+    width: 30px;
+    height: 30px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    padding: 0;
+
+    border: 0;
+    border-radius: 6px;
+
+    background: transparent;
+
+    cursor: pointer;
+
+    transition:
+        background 0.15s ease,
+        color 0.15s ease;
+}
+
+
+/* Editar */
+
+.news-taxonomy-action.edit {
+    color: var(--hu-text-light);
+}
+
+.news-taxonomy-action.edit:hover {
+    background: rgba(0, 55, 100, 0.08);
+
+    color: var(--hu-primary);
+}
+
+
+/* Eliminar */
+
+.news-taxonomy-action.delete {
+    color: var(--hu-danger);
+}
+
+.news-taxonomy-action.delete:hover {
+    background: rgba(180, 35, 24, 0.08);
+
+    color: var(--hu-danger);
+}
+
+
+/* Iconos */
+
+.news-taxonomy-action
+    .material-symbols-outlined {
+    font-size: 18px;
+}
+
+
+/* =========================================================
+   EDICIÓN INLINE
+   ========================================================= */
+
+.news-taxonomy-option.editing {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+    padding: 4px;
+}
+
+.news-taxonomy-option.editing input {
+    flex: 1;
+
+    min-width: 0;
+    height: 34px;
+
+    padding: 0 8px;
+
+    border: 1px solid var(--hu-border);
+    border-radius: 6px;
+
+    outline: none;
+
+    background: var(--hu-surface);
+
+    color: var(--hu-text);
+
+    font-family: var(--hu-font);
+    font-size: 13px;
+}
+
+.news-taxonomy-option.editing input:focus {
+    border-color: var(--hu-primary);
+
+    box-shadow:
+        0 0 0 2px rgba(0, 55, 100, 0.08);
+}
+
+.news-taxonomy-option.editing button {
+    width: 30px;
+    height: 30px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    padding: 0;
+
+    border: 0;
+    border-radius: 6px;
+
+    background: transparent;
+
+    cursor: pointer;
+
+    transition:
+        background 0.15s ease;
+}
+
+.news-taxonomy-option.editing button:hover {
+    background: var(--hu-background);
+}
+
+.news-taxonomy-option.editing button:first-of-type {
+    color: var(--hu-success);
+}
+
+.news-taxonomy-option.editing button:last-of-type {
+    color: var(--hu-text-light);
+}
+
+.news-taxonomy-option.editing
+    .material-symbols-outlined {
+    font-size: 17px;
+}
+
+
+/* =========================================================
+   SIN RESULTADOS
+   ========================================================= */
+
+.news-taxonomy-empty {
+    padding: 12px 10px;
+
+    color: var(--hu-text-muted);
+
+    font-family: var(--hu-font);
+    font-size: 13px;
+
+    text-align: center;
+}
+
+
+/* =========================================================
+   CREAR NUEVA CATEGORÍA / TAG
+   ========================================================= */
+
+.news-taxonomy-create {
+    display: flex;
+    align-items: stretch;
+
+    margin-top: 12px;
+}
+
+.news-taxonomy-create input {
+    flex: 1;
+
+    min-width: 0;
+    height: 38px;
+
+    padding: 0 10px;
+
+    border: 1px solid var(--hu-border);
+    border-right: 0;
+
+    border-radius:
+        var(--hu-radius-sm) 0 0 var(--hu-radius-sm);
+
+    outline: none;
+
+    background: var(--hu-surface);
+
+    color: var(--hu-text);
+
+    font-family: var(--hu-font);
+    font-size: 13px;
+}
+
+.news-taxonomy-create input:focus {
+    border-color: var(--hu-primary);
+}
+
+.news-taxonomy-create input::placeholder {
+    color: var(--hu-text-muted);
+}
+
+.news-taxonomy-create button {
+    height: 38px;
+
+    padding: 0 15px;
+
+    border: 1px solid var(--hu-primary);
+
+    border-radius:
+        0 var(--hu-radius-sm) var(--hu-radius-sm) 0;
+
+    background: var(--hu-primary);
+
+    color: #ffffff;
+
+    font-family: var(--hu-font);
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background 0.15s ease,
+        opacity 0.15s ease;
+}
+
+.news-taxonomy-create button:hover:not(:disabled) {
+    background: var(--hu-primary-dark);
+}
+
+.news-taxonomy-create button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+
+/* =========================================================
+   ERROR AL CREAR / EDITAR / ELIMINAR
+   ========================================================= */
+
+.news-taxonomy-create-error {
+    margin-top: 7px;
+
+    color: var(--hu-danger);
+
+    font-family: var(--hu-font);
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   BOTÓN CERRAR
+   ========================================================= */
+
+.news-taxonomy-close {
+    width: 100%;
+
+    height: 36px;
+
+    margin-top: 10px;
+
+    border: 1px solid var(--hu-border);
+    border-radius: var(--hu-radius-sm);
+
+    background: var(--hu-surface);
+
+    color: var(--hu-text);
+
+    font-family: var(--hu-font);
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background 0.15s ease,
+        border-color 0.15s ease;
+}
+
+.news-taxonomy-close:hover {
+    background: var(--hu-background);
+    border-color: #cbd3dc;
+}
+
+
+/* =========================================================
+   CHIPS EXTERIORES
+   ========================================================= */
+
+/*
+ * Los chips que están fuera del popover NO tienen
+ * lápiz, tacho ni tres puntos.
+ */
+
+.news-chip-wrapper {
+    display: inline-flex;
+    align-items: center;
+}
+
+
+/* =========================================================
+   SCROLLBAR
+   ========================================================= */
+
+.news-taxonomy-options::-webkit-scrollbar {
+    width: 6px;
+}
+
+.news-taxonomy-options::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.news-taxonomy-options::-webkit-scrollbar-thumb {
+    background: #cbd3dc;
+    border-radius: 10px;
+}
+
+.news-taxonomy-options::-webkit-scrollbar-thumb:hover {
+    background: #aeb8c4;
+}

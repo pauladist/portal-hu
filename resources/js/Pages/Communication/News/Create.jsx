@@ -1,10 +1,20 @@
 import React, { useCallback, useState } from "react";
+
 import { Head, Link, useForm } from "@inertiajs/react";
+
 import PanelLayout from "@/Layouts/PanelLayout";
+
 import RichTextEditor from "@/Components/Communication/RichTextEditor";
+import CategorySelector from "@/Components/Communication/CategorySelector";
+import TagSelector from "@/Components/Communication/TagSelector";
+
 import "../css/create.css";
 
-export default function Create({ categories = [], tags = [] }) {
+
+export default function Create({
+    categories = [],
+    tags = [],
+}) {
     const { data, setData, post, processing, errors } = useForm({
         title: "",
         subtitle: "",
@@ -17,46 +27,33 @@ export default function Create({ categories = [], tags = [] }) {
         editor_media: [],
     });
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | Archivos del editor
+    |--------------------------------------------------------------------------
+    */
+
     const handleEditorMediaChange = useCallback(
         (mediaFiles) => {
             setData("editor_media", mediaFiles);
         },
         [setData]
     );
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Estados
+    |--------------------------------------------------------------------------
+    */
+
     const [coverPreview, setCoverPreview] = useState(null);
 
     const [showSchedule, setShowSchedule] = useState(false);
+
     const [showStatusMenu, setShowStatusMenu] = useState(false);
 
-    /*
-    |--------------------------------------------------------------------------
-    | Categorías
-    |--------------------------------------------------------------------------
-    */
-
-    const toggleCategory = (categoryId) => {
-        setData(
-            "categories",
-            data.categories.includes(categoryId)
-                ? data.categories.filter((id) => id !== categoryId)
-                : [...data.categories, categoryId],
-        );
-    };
-
-    /*
-    |--------------------------------------------------------------------------
-    | Tags
-    |--------------------------------------------------------------------------
-    */
-
-    const toggleTag = (tagId) => {
-        setData(
-            "tags",
-            data.tags.includes(tagId)
-                ? data.tags.filter((id) => id !== tagId)
-                : [...data.tags, tagId],
-        );
-    };
 
     /*
     |--------------------------------------------------------------------------
@@ -85,6 +82,7 @@ export default function Create({ categories = [], tags = [] }) {
         event.target.value = "";
     };
 
+
     const removeCover = () => {
         if (coverPreview) {
             URL.revokeObjectURL(coverPreview);
@@ -93,6 +91,7 @@ export default function Create({ categories = [], tags = [] }) {
         setCoverPreview(null);
         setData("cover", null);
     };
+
 
     /*
     |--------------------------------------------------------------------------
@@ -110,21 +109,26 @@ export default function Create({ categories = [], tags = [] }) {
         }, 0);
     };
 
+
     const handlePublish = () => {
         setData("published_at", "");
+
         setShowSchedule(false);
         setShowStatusMenu(false);
 
         submitWithStatus("published");
     };
 
+
     const handleDraft = () => {
         setData("published_at", "");
+
         setShowSchedule(false);
         setShowStatusMenu(false);
 
         submitWithStatus("draft");
     };
+
 
     const handleSchedule = () => {
         if (showSchedule) {
@@ -141,6 +145,7 @@ export default function Create({ categories = [], tags = [] }) {
         setShowStatusMenu(false);
     };
 
+
     /*
     |--------------------------------------------------------------------------
     | Enviar formulario
@@ -156,41 +161,55 @@ export default function Create({ categories = [], tags = [] }) {
         formData.append("subtitle", data.subtitle || "");
         formData.append("content", data.content);
         formData.append("status", data.status);
-        formData.append("published_at", data.published_at || "");
+        formData.append(
+            "published_at",
+            data.published_at || ""
+        );
+
 
         /*
-        |----------------------------------------------------------------------
+        |--------------------------------------------------------------------------
         | Portada
-        |----------------------------------------------------------------------
+        |--------------------------------------------------------------------------
         */
 
         if (data.cover) {
             formData.append("cover", data.cover);
         }
 
+
         /*
-        |----------------------------------------------------------------------
+        |--------------------------------------------------------------------------
         | Categorías
-        |----------------------------------------------------------------------
+        |--------------------------------------------------------------------------
         */
 
         data.categories.forEach((categoryId, index) => {
-            formData.append(`categories[${index}]`, categoryId);
+            formData.append(
+                `categories[${index}]`,
+                categoryId
+            );
         });
 
+
         /*
-        |----------------------------------------------------------------------
+        |--------------------------------------------------------------------------
         | Tags
-        |----------------------------------------------------------------------
+        |--------------------------------------------------------------------------
         */
 
         data.tags.forEach((tagId, index) => {
-            formData.append(`tags[${index}]`, tagId);
+            formData.append(
+                `tags[${index}]`,
+                tagId
+            );
         });
 
+
         /*
-        |----------------------------------------------------------------------
+        |--------------------------------------------------------------------------
         | Archivos insertados desde el editor
+        |--------------------------------------------------------------------------
         |
         | Cada elemento tiene:
         | id
@@ -198,77 +217,100 @@ export default function Create({ categories = [], tags = [] }) {
         | type
         | name
         | url
-        |----------------------------------------------------------------------
+        |
         */
 
         data.editor_media.forEach((media, index) => {
             formData.append(
                 `editor_media[${index}][id]`,
-                media.id,
+                media.id
             );
 
             formData.append(
                 `editor_media[${index}][type]`,
-                media.type || "",
+                media.type || ""
             );
 
             formData.append(
                 `editor_media[${index}][file]`,
-                media.file,
+                media.file
             );
         });
 
+
         console.log("FORM DATA PREPARADO");
+
 
         post(route("news.store"), {
             data: formData,
             forceFormData: true,
 
             onError: (errors) => {
-                console.log("ERRORES DE LARAVEL:", errors);
+                console.log(
+                    "ERRORES DE LARAVEL:",
+                    errors
+                );
             },
 
             onSuccess: () => {
-                console.log("NOTICIA GUARDADA CORRECTAMENTE");
+                console.log(
+                    "NOTICIA GUARDADA CORRECTAMENTE"
+                );
             },
         });
     };
 
+
     return (
         <PanelLayout>
+
             <Head title="Crear noticia" />
 
+
             <div className="news-create">
+
 
                 {/* =====================================================
                     HEADER
                 ====================================================== */}
 
                 <div className="news-create-header">
+
                     <div>
+
                         <Link
                             href={route("news.dashboard")}
                             className="news-back"
                         >
+
                             <span className="material-symbols-outlined">
                                 arrow_back
                             </span>
 
                             Volver a noticias
+
                         </Link>
 
-                        <h1>Crear noticia</h1>
+
+                        <h1>
+                            Crear noticia
+                        </h1>
+
 
                         <p>
                             Completá los datos para publicar una nueva noticia.
                         </p>
+
                     </div>
+
                 </div>
+
 
                 <form
                     onSubmit={handleSubmit}
                     className="news-create-form"
                 >
+
 
                     {/* =====================================================
                         INFORMACIÓN PRINCIPAL
@@ -277,19 +319,26 @@ export default function Create({ categories = [], tags = [] }) {
                     <section className="news-form-section">
 
                         <div className="news-section-heading">
-                            <h2>Información de la noticia</h2>
+
+                            <h2>
+                                Información de la noticia
+                            </h2>
 
                             <p>
                                 Ingresá el contenido principal de la noticia.
                             </p>
+
                         </div>
+
 
                         {/* TÍTULO */}
 
                         <div className="news-form-field">
+
                             <label htmlFor="title">
                                 Título
                             </label>
+
 
                             <input
                                 id="title"
@@ -298,25 +347,30 @@ export default function Create({ categories = [], tags = [] }) {
                                 onChange={(event) =>
                                     setData(
                                         "title",
-                                        event.target.value,
+                                        event.target.value
                                     )
                                 }
                                 placeholder="Ingresá el título de la noticia"
                             />
+
 
                             {errors.title && (
                                 <span className="news-form-error">
                                     {errors.title}
                                 </span>
                             )}
+
                         </div>
+
 
                         {/* SUBTÍTULO */}
 
                         <div className="news-form-field">
+
                             <label htmlFor="subtitle">
                                 Subtítulo
                             </label>
+
 
                             <input
                                 id="subtitle"
@@ -325,18 +379,21 @@ export default function Create({ categories = [], tags = [] }) {
                                 onChange={(event) =>
                                     setData(
                                         "subtitle",
-                                        event.target.value,
+                                        event.target.value
                                     )
                                 }
                                 placeholder="Ingresá un subtítulo"
                             />
+
 
                             {errors.subtitle && (
                                 <span className="news-form-error">
                                     {errors.subtitle}
                                 </span>
                             )}
+
                         </div>
+
 
                         {/* =================================================
                             PORTADA
@@ -348,29 +405,38 @@ export default function Create({ categories = [], tags = [] }) {
                                 Imagen de portada
                             </label>
 
+
                             <p className="news-field-description">
                                 Esta imagen se utilizará como imagen principal
                                 de la noticia.
                             </p>
 
+
                             {!coverPreview ? (
+
                                 <>
+
                                     <label
                                         htmlFor="cover"
                                         className="news-upload"
                                     >
+
                                         <span className="material-symbols-outlined">
                                             cloud_upload
                                         </span>
+
 
                                         <strong>
                                             Seleccionar imagen de portada
                                         </strong>
 
+
                                         <span>
                                             JPG, PNG o WEBP
                                         </span>
+
                                     </label>
+
 
                                     <input
                                         id="cover"
@@ -379,8 +445,11 @@ export default function Create({ categories = [], tags = [] }) {
                                         onChange={handleCoverChange}
                                         className="news-file-input"
                                     />
+
                                 </>
+
                             ) : (
+
                                 <div className="news-cover-preview">
 
                                     <img
@@ -388,11 +457,13 @@ export default function Create({ categories = [], tags = [] }) {
                                         alt="Vista previa de portada"
                                     />
 
+
                                     <div className="news-cover-preview-actions">
 
                                         <span>
                                             Imagen de portada
                                         </span>
+
 
                                         <button
                                             type="button"
@@ -400,14 +471,19 @@ export default function Create({ categories = [], tags = [] }) {
                                             className="news-preview-remove"
                                             aria-label="Eliminar portada"
                                         >
+
                                             <span className="material-symbols-outlined">
                                                 delete
                                             </span>
+
                                         </button>
 
                                     </div>
+
                                 </div>
+
                             )}
+
 
                             {errors.cover && (
                                 <span className="news-form-error">
@@ -416,6 +492,7 @@ export default function Create({ categories = [], tags = [] }) {
                             )}
 
                         </div>
+
 
                         {/* =================================================
                             CONTENIDO
@@ -427,17 +504,24 @@ export default function Create({ categories = [], tags = [] }) {
                                 Contenido
                             </label>
 
+
                             <RichTextEditor
                                 value={data.content}
-                                onChange={(value) => setData("content", value)}
-                                onMediaChange={handleEditorMediaChange}
+                                onChange={(value) =>
+                                    setData("content", value)
+                                }
+                                onMediaChange={
+                                    handleEditorMediaChange
+                                }
                             />
+
 
                             {errors.content && (
                                 <span className="news-form-error">
                                     {errors.content}
                                 </span>
                             )}
+
 
                             {errors.editor_media && (
                                 <span className="news-form-error">
@@ -448,6 +532,7 @@ export default function Create({ categories = [], tags = [] }) {
                         </div>
 
                     </section>
+
 
                     {/* =====================================================
                         CATEGORÍAS
@@ -467,36 +552,24 @@ export default function Create({ categories = [], tags = [] }) {
 
                         </div>
 
-                        <div className="news-chip-list">
 
-                            {categories.map((category) => (
-                                <button
-                                    key={category.id}
-                                    type="button"
-                                    className={
-                                        data.categories.includes(
-                                            category.id,
-                                        )
-                                            ? "news-chip selected"
-                                            : "news-chip"
-                                    }
-                                    onClick={() =>
-                                        toggleCategory(category.id)
-                                    }
-                                >
-                                    {category.title}
-                                </button>
-                            ))}
-
-                        </div>
-
-                        {errors.categories && (
-                            <span className="news-form-error">
-                                {errors.categories}
-                            </span>
-                        )}
+                        <CategorySelector
+                            categories={categories}
+                            selected={data.categories}
+                            onChange={(selectedCategories) =>
+                                setData(
+                                    "categories",
+                                    selectedCategories
+                                )
+                            }
+                            createUrl={route(
+                                "news.categories.quickStore"
+                            )}
+                            error={errors.categories}
+                        />
 
                     </section>
+
 
                     {/* =====================================================
                         TAGS
@@ -516,34 +589,24 @@ export default function Create({ categories = [], tags = [] }) {
 
                         </div>
 
-                        <div className="news-chip-list">
 
-                            {tags.map((tag) => (
-                                <button
-                                    key={tag.id}
-                                    type="button"
-                                    className={
-                                        data.tags.includes(tag.id)
-                                            ? "news-chip selected"
-                                            : "news-chip"
-                                    }
-                                    onClick={() =>
-                                        toggleTag(tag.id)
-                                    }
-                                >
-                                    {tag.title}
-                                </button>
-                            ))}
-
-                        </div>
-
-                        {errors.tags && (
-                            <span className="news-form-error">
-                                {errors.tags}
-                            </span>
-                        )}
+                        <TagSelector
+                            tags={tags}
+                            selected={data.tags}
+                            onChange={(selectedTags) =>
+                                setData(
+                                    "tags",
+                                    selectedTags
+                                )
+                            }
+                            createUrl={route(
+                                "news.tags.quickStore"
+                            )}
+                            error={errors.tags}
+                        />
 
                     </section>
+
 
                     {/* =====================================================
                         ACCIONES DE PUBLICACIÓN
@@ -551,14 +614,17 @@ export default function Create({ categories = [], tags = [] }) {
 
                     <div className="news-publication-actions">
 
+
                         {/* PROGRAMACIÓN */}
 
                         {showSchedule && (
+
                             <div className="news-schedule-field">
 
                                 <label htmlFor="published_at">
                                     Fecha y hora de publicación
                                 </label>
+
 
                                 <input
                                     id="published_at"
@@ -567,10 +633,11 @@ export default function Create({ categories = [], tags = [] }) {
                                     onChange={(event) =>
                                         setData(
                                             "published_at",
-                                            event.target.value,
+                                            event.target.value
                                         )
                                     }
                                 />
+
 
                                 {errors.published_at && (
                                     <span className="news-form-error">
@@ -579,9 +646,12 @@ export default function Create({ categories = [], tags = [] }) {
                                 )}
 
                             </div>
+
                         )}
 
+
                         <div className="news-publication-buttons">
+
 
                             {/* CANCELAR */}
 
@@ -591,6 +661,7 @@ export default function Create({ categories = [], tags = [] }) {
                             >
                                 Cancelar
                             </Link>
+
 
                             {/* PROGRAMAR */}
 
@@ -602,10 +673,13 @@ export default function Create({ categories = [], tags = [] }) {
                                 onClick={handleSchedule}
                                 title="Programar publicación"
                             >
+
                                 <span className="material-symbols-outlined">
                                     schedule
                                 </span>
+
                             </button>
+
 
                             {/* PUBLICAR */}
 
@@ -618,45 +692,54 @@ export default function Create({ categories = [], tags = [] }) {
                                     onClick={
                                         showSchedule
                                             ? () => {
-                                                  setData(
-                                                      "status",
-                                                      "scheduled",
-                                                  );
 
-                                                  setTimeout(() => {
-                                                      document
-                                                          .querySelector(
-                                                              ".news-create-form",
-                                                          )
-                                                          ?.requestSubmit();
-                                                  }, 0);
-                                              }
+                                                setData(
+                                                    "status",
+                                                    "scheduled"
+                                                );
+
+                                                setTimeout(() => {
+                                                    document
+                                                        .querySelector(
+                                                            ".news-create-form"
+                                                        )
+                                                        ?.requestSubmit();
+                                                }, 0);
+
+                                            }
                                             : handlePublish
                                     }
                                 >
+
                                     {processing
                                         ? "Guardando..."
                                         : showSchedule
-                                          ? "Programar"
-                                          : "Publicar"}
+                                            ? "Programar"
+                                            : "Publicar"}
+
                                 </button>
+
 
                                 <button
                                     type="button"
                                     className="news-publish-dropdown"
                                     onClick={() =>
                                         setShowStatusMenu(
-                                            !showStatusMenu,
+                                            !showStatusMenu
                                         )
                                     }
                                     aria-label="Más opciones"
                                 >
+
                                     <span className="material-symbols-outlined">
                                         expand_more
                                     </span>
+
                                 </button>
 
+
                                 {showStatusMenu && (
+
                                     <div className="news-status-menu">
 
                                         <button
@@ -664,14 +747,17 @@ export default function Create({ categories = [], tags = [] }) {
                                             onClick={handleDraft}
                                             disabled={processing}
                                         >
+
                                             <span className="material-symbols-outlined">
                                                 draft
                                             </span>
 
                                             Guardar como borrador
+
                                         </button>
 
                                     </div>
+
                                 )}
 
                             </div>
@@ -683,6 +769,7 @@ export default function Create({ categories = [], tags = [] }) {
                 </form>
 
             </div>
+
         </PanelLayout>
     );
 }

@@ -541,41 +541,31 @@ export default function RichTextEditor({
 
 
     /* =====================================================
-       CLICK OUTSIDE + ESCAPE
+    CLICK OUTSIDE + ESCAPE
     ===================================================== */
 
     useEffect(() => {
-    const handleClickOutside = (event) => {
-        if (
-            attachmentRef.current &&
-            !attachmentRef.current.contains(event.target)
-        ) {
-            setAttachmentOpen(false);
-        }
+        const handleClickOutside = (event) => {
+            if (
+                attachmentRef.current &&
+                !attachmentRef.current.contains(event.target)
+            ) {
+                setAttachmentOpen(false);
+            }
 
-        if (
-            videoOpen &&
-            videoRef.current &&
-            !videoRef.current.contains(event.target)
-        ) {
-            setVideoOpen(false);
-            setVideoUrl("");
-            setVideoTitle("");
-        }
-
-        if (
-            linkRef.current &&
-            !linkRef.current.contains(event.target)
-        ) {
-            setLinkOpen(false);
-        }
-    };
+            if (
+                videoOpen &&
+                videoRef.current &&
+                !videoRef.current.contains(event.target)
+            ) {
+                setVideoOpen(false);
+                setVideoUrl("");
+                setVideoTitle("");
+            }
 
             if (
                 linkRef.current &&
-                !linkRef.current.contains(
-                    event.target
-                )
+                !linkRef.current.contains(event.target)
             ) {
                 setLinkOpen(false);
             }
@@ -587,13 +577,9 @@ export default function RichTextEditor({
             }
 
             setAttachmentOpen(false);
-
             setLinkOpen(false);
-
             setVideoOpen(false);
-
             setVideoUrl("");
-
             setVideoTitle("");
         };
 
@@ -663,19 +649,16 @@ export default function RichTextEditor({
                 editor
                     .chain()
                     .focus()
-                    .insertContent({
-                        type: "newsImage",
-
-                        attrs: {
-                            src: blobUrl,
-
-                            alt: file.name,
-
-                            title: file.name,
-
-                            mediaId,
+                    .insertContent([
+                        {
+                            type: "newsVideo",
+                            attrs: {
+                                src: embedUrl,
+                                title: videoTitle.trim(),
+                            },
                         },
-                    })
+                        { type: "paragraph" },
+                    ])
                     .run();
 
                 return;
