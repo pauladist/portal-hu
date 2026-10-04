@@ -172,6 +172,14 @@ const NewsImage = Node.create({
 
             mediaId: {
                 default: null,
+
+                parseHTML: (element) =>
+                    element.getAttribute("data-media-id"),
+
+                renderHTML: (attributes) =>
+                    attributes.mediaId
+                        ? { "data-media-id": attributes.mediaId }
+                        : {},
             },
         };
     },
@@ -226,6 +234,14 @@ const PdfNode = Node.create({
 
             mediaId: {
                 default: null,
+
+                parseHTML: (element) =>
+                    element.getAttribute("data-media-id"),
+
+                renderHTML: (attributes) =>
+                    attributes.mediaId
+                        ? { "data-media-id": attributes.mediaId }
+                        : {},
             },
         };
     },
@@ -651,10 +667,12 @@ export default function RichTextEditor({
                     .focus()
                     .insertContent([
                         {
-                            type: "newsVideo",
+                            type: "newsImage",
                             attrs: {
-                                src: embedUrl,
-                                title: videoTitle.trim(),
+                                src: blobUrl,
+                                alt: file.name,
+                                title: file.name,
+                                mediaId,
                             },
                         },
                         { type: "paragraph" },
@@ -732,21 +750,18 @@ export default function RichTextEditor({
         editor
             .chain()
             .focus()
-            .insertContent({
-                type: "newsVideo",
+            .insertContent([
+                {
+                    type: "newsVideo",
 
-                attrs: {
-                    src: embedUrl,
+                    attrs: {
+                        src: embedUrl,
 
-                    title: videoTitle.trim(),
+                        title: videoTitle.trim(),
+                    },
                 },
-            })
-            .run();
-
-        editor
-            .chain()
-            .focus()
-            .insertContent("<p></p>")
+                { type: "paragraph" },
+            ])
             .run();
 
         setVideoUrl("");

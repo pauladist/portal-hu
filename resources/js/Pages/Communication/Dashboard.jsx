@@ -12,6 +12,37 @@ export default function Dashboard({
     const [search, setSearch] = useState(filters?.search ?? '');
     const [month, setMonth] = useState(filters?.month ?? '');
     const [year, setYear] = useState(filters?.year ?? '');
+    const [newsToDelete, setNewsToDelete] = useState(null);
+    const [deleting, setDeleting] = useState(false);
+
+    /*
+    |--------------------------------------------------------------------------
+    | Eliminar noticia
+    |--------------------------------------------------------------------------
+    */
+
+    const confirmDelete = () => {
+        if (!newsToDelete) {
+            return;
+        }
+
+        router.delete(route('news.destroy', newsToDelete.id), {
+            preserveScroll: true,
+
+            onStart: () => setDeleting(true),
+
+            onFinish: () => {
+                setDeleting(false);
+                setNewsToDelete(null);
+            },
+        });
+    };
+
+    const cancelDelete = () => {
+        if (!deleting) {
+            setNewsToDelete(null);
+        }
+    };
 
     /*
     |--------------------------------------------------------------------------
@@ -40,7 +71,7 @@ export default function Dashboard({
         });
 
         router.get(
-            route('communication.dashboard'),
+            route('news.dashboard'),
             params,
             {
                 preserveState: true,
@@ -89,7 +120,7 @@ export default function Dashboard({
         setMonth(value);
 
         router.get(
-            route('communication.dashboard'),
+            route('news.dashboard'),
             {
                 search,
                 month: value,
@@ -117,7 +148,7 @@ export default function Dashboard({
         setYear(value);
 
         router.get(
-            route('communication.dashboard'),
+            route('news.dashboard'),
             {
                 search,
                 month,
@@ -490,6 +521,7 @@ export default function Dashboard({
                                         type="button"
                                         className="news-action-button delete"
                                         aria-label="Eliminar noticia"
+                                        onClick={() => setNewsToDelete(item)}
                                     >
 
                                         <span className="material-symbols-outlined">
@@ -553,6 +585,66 @@ export default function Dashboard({
                 )}
 
             </div>
+
+
+            {/* =====================================================
+                MODAL ELIMINAR
+            ====================================================== */}
+
+            {newsToDelete && (
+
+                <div
+                    className="news-delete-overlay"
+                    onClick={cancelDelete}
+                >
+
+                    <div
+                        className="news-delete-modal"
+                        role="dialog"
+                        aria-modal="true"
+                        onClick={(event) => event.stopPropagation()}
+                    >
+
+                        <h2>
+                            Eliminar noticia
+                        </h2>
+
+                        <p>
+                            ¿Seguro que querés eliminar
+                            <strong>{` "${newsToDelete.title}"`}</strong>?
+                        </p>
+
+                        <span>
+                            Esta acción no se puede deshacer.
+                        </span>
+
+                        <div className="news-delete-actions">
+
+                            <button
+                                type="button"
+                                className="news-delete-cancel"
+                                onClick={cancelDelete}
+                                disabled={deleting}
+                            >
+                                Cancelar
+                            </button>
+
+                            <button
+                                type="button"
+                                className="news-delete-confirm"
+                                onClick={confirmDelete}
+                                disabled={deleting}
+                            >
+                                {deleting ? 'Eliminando...' : 'Eliminar'}
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            )}
 
         </PanelLayout>
     );
