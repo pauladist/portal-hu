@@ -33,8 +33,23 @@ class MenuItemController extends Controller
             ->orderBy('order')
             ->get();
 
+        /*
+        |--------------------------------------------------------------------------
+        | Páginas institucionales publicadas
+        |--------------------------------------------------------------------------
+        */
+
+        $institutionalPages = InstitutionalPage::query()
+            ->where('status', 'published')
+            ->orderBy('title')
+            ->get([
+                'id',
+                'title',
+            ]);
+
         return Inertia::render('Admin/Botonera', [
             'menuItems' => $menuItems,
+            'pages' => $institutionalPages,
         ]);
     }
 

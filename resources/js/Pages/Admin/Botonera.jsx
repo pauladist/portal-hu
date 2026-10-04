@@ -60,7 +60,7 @@ const silentVisit = {
     only: ["menuItems", "errors"],
 };
 
-export default function Botonera({ menuItems: serverItems = [] }) {
+export default function Botonera({ menuItems: serverItems = [], pages = [] }) {
     const [menuItems, setMenuItems] = useState(serverItems);
 
     // Cuando el servidor responde, se sincroniza con lo real
@@ -418,6 +418,7 @@ export default function Botonera({ menuItems: serverItems = [] }) {
                                     }
                                     menuItem={selectedItem}
                                     parentItem={parentItem}
+                                    pages={pages}
                                     onCancel={handleCloseForm}
                                 />
                             </div>
@@ -475,7 +476,6 @@ export default function Botonera({ menuItems: serverItems = [] }) {
                             className="delete-modal"
                             onClick={(event) => event.stopPropagation()}
                         >
-
                             <div className="delete-modal__content">
                                 <h2>Eliminar botón</h2>
 
