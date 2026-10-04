@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\InstitutionalPage;
+use App\Models\MenuItem;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -316,9 +317,11 @@ class InstitutionalPageController extends Controller
 
 
         return Inertia::render(
-            'InstitutionalPages/Show',
+            'Communication/InstitutionalPages/Show',
             [
                 'page' => $institutionalPage,
+                'menuItems' => MenuItem::publicTree(),
+                'quickLinks' => MenuItem::publicQuickLinks(),
             ]
         );
     }

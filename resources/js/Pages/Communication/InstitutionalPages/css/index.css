@@ -222,7 +222,7 @@
     display: flex;
     align-items: stretch;
 
-    min-height: 136px;
+    min-height: 104px;
 
     border: 1px solid #e0e5ea;
     border-radius: 14px;
@@ -244,57 +244,6 @@
         0 7px 24px rgba(31, 57, 78, 0.08);
 
     transform: translateY(-1px);
-}
-
-
-/* =========================================================
-   IMAGEN
-   ========================================================= */
-
-.institutional-page-card__image {
-    width: 170px;
-    min-width: 170px;
-    height: 104px;
-
-    margin: 16px 0 16px 16px;
-
-    border-radius: 10px;
-
-    overflow: hidden;
-
-    background: #edf2f5;
-}
-
-.institutional-page-card__image img {
-    display: block;
-
-    width: 100%;
-    height: 100%;
-
-    object-fit: cover;
-}
-
-.institutional-page-card__placeholder {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    width: 100%;
-    height: 100%;
-
-    background:
-        linear-gradient(
-            145deg,
-            #e8eff4 0%,
-            #dce7ee 100%
-        );
-
-    color: #5f7d96;
-}
-
-.institutional-page-card__placeholder
-.material-symbols-outlined {
-    font-size: 42px;
 }
 
 
@@ -599,11 +548,6 @@
         padding: 40px 36px 56px;
     }
 
-    .institutional-page-card__image {
-        width: 150px;
-        min-width: 150px;
-    }
-
 }
 
 @media (max-width: 900px) {
@@ -614,11 +558,6 @@
 
     .institutional-index__heading h1 {
         font-size: 30px;
-    }
-
-    .institutional-page-card__image {
-        width: 135px;
-        min-width: 135px;
     }
 
 }
@@ -645,14 +584,6 @@
     .institutional-page-card {
         min-height: 0;
         flex-wrap: wrap;
-    }
-
-    .institutional-page-card__image {
-        width: 110px;
-        min-width: 110px;
-        height: 100px;
-
-        margin: 14px 0 14px 14px;
     }
 
     .institutional-page-card__content {
@@ -687,15 +618,8 @@
         display: block;
     }
 
-    .institutional-page-card__image {
-        width: calc(100% - 28px);
-        height: 150px;
-
-        margin: 14px;
-    }
-
     .institutional-page-card__content {
-        padding: 2px 14px 18px;
+        padding: 18px 14px;
     }
 
 }

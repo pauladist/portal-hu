@@ -123,26 +123,6 @@ export default function Index({ pages = [] }) {
 
     /*
     |--------------------------------------------------------------------------
-    | Imagen de portada
-    |--------------------------------------------------------------------------
-    */
-
-    const getPageImage = (page) => {
-        if (!Array.isArray(page.media)) {
-            return null;
-        }
-
-        const image = page.media.find((media) => media.type === "image");
-
-        if (!image) {
-            return null;
-        }
-
-        return `/storage/${image.path}`;
-    };
-
-    /*
-    |--------------------------------------------------------------------------
     | Render
     |--------------------------------------------------------------------------
     */
@@ -243,8 +223,6 @@ export default function Index({ pages = [] }) {
                         </div>
                     ) : (
                         filteredPages.map((page) => {
-                            const image = getPageImage(page);
-
                             const isPublished = page.status === "published";
 
                             return (
@@ -265,22 +243,6 @@ export default function Index({ pages = [] }) {
                                         }
                                     }}
                                 >
-                                    {/* =================================
-                                        IMAGEN
-                                    ================================== */}
-
-                                    <div className="institutional-page-card__image">
-                                        {image ? (
-                                            <img src={image} alt="" />
-                                        ) : (
-                                            <div className="institutional-page-card__placeholder">
-                                                <span className="material-symbols-outlined">
-                                                    account_balance
-                                                </span>
-                                            </div>
-                                        )}
-                                    </div>
-
                                     {/* =================================
                                         CONTENIDO
                                     ================================== */}

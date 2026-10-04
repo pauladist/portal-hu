@@ -56,4 +56,37 @@ class MenuItem extends Model
     {
         return $this->belongsTo(InstitutionalPage::class, 'page_id');
     }
+
+    /**
+     * Botonera pública (navbar): solo botones activos,
+     * con la página institucional asociada para poder armar el link.
+     */
+    public static function publicTree()
+    {
+        return static::query()
+            ->whereNull('parent_id')
+            ->where('is_active', true)
+            ->with([
+                'page:id,slug',
+                'children' => fn ($query) => $query
+                    ->where('is_active', true)
+                    ->with('page:id,slug')
+                    ->orderBy('order'),
+            ])
+            ->orderBy('order')
+            ->get();
+    }
+
+    /**
+     * Accesos rápidos públicos (cards debajo del hero).
+     */
+    public static function publicQuickLinks()
+    {
+        return static::query()
+            ->where('is_active', true)
+            ->where('is_quick_link', true)
+            ->with('page:id,slug')
+            ->orderBy('quick_link_order')
+            ->get();
+    }
 }

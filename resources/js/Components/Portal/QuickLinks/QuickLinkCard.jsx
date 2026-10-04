@@ -1,17 +1,10 @@
 import React from 'react';
+import { getMenuItemHref } from '@/Utils/menuLinks';
 
 export default function QuickLinkCard({ item }) {
-    const getItemHref = () => {
-        if (item.destination_type === "pdf" && item.file_path) {
-            return `/storage/${item.file_path}`;
-        }
-
-        return item.url ?? "#";
-    };
-
     return (
         <a
-            href={getItemHref()}
+            href={getMenuItemHref(item)}
             className="portal-quick-link-card"
         >
             <span className="portal-quick-link-card__title">
