@@ -748,3 +748,117 @@
     }
 
 }
+
+
+/* =========================================================
+   MODAL ELIMINAR NOTICIA
+   ========================================================= */
+
+.news-delete-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+
+    background: rgba(15, 23, 32, 0.5);
+}
+
+.news-delete-modal {
+    width: 100%;
+    max-width: 420px;
+
+    padding: 26px;
+
+    border-radius: 12px;
+
+    background: #fff;
+
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+}
+
+.news-delete-modal h2 {
+    margin: 0 0 10px;
+
+    font-size: 20px;
+    color: #1f2d3a;
+}
+
+.news-delete-modal p {
+    margin: 0 0 6px;
+
+    font-size: 15px;
+    line-height: 1.5;
+    color: #3c4b59;
+
+    overflow-wrap: anywhere;
+}
+
+.news-delete-modal > span {
+    display: block;
+
+    font-size: 13px;
+    color: #71808e;
+}
+
+.news-delete-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+
+    margin-top: 22px;
+}
+
+.news-delete-actions button {
+    height: 40px;
+    padding: 0 18px;
+
+    border: 0;
+    border-radius: 8px;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: background-color 0.2s ease;
+}
+
+.news-delete-actions button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.news-delete-cancel {
+    background: #edf1f4;
+    color: #3c4b59;
+}
+
+.news-delete-cancel:hover:not(:disabled) {
+    background: #e0e6eb;
+}
+
+.news-delete-confirm {
+    background: var(--hu-danger, #b42318);
+    color: #fff;
+}
+
+.news-delete-confirm:hover:not(:disabled) {
+    background: #912018;
+}
+
+@media (max-width: 480px) {
+
+    .news-delete-actions {
+        flex-direction: column-reverse;
+    }
+
+    .news-delete-actions button {
+        width: 100%;
+    }
+
+}

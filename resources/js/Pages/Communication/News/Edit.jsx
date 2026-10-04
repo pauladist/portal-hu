@@ -11,21 +11,42 @@ import TagSelector from "@/Components/Communication/TagSelector";
 import "../css/create.css";
 
 
-export default function Create({
+export default function Edit({
+    news,
+    publishedAtInput = "",
     categories = [],
     tags = [],
 }) {
-    const { data, setData, post, processing, errors } = useForm({
-        title: "",
-        subtitle: "",
-        content: "",
-        status: "draft",
-        published_at: "",
-        categories: [],
-        tags: [],
+    const { data, setData, post, transform, processing, errors } = useForm({
+        title: news.title ?? "",
+        subtitle: news.subtitle ?? "",
+        content: news.content ?? "",
+        status: news.status,
+        published_at: publishedAtInput,
+        categories: (news.categories ?? []).map((category) => category.id),
+        tags: (news.tags ?? []).map((tag) => tag.id),
         cover: null,
         editor_media: [],
     });
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Estados
+    |--------------------------------------------------------------------------
+    */
+
+    const currentCover =
+        news.media?.find((media) => media.is_featured && media.type === "image") ??
+        null;
+
+    const [coverPreview, setCoverPreview] = useState(null);
+
+    const [showSchedule, setShowSchedule] = useState(
+        news.status === "scheduled"
+    );
+
+    const [showStatusMenu, setShowStatusMenu] = useState(false);
 
 
     /*
@@ -44,19 +65,6 @@ export default function Create({
 
     /*
     |--------------------------------------------------------------------------
-    | Estados
-    |--------------------------------------------------------------------------
-    */
-
-    const [coverPreview, setCoverPreview] = useState(null);
-
-    const [showSchedule, setShowSchedule] = useState(false);
-
-    const [showStatusMenu, setShowStatusMenu] = useState(false);
-
-
-    /*
-    |--------------------------------------------------------------------------
     | Portada
     |--------------------------------------------------------------------------
     */
@@ -68,22 +76,18 @@ export default function Create({
             return;
         }
 
-        // Liberar preview anterior
         if (coverPreview) {
             URL.revokeObjectURL(coverPreview);
         }
 
-        const previewUrl = URL.createObjectURL(file);
-
         setData("cover", file);
-        setCoverPreview(previewUrl);
+        setCoverPreview(URL.createObjectURL(file));
 
-        // Permite volver a seleccionar el mismo archivo
         event.target.value = "";
     };
 
 
-    const removeCover = () => {
+    const removeNewCover = () => {
         if (coverPreview) {
             URL.revokeObjectURL(coverPreview);
         }
@@ -95,90 +99,75 @@ export default function Create({
 
     /*
     |--------------------------------------------------------------------------
-    | Publicación
+    | Enviar
     |--------------------------------------------------------------------------
+    |
+    | Los archivos requieren multipart, y Laravel no lee multipart en PUT,
+    | por eso se envía por POST con _method=put.
+    |
     */
 
-    const submitWithStatus = (status) => {
-        setData("status", status);
-
-        setTimeout(() => {
-            document
-                .querySelector(".news-create-form")
-                ?.requestSubmit();
-        }, 0);
-    };
-
-
-    const handlePublish = () => {
-        setData("published_at", "");
-
-        setShowSchedule(false);
+    const submit = (status) => {
         setShowStatusMenu(false);
 
-        submitWithStatus("published");
-    };
+        transform((formData) => {
+            const payload = {
+                ...formData,
+                status,
+                published_at:
+                    status === "scheduled" ? formData.published_at : "",
+                _method: "put",
+            };
 
+            if (!payload.cover) {
+                delete payload.cover;
+            }
 
-    const handleDraft = () => {
-        setData("published_at", "");
+            return payload;
+        });
 
-        setShowSchedule(false);
-        setShowStatusMenu(false);
-
-        submitWithStatus("draft");
-    };
-
-
-    const handleSchedule = () => {
-        if (showSchedule) {
-            // Volver a publicación normal
-            setData("status", "published");
-            setData("published_at", "");
-            setShowSchedule(false);
-        } else {
-            // Activar programación
-            setData("status", "scheduled");
-            setShowSchedule(true);
-        }
-
-        setShowStatusMenu(false);
-    };
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Enviar formulario
-    |--------------------------------------------------------------------------
-    */
-
-    const handleSubmit = (event) => {
-        event.preventDefault();
-
-        /*
-        | Inertia arma el FormData solo (forceFormData) a partir de `data`,
-        | incluyendo cover y editor_media[n][id|type|url|file].
-        */
-
-        post(route("news.store"), {
+        post(route("news.update", news.id), {
             forceFormData: true,
             preserveScroll: true,
         });
     };
 
 
+    const handleSubmit = (event) => {
+        event.preventDefault();
+
+        submit(showSchedule ? "scheduled" : "published");
+    };
+
+
+    const handleSchedule = () => {
+        if (showSchedule) {
+            setData("published_at", "");
+        }
+
+        setShowSchedule(!showSchedule);
+        setShowStatusMenu(false);
+    };
+
+
+    const primaryLabel = processing
+        ? "Guardando..."
+        : showSchedule
+            ? "Programar"
+            : news.status === "published"
+                ? "Actualizar"
+                : "Publicar";
+
+
     return (
         <PanelLayout>
 
-            <Head title="Crear noticia" />
+            <Head title="Editar noticia" />
 
 
             <div className="news-create">
 
-
-                {/* =====================================================
-                    HEADER
-                ====================================================== */}
+                {/* HEADER */}
 
                 <div className="news-create-header">
 
@@ -199,12 +188,12 @@ export default function Create({
 
 
                         <h1>
-                            Crear noticia
+                            Editar noticia
                         </h1>
 
 
                         <p>
-                            Completá los datos para publicar una nueva noticia.
+                            Modificá los datos de la noticia y guardá los cambios.
                         </p>
 
                     </div>
@@ -217,10 +206,7 @@ export default function Create({
                     className="news-create-form"
                 >
 
-
-                    {/* =====================================================
-                        INFORMACIÓN PRINCIPAL
-                    ====================================================== */}
+                    {/* INFORMACIÓN PRINCIPAL */}
 
                     <section className="news-form-section">
 
@@ -231,7 +217,7 @@ export default function Create({
                             </h2>
 
                             <p>
-                                Ingresá el contenido principal de la noticia.
+                                Editá el contenido principal de la noticia.
                             </p>
 
                         </div>
@@ -245,20 +231,15 @@ export default function Create({
                                 Título
                             </label>
 
-
                             <input
                                 id="title"
                                 type="text"
                                 value={data.title}
                                 onChange={(event) =>
-                                    setData(
-                                        "title",
-                                        event.target.value
-                                    )
+                                    setData("title", event.target.value)
                                 }
                                 placeholder="Ingresá el título de la noticia"
                             />
-
 
                             {errors.title && (
                                 <span className="news-form-error">
@@ -277,20 +258,15 @@ export default function Create({
                                 Subtítulo
                             </label>
 
-
                             <input
                                 id="subtitle"
                                 type="text"
                                 value={data.subtitle}
                                 onChange={(event) =>
-                                    setData(
-                                        "subtitle",
-                                        event.target.value
-                                    )
+                                    setData("subtitle", event.target.value)
                                 }
                                 placeholder="Ingresá un subtítulo"
                             />
-
 
                             {errors.subtitle && (
                                 <span className="news-form-error">
@@ -301,9 +277,7 @@ export default function Create({
                         </div>
 
 
-                        {/* =================================================
-                            PORTADA
-                        ================================================== */}
+                        {/* PORTADA */}
 
                         <div className="news-form-field">
 
@@ -311,84 +285,99 @@ export default function Create({
                                 Imagen de portada
                             </label>
 
-
                             <p className="news-field-description">
-                                Esta imagen se utilizará como imagen principal
-                                de la noticia.
+                                Si no elegís una nueva, se mantiene la actual.
                             </p>
 
 
-                            {!coverPreview ? (
-
-                                <>
-
-                                    <label
-                                        htmlFor="cover"
-                                        className="news-upload"
-                                    >
-
-                                        <span className="material-symbols-outlined">
-                                            cloud_upload
-                                        </span>
-
-
-                                        <strong>
-                                            Seleccionar imagen de portada
-                                        </strong>
-
-
-                                        <span>
-                                            JPG, PNG o WEBP
-                                        </span>
-
-                                    </label>
-
-
-                                    <input
-                                        id="cover"
-                                        type="file"
-                                        accept="image/jpeg,image/png,image/webp"
-                                        onChange={handleCoverChange}
-                                        className="news-file-input"
-                                    />
-
-                                </>
-
-                            ) : (
+                            {coverPreview || currentCover ? (
 
                                 <div className="news-cover-preview">
 
                                     <img
-                                        src={coverPreview}
-                                        alt="Vista previa de portada"
+                                        src={
+                                            coverPreview ??
+                                            `/storage/${currentCover.path}`
+                                        }
+                                        alt="Portada de la noticia"
                                     />
-
 
                                     <div className="news-cover-preview-actions">
 
                                         <span>
-                                            Imagen de portada
+                                            {coverPreview
+                                                ? "Nueva portada"
+                                                : "Portada actual"}
                                         </span>
 
+                                        {coverPreview ? (
 
-                                        <button
-                                            type="button"
-                                            onClick={removeCover}
-                                            className="news-preview-remove"
-                                            aria-label="Eliminar portada"
-                                        >
+                                            <button
+                                                type="button"
+                                                onClick={removeNewCover}
+                                                className="news-preview-remove"
+                                                aria-label="Descartar nueva portada"
+                                            >
 
-                                            <span className="material-symbols-outlined">
-                                                delete
-                                            </span>
+                                                <span className="material-symbols-outlined">
+                                                    close
+                                                </span>
 
-                                        </button>
+                                            </button>
+
+                                        ) : (
+
+                                            <label
+                                                htmlFor="cover"
+                                                className="news-preview-remove"
+                                                style={{ cursor: "pointer" }}
+                                                aria-label="Cambiar portada"
+                                                title="Cambiar portada"
+                                            >
+
+                                                <span className="material-symbols-outlined">
+                                                    edit
+                                                </span>
+
+                                            </label>
+
+                                        )}
 
                                     </div>
 
                                 </div>
 
+                            ) : (
+
+                                <label
+                                    htmlFor="cover"
+                                    className="news-upload"
+                                >
+
+                                    <span className="material-symbols-outlined">
+                                        cloud_upload
+                                    </span>
+
+                                    <strong>
+                                        Seleccionar imagen de portada
+                                    </strong>
+
+                                    <span>
+                                        JPG, PNG o WEBP
+                                    </span>
+
+                                </label>
+
                             )}
+
+
+                            <input
+                                id="cover"
+                                type="file"
+                                accept="image/jpeg,image/png,image/webp"
+                                onChange={handleCoverChange}
+                                className="news-file-input"
+                            />
 
 
                             {errors.cover && (
@@ -400,9 +389,7 @@ export default function Create({
                         </div>
 
 
-                        {/* =================================================
-                            CONTENIDO
-                        ================================================== */}
+                        {/* CONTENIDO */}
 
                         <div className="news-form-field">
 
@@ -410,17 +397,13 @@ export default function Create({
                                 Contenido
                             </label>
 
-
                             <RichTextEditor
                                 value={data.content}
                                 onChange={(value) =>
                                     setData("content", value)
                                 }
-                                onMediaChange={
-                                    handleEditorMediaChange
-                                }
+                                onMediaChange={handleEditorMediaChange}
                             />
-
 
                             {errors.content && (
                                 <span className="news-form-error">
@@ -428,21 +411,23 @@ export default function Create({
                                 </span>
                             )}
 
-
-                            {errors.editor_media && (
-                                <span className="news-form-error">
-                                    {errors.editor_media}
-                                </span>
-                            )}
+                            {Object.keys(errors)
+                                .filter((key) => key.startsWith("editor_media"))
+                                .map((key) => (
+                                    <span
+                                        key={key}
+                                        className="news-form-error"
+                                    >
+                                        {errors[key]}
+                                    </span>
+                                ))}
 
                         </div>
 
                     </section>
 
 
-                    {/* =====================================================
-                        CATEGORÍAS
-                    ====================================================== */}
+                    {/* CATEGORÍAS */}
 
                     <section className="news-form-section">
 
@@ -458,28 +443,20 @@ export default function Create({
 
                         </div>
 
-
                         <CategorySelector
                             categories={categories}
                             selected={data.categories}
                             onChange={(selectedCategories) =>
-                                setData(
-                                    "categories",
-                                    selectedCategories
-                                )
+                                setData("categories", selectedCategories)
                             }
-                            createUrl={route(
-                                "news.categories.quickStore"
-                            )}
+                            createUrl={route("news.categories.quickStore")}
                             error={errors.categories}
                         />
 
                     </section>
 
 
-                    {/* =====================================================
-                        TAGS
-                    ====================================================== */}
+                    {/* TAGS */}
 
                     <section className="news-form-section">
 
@@ -495,33 +472,22 @@ export default function Create({
 
                         </div>
 
-
                         <TagSelector
                             tags={tags}
                             selected={data.tags}
                             onChange={(selectedTags) =>
-                                setData(
-                                    "tags",
-                                    selectedTags
-                                )
+                                setData("tags", selectedTags)
                             }
-                            createUrl={route(
-                                "news.tags.quickStore"
-                            )}
+                            createUrl={route("news.tags.quickStore")}
                             error={errors.tags}
                         />
 
                     </section>
 
 
-                    {/* =====================================================
-                        ACCIONES DE PUBLICACIÓN
-                    ====================================================== */}
+                    {/* ACCIONES DE PUBLICACIÓN */}
 
                     <div className="news-publication-actions">
-
-
-                        {/* PROGRAMACIÓN */}
 
                         {showSchedule && (
 
@@ -530,7 +496,6 @@ export default function Create({
                                 <label htmlFor="published_at">
                                     Fecha y hora de publicación
                                 </label>
-
 
                                 <input
                                     id="published_at"
@@ -544,7 +509,6 @@ export default function Create({
                                     }
                                 />
 
-
                                 {errors.published_at && (
                                     <span className="news-form-error">
                                         {errors.published_at}
@@ -557,7 +521,6 @@ export default function Create({
 
 
                         <div className="news-publication-buttons">
-
 
                             {/* CANCELAR */}
 
@@ -587,42 +550,16 @@ export default function Create({
                             </button>
 
 
-                            {/* PUBLICAR */}
+                            {/* GUARDAR */}
 
                             <div className="news-publish-group">
 
                                 <button
-                                    type="button"
+                                    type="submit"
                                     className="news-publish-button"
                                     disabled={processing}
-                                    onClick={
-                                        showSchedule
-                                            ? () => {
-
-                                                setData(
-                                                    "status",
-                                                    "scheduled"
-                                                );
-
-                                                setTimeout(() => {
-                                                    document
-                                                        .querySelector(
-                                                            ".news-create-form"
-                                                        )
-                                                        ?.requestSubmit();
-                                                }, 0);
-
-                                            }
-                                            : handlePublish
-                                    }
                                 >
-
-                                    {processing
-                                        ? "Guardando..."
-                                        : showSchedule
-                                            ? "Programar"
-                                            : "Publicar"}
-
+                                    {primaryLabel}
                                 </button>
 
 
@@ -630,9 +567,7 @@ export default function Create({
                                     type="button"
                                     className="news-publish-dropdown"
                                     onClick={() =>
-                                        setShowStatusMenu(
-                                            !showStatusMenu
-                                        )
+                                        setShowStatusMenu(!showStatusMenu)
                                     }
                                     aria-label="Más opciones"
                                 >
@@ -650,7 +585,7 @@ export default function Create({
 
                                         <button
                                             type="button"
-                                            onClick={handleDraft}
+                                            onClick={() => submit("draft")}
                                             disabled={processing}
                                         >
 
