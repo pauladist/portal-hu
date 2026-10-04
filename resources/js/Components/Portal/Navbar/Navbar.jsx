@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { getMenuItemHref } from "@/Utils/menuLinks";
 import "./Navbar.css";
 
 /* =========================================================
@@ -17,11 +18,7 @@ function NavbarItem({ item, level = 0 }) {
             return "#";
         }
 
-        if (item.destination_type === "pdf" && item.file_path) {
-            return `/storage/${item.file_path}`;
-        }
-
-        return item.url ?? "#";
+        return getMenuItemHref(item);
     };
 
     const handleMouseEnter = () => {
@@ -128,10 +125,7 @@ function MobileNavItem({ item }) {
     const children = item.children ?? [];
     const hasChildren = children.length > 0;
 
-    const href =
-        item.destination_type === "pdf" && item.file_path
-            ? `/storage/${item.file_path}`
-            : (item.url ?? "#");
+    const href = getMenuItemHref(item);
 
     if (!hasChildren) {
         return (

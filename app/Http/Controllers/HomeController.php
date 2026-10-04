@@ -10,22 +10,9 @@ class HomeController extends Controller
 {
     public function index()
     {
-        $menuItems = MenuItem::query()
-            ->whereNull('parent_id')
-            ->where('is_active', true)
-            ->with([
-                'children' => fn ($query) => $query
-                    ->where('is_active', true)
-                    ->orderBy('order'),
-            ])
-            ->orderBy('order')
-            ->get();
+        $menuItems = MenuItem::publicTree();
 
-        $quickLinks = MenuItem::query()
-            ->where('is_active', true)
-            ->where('is_quick_link', true)
-            ->orderBy('quick_link_order')
-            ->get();
+        $quickLinks = MenuItem::publicQuickLinks();
 
         $featuredNews = News::query()
             ->where('status', 'published')
