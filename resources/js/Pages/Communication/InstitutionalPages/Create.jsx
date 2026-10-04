@@ -1,20 +1,18 @@
-import React from 'react';
-import { Head } from '@inertiajs/react';
-import PanelLayout from '../../../Layouts/PanelLayout';
-import MenuItemForm from '../Botonera/Form/MenuItemForm';
+import React from "react";
 
-export default function Create({
-    parentItem = null,
-    pages = [],
-}) {
+import { Head } from "@inertiajs/react";
+
+import PanelLayout from "../../../Layouts/PanelLayout";
+
+import InstitutionalPageForm from "./components/InstitutionalPageForm";
+
+export default function Create() {
     return (
         <PanelLayout>
-            <Head title="Crear botón" />
+            <Head title="Crear contenido institucional" />
 
             <div className="page-container">
-                <MenuItemForm
-                    parentItem={parentItem}
-                    pages={pages}
+                <InstitutionalPageForm
                     mode="create"
                 />
             </div>
