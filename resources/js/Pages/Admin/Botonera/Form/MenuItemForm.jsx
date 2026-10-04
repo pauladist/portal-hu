@@ -8,6 +8,7 @@ export default function MenuItemForm({
     menuItem = null,
     mode = "create",
     onCancel = null,
+    pages = [],
 }) {
     const isEditing = mode === "edit";
 
@@ -16,6 +17,7 @@ export default function MenuItemForm({
         title: menuItem?.title ?? "",
         destination_type: menuItem?.destination_type ?? "url",
         url: menuItem?.url ?? "",
+        page_id: menuItem?.page_id ?? "",
         file: null,
 
         // Los necesita actualmente el backend.
@@ -30,10 +32,17 @@ export default function MenuItemForm({
 
         if (value === "url") {
             form.setData("file", null);
+            form.setData("page_id", "");
         }
 
         if (value === "pdf") {
             form.setData("url", "");
+            form.setData("page_id", "");
+        }
+
+        if (value === "page") {
+            form.setData("url", "");
+            form.setData("file", null);
         }
     };
 
@@ -168,6 +177,8 @@ export default function MenuItemForm({
                         <option value="url">Enlace web</option>
 
                         <option value="pdf">Archivo PDF</option>
+
+                        <option value="page">Página interna</option>
                     </select>
 
                     {form.errors.destination_type && (
@@ -176,6 +187,42 @@ export default function MenuItemForm({
                         </span>
                     )}
                 </div>
+
+                {/* PÁGINA INSTITUCIONAL */}
+
+                {form.data.destination_type === "page" && (
+                    <div className="menu-item-form__field">
+                        <label htmlFor="page_id">Página institucional</label>
+
+                        <select
+                            id="page_id"
+                            value={form.data.page_id}
+                            onChange={(event) =>
+                                form.setData("page_id", event.target.value)
+                            }
+                        >
+                            <option value="">Seleccioná una página</option>
+
+                            {pages.map((page) => (
+                                <option key={page.id} value={page.id}>
+                                    {page.title}
+                                </option>
+                            ))}
+                        </select>
+
+                        {pages.length === 0 && (
+                            <span className="menu-item-form__help">
+                                No hay páginas institucionales publicadas.
+                            </span>
+                        )}
+
+                        {form.errors.page_id && (
+                            <span className="menu-item-form__error">
+                                {form.errors.page_id}
+                            </span>
+                        )}
+                    </div>
+                )}
 
                 {/* URL */}
 

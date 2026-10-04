@@ -1,0 +1,460 @@
+/* =========================================================
+   PREVISUALIZACIÓN DE PÁGINA INSTITUCIONAL
+   ========================================================= */
+
+.institutional-preview-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 30px;
+
+    background: rgba(10, 28, 42, 0.62);
+
+    backdrop-filter: blur(3px);
+
+    animation: institutional-preview-overlay-in 0.18s ease;
+}
+
+
+/* =========================================================
+   MODAL
+   ========================================================= */
+
+.institutional-preview-modal {
+    display: flex;
+    flex-direction: column;
+
+    width: min(1050px, 100%);
+    max-height: calc(100vh - 60px);
+
+    overflow: hidden;
+
+    border-radius: 16px;
+
+    background: #ffffff;
+
+    box-shadow:
+        0 25px 70px rgba(0, 0, 0, 0.22);
+
+    animation: institutional-preview-modal-in 0.2s ease;
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.institutional-preview-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+
+    gap: 24px;
+
+    padding: 24px 28px;
+
+    border-bottom: 1px solid #e5e9ed;
+}
+
+.institutional-preview-heading {
+    min-width: 0;
+}
+
+.institutional-preview-label {
+    display: block;
+
+    margin-bottom: 6px;
+
+    color: #7b8997;
+
+    font-family: "Montserrat", sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.institutional-preview-heading h2 {
+    margin: 0;
+
+    color: #163b5c;
+
+    font-family: "Montserrat", sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1.3;
+
+    overflow-wrap: anywhere;
+}
+
+.institutional-preview-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    width: 38px;
+    height: 38px;
+
+    padding: 0;
+
+    border: none;
+    border-radius: 50%;
+
+    background: #f0f3f5;
+    color: #53697b;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease;
+}
+
+.institutional-preview-close:hover {
+    background: #e4eaee;
+    color: #163b5c;
+}
+
+
+/* =========================================================
+   BODY
+   ========================================================= */
+
+.institutional-preview-body {
+    flex: 1;
+
+    min-height: 0;
+
+    overflow-y: auto;
+
+    padding: 36px 42px 42px;
+}
+
+.institutional-preview-subtitle {
+    max-width: 850px;
+
+    margin: 0 auto 28px;
+
+    color: #667789;
+
+    font-family: "Montserrat", sans-serif;
+    font-size: 16px;
+    line-height: 1.65;
+}
+
+
+/* =========================================================
+   CONTENIDO
+   ========================================================= */
+
+.institutional-preview-content {
+    max-width: 850px;
+
+    margin: 0 auto;
+
+    color: #344b5f;
+
+    font-family: "Montserrat", sans-serif;
+    font-size: 15px;
+    line-height: 1.75;
+
+    overflow-wrap: anywhere;
+}
+
+.institutional-preview-content h1,
+.institutional-preview-content h2,
+.institutional-preview-content h3,
+.institutional-preview-content h4,
+.institutional-preview-content h5,
+.institutional-preview-content h6 {
+    margin-top: 28px;
+    margin-bottom: 12px;
+
+    color: #163b5c;
+
+    font-weight: 700;
+    line-height: 1.35;
+}
+
+.institutional-preview-content h1 {
+    font-size: 28px;
+}
+
+.institutional-preview-content h2 {
+    font-size: 24px;
+}
+
+.institutional-preview-content h3 {
+    font-size: 20px;
+}
+
+.institutional-preview-content p {
+    margin: 0 0 16px;
+}
+
+.institutional-preview-content ul,
+.institutional-preview-content ol {
+    margin: 0 0 18px;
+
+    padding-left: 28px;
+}
+
+.institutional-preview-content li {
+    margin-bottom: 7px;
+}
+
+.institutional-preview-content a {
+    color: #00649d;
+
+    text-decoration: underline;
+}
+
+.institutional-preview-content img {
+    display: block;
+
+    max-width: 100%;
+    height: auto;
+
+    margin: 24px auto;
+
+    border-radius: 10px;
+}
+
+.institutional-preview-content iframe {
+    display: block;
+
+    width: 100%;
+    max-width: 850px;
+
+    min-height: 480px;
+
+    margin: 24px auto;
+
+    border: none;
+    border-radius: 10px;
+}
+
+.institutional-preview-content table {
+    width: 100%;
+
+    margin: 24px 0;
+
+    border-collapse: collapse;
+}
+
+.institutional-preview-content th,
+.institutional-preview-content td {
+    padding: 10px 12px;
+
+    border: 1px solid #dfe5ea;
+
+    text-align: left;
+}
+
+.institutional-preview-content blockquote {
+    margin: 24px 0;
+
+    padding: 14px 20px;
+
+    border-left: 4px solid #c7a36e;
+
+    background: #f5f7f8;
+
+    color: #596c7d;
+}
+
+
+/* =========================================================
+   SIN CONTENIDO
+   ========================================================= */
+
+.institutional-preview-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 260px;
+
+    color: #7b8997;
+
+    text-align: center;
+}
+
+.institutional-preview-empty
+.material-symbols-outlined {
+    margin-bottom: 12px;
+
+    font-size: 42px;
+}
+
+.institutional-preview-empty p {
+    margin: 0;
+
+    font-family: "Montserrat", sans-serif;
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.institutional-preview-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    padding: 16px 24px;
+
+    border-top: 1px solid #e5e9ed;
+
+    background: #fafbfc;
+}
+
+.institutional-preview-edit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+
+    min-height: 40px;
+
+    padding: 0 16px;
+
+    border: 1px solid #d5dfe6;
+    border-radius: 8px;
+
+    background: #ffffff;
+    color: #31546e;
+
+    font-family: "Montserrat", sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.institutional-preview-edit:hover {
+    background: #f0f4f6;
+}
+
+.institutional-preview-edit
+.material-symbols-outlined {
+    font-size: 18px;
+}
+
+
+/* =========================================================
+   ANIMACIONES
+   ========================================================= */
+
+@keyframes institutional-preview-overlay-in {
+
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+
+}
+
+@keyframes institutional-preview-modal-in {
+
+    from {
+        opacity: 0;
+        transform: translateY(12px) scale(0.985);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .institutional-preview-overlay {
+        padding: 20px;
+    }
+
+    .institutional-preview-modal {
+        max-height: calc(100vh - 40px);
+    }
+
+    .institutional-preview-body {
+        padding: 30px;
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .institutional-preview-overlay {
+        align-items: flex-end;
+
+        padding: 0;
+    }
+
+    .institutional-preview-modal {
+        width: 100%;
+        max-height: 94vh;
+
+        border-radius: 16px 16px 0 0;
+    }
+
+    .institutional-preview-header {
+        padding: 18px;
+    }
+
+    .institutional-preview-heading h2 {
+        font-size: 19px;
+    }
+
+    .institutional-preview-body {
+        padding: 24px 18px 30px;
+    }
+
+    .institutional-preview-content {
+        font-size: 14px;
+        line-height: 1.7;
+    }
+
+    .institutional-preview-content h1 {
+        font-size: 24px;
+    }
+
+    .institutional-preview-content h2 {
+        font-size: 21px;
+    }
+
+    .institutional-preview-content h3 {
+        font-size: 18px;
+    }
+
+    .institutional-preview-content iframe {
+        min-height: 300px;
+    }
+
+}

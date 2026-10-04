@@ -1,0 +1,378 @@
+/* =========================================================
+   FORMULARIO DE PÁGINAS INSTITUCIONALES
+   ========================================================= */
+
+.institutional-form-page {
+    width: 100%;
+    max-width: 1200px;
+
+    margin: 0 auto;
+
+    padding: 42px 48px 60px;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.institutional-form-header {
+    margin-bottom: 28px;
+}
+
+.institutional-form-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    margin-bottom: 18px;
+
+    color: #5e7487;
+
+    font-family: "Montserrat", sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+
+    text-decoration: none;
+}
+
+.institutional-form-back:hover {
+    color: #003764;
+}
+
+.institutional-form-back
+.material-symbols-outlined {
+    font-size: 18px;
+}
+
+.institutional-form-header h1 {
+    margin: 0;
+
+    color: #163b5c;
+
+    font-family: "Montserrat", sans-serif;
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1.25;
+}
+
+.institutional-form-header p {
+    margin: 9px 0 0;
+
+    color: #718292;
+
+    font-family: "Montserrat", sans-serif;
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   FORMULARIO
+   ========================================================= */
+
+.institutional-form {
+    width: 100%;
+}
+
+
+/* =========================================================
+   SECCIÓN
+   ========================================================= */
+
+.institutional-form-section {
+    padding: 30px;
+
+    border: 1px solid #e0e6eb;
+    border-radius: 14px;
+
+    background: #ffffff;
+
+    box-shadow:
+        0 4px 18px rgba(31, 57, 78, 0.04);
+}
+
+.institutional-form-section__heading {
+    margin-bottom: 28px;
+
+    padding-bottom: 20px;
+
+    border-bottom: 1px solid #e8ecef;
+}
+
+.institutional-form-section__heading h2 {
+    margin: 0;
+
+    color: #24445d;
+
+    font-family: "Montserrat", sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.institutional-form-section__heading p {
+    margin: 7px 0 0;
+
+    color: #7a8997;
+
+    font-family: "Montserrat", sans-serif;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   CAMPOS
+   ========================================================= */
+
+.institutional-form-field {
+    margin-bottom: 26px;
+}
+
+.institutional-form-field:last-child {
+    margin-bottom: 0;
+}
+
+.institutional-form-field label {
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: #304b62;
+
+    font-family: "Montserrat", sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.institutional-form-field input[type="text"] {
+    display: block;
+
+    width: 100%;
+    min-height: 46px;
+
+    padding: 0 14px;
+
+    box-sizing: border-box;
+
+    border: 1px solid #d5dfe6;
+    border-radius: 8px;
+
+    outline: none;
+
+    background: #ffffff;
+    color: #30485e;
+
+    font-family: "Montserrat", sans-serif;
+    font-size: 13px;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.institutional-form-field input[type="text"]:focus {
+    border-color: #7f9db7;
+
+    box-shadow:
+        0 0 0 3px rgba(0, 55, 100, 0.08);
+}
+
+.institutional-form-field input::placeholder {
+    color: #a0acb7;
+}
+
+.institutional-form-description {
+    margin: -2px 0 12px;
+
+    color: #7b8996;
+
+    font-family: "Montserrat", sans-serif;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   ERRORES
+   ========================================================= */
+
+.institutional-form-error {
+    display: block;
+
+    margin-top: 7px;
+
+    color: #b04444;
+
+    font-family: "Montserrat", sans-serif;
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   ACCIONES
+   ========================================================= */
+
+.institutional-form-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+
+    width: 100%;
+
+    margin-top: 24px;
+    padding-top: 22px;
+
+    border-top: 1px solid #e2e7eb;
+}
+
+.institutional-form-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 42px;
+
+    padding: 0 19px;
+
+    box-sizing: border-box;
+
+    border-radius: 8px;
+
+    font-family: "Montserrat", sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+
+    text-decoration: none;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+/* CANCELAR */
+
+.institutional-form-button--cancel {
+    border: 1px solid #d6dfe6;
+
+    background: #ffffff;
+    color: #53697a;
+}
+
+.institutional-form-button--cancel:hover {
+    background: #f5f7f9;
+    border-color: #c8d3dc;
+    color: #163b5c;
+}
+
+
+/* BORRADOR */
+
+.institutional-form-button--draft {
+    border: 1px solid #cbd7df;
+
+    background: #ffffff;
+    color: #31546e;
+}
+
+.institutional-form-button--draft:hover:not(:disabled) {
+    background: #f1f5f7;
+    border-color: #b9c8d3;
+}
+
+
+/* PUBLICAR */
+
+.institutional-form-button--publish {
+    border: 1px solid #003764;
+
+    background: #003764;
+    color: #ffffff;
+}
+
+.institutional-form-button--publish:hover:not(:disabled) {
+    background: #002b4d;
+    border-color: #002b4d;
+
+    box-shadow:
+        0 4px 12px rgba(0, 55, 100, 0.16);
+
+    transform: translateY(-1px);
+}
+
+
+/* DISABLED */
+
+.institutional-form-button:disabled {
+    opacity: 0.55;
+
+    cursor: not-allowed;
+
+    transform: none;
+
+    box-shadow: none;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .institutional-form-page {
+        padding: 32px 28px 48px;
+    }
+
+    .institutional-form-section {
+        padding: 26px;
+    }
+
+}
+
+@media (max-width: 600px) {
+
+    .institutional-form-page {
+        padding: 26px 18px 40px;
+    }
+
+    .institutional-form-header h1 {
+        font-size: 26px;
+    }
+
+    .institutional-form-section {
+        padding: 20px;
+    }
+
+    .institutional-form-actions {
+        flex-wrap: wrap;
+        justify-content: stretch;
+    }
+
+    .institutional-form-button {
+        flex: 1;
+        min-width: 0;
+    }
+
+}
+
+@media (max-width: 420px) {
+
+    .institutional-form-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .institutional-form-button {
+        width: 100%;
+    }
+
+}

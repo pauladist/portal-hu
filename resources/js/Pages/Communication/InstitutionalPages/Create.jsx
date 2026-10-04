@@ -5,7 +5,7 @@ import MenuItemForm from '../Botonera/Form/MenuItemForm';
 
 export default function Create({
     parentItem = null,
-    institutionalPages = [],
+    pages = [],
 }) {
     return (
         <PanelLayout>
@@ -14,7 +14,7 @@ export default function Create({
             <div className="page-container">
                 <MenuItemForm
                     parentItem={parentItem}
-                    institutionalPages={institutionalPages}
+                    pages={pages}
                     mode="create"
                 />
             </div>

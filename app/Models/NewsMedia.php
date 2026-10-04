@@ -12,6 +12,7 @@ class NewsMedia extends Model
 
     protected $fillable = [
         'news_id',
+        'page_id',
         'type',
         'path',
         'title',
@@ -24,8 +25,19 @@ class NewsMedia extends Model
         'order' => 'integer',
     ];
 
+    /**
+     * Noticia a la que pertenece el archivo.
+     */
     public function news(): BelongsTo
     {
         return $this->belongsTo(News::class);
+    }
+
+    /**
+     * Página institucional a la que pertenece el archivo.
+     */
+    public function page(): BelongsTo
+    {
+        return $this->belongsTo(InstitutionalPage::class, 'page_id');
     }
 }

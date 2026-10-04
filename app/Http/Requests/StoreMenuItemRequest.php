@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\InstitutionalPage;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -29,7 +30,7 @@ class StoreMenuItemRequest extends FormRequest
 
             'destination_type' => [
                 'nullable',
-                Rule::in(['url', 'pdf']),
+                Rule::in(['url', 'pdf', 'page']),
             ],
 
             'url' => [
@@ -45,6 +46,12 @@ class StoreMenuItemRequest extends FormRequest
                 'max:10240',
             ],
 
+            'page_id' => [
+                'nullable',
+                'integer',
+                'exists:institutional_pages,id',
+            ],
+
             'order' => [
                 'required',
                 'integer',
@@ -55,6 +62,7 @@ class StoreMenuItemRequest extends FormRequest
                 'required',
                 'boolean',
             ],
+
             'is_quick_link' => [
                 'required',
                 'boolean',
@@ -87,6 +95,31 @@ class StoreMenuItemRequest extends FormRequest
                     'Debe seleccionar un archivo PDF para este tipo de destino.'
                 );
             }
+
+            if ($type === 'page') {
+                $pageId = $this->input('page_id');
+
+                if (!$pageId) {
+                    $validator->errors()->add(
+                        'page_id',
+                        'Debe seleccionar una página institucional.'
+                    );
+
+                    return;
+                }
+
+                $pageExists = InstitutionalPage::query()
+                    ->where('id', $pageId)
+                    ->where('status', 'published')
+                    ->exists();
+
+                if (!$pageExists) {
+                    $validator->errors()->add(
+                        'page_id',
+                        'La página institucional seleccionada no está publicada.'
+                    );
+                }
+            }
         });
     }
 
@@ -94,7 +127,6 @@ class StoreMenuItemRequest extends FormRequest
     {
         return [
             'parent_id.exists' => 'El menú seleccionado como padre no existe.',
-
             'title.required' => 'El nombre del botón es obligatorio.',
             'title.max' => 'El nombre del botón no puede superar los 255 caracteres.',
 
@@ -106,6 +138,8 @@ class StoreMenuItemRequest extends FormRequest
             'file.file' => 'El archivo seleccionado no es válido.',
             'file.mimes' => 'El archivo debe ser un PDF.',
             'file.max' => 'El archivo no puede superar los 10 MB.',
+
+            'page_id.exists' => 'La página institucional seleccionada no existe.',
 
             'order.required' => 'El orden es obligatorio.',
             'order.integer' => 'El orden debe ser un número entero.',

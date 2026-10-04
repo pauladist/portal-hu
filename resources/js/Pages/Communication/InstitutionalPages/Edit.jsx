@@ -3,19 +3,21 @@ import { Head } from '@inertiajs/react';
 import PanelLayout from '../../../Layouts/PanelLayout';
 import MenuItemForm from '../Botonera/Form/MenuItemForm';
 
-export default function Create({
+export default function Edit({
+    menuItem,
     parentItem = null,
-    institutionalPages = [],
+    pages = [],
 }) {
     return (
         <PanelLayout>
-            <Head title="Crear botón" />
+            <Head title="Editar botón" />
 
             <div className="page-container">
                 <MenuItemForm
+                    menuItem={menuItem}
                     parentItem={parentItem}
-                    institutionalPages={institutionalPages}
-                    mode="create"
+                    pages={pages}
+                    mode="edit"
                 />
             </div>
         </PanelLayout>

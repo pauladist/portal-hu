@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreMenuItemRequest;
 use App\Http\Requests\UpdateMenuItemRequest;
+use App\Models\InstitutionalPage;
 use App\Models\MenuItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -22,8 +23,11 @@ class MenuItemController extends Controller
         $menuItems = MenuItem::query()
             ->whereNull('parent_id')
             ->with([
+                'page',
                 'children' => function ($query) {
-                    $query->orderBy('order');
+                    $query
+                        ->with('page')
+                        ->orderBy('order');
                 },
             ])
             ->orderBy('order')
@@ -50,8 +54,17 @@ class MenuItemController extends Controller
             $parentItem = MenuItem::findOrFail($parentId);
         }
 
+        $institutionalPages = InstitutionalPage::query()
+            ->where('status', 'published')
+            ->orderBy('title')
+            ->get([
+                'id',
+                'title',
+            ]);
+
         return Inertia::render('Admin/MenuItems/Create', [
             'parentItem' => $parentItem,
+            'pages' => $institutionalPages,
         ]);
     }
 
@@ -85,8 +98,15 @@ class MenuItemController extends Controller
             'parent_id' => $parentId,
             'title' => $request->title,
             'destination_type' => $request->destination_type,
-            'url' => $request->url,
-            'file_path' => $filePath,
+            'url' => $request->destination_type === 'url'
+                ? $request->url
+                : null,
+            'page_id' => $request->destination_type === 'page'
+                ? $request->page_id
+                : null,
+            'file_path' => $request->destination_type === 'pdf'
+                ? $filePath
+                : null,
             'order' => $nextOrder,
             'is_active' => true,
             'is_quick_link' => false,
@@ -112,9 +132,18 @@ class MenuItemController extends Controller
             $parentItem = MenuItem::find($menuItem->parent_id);
         }
 
+        $institutionalPages = InstitutionalPage::query()
+            ->where('status', 'published')
+            ->orderBy('title')
+            ->get([
+                'id',
+                'title',
+            ]);
+
         return Inertia::render('Admin/MenuItems/Edit', [
             'menuItem' => $menuItem,
             'parentItem' => $parentItem,
+            'pages' => $institutionalPages,
         ]);
     }
 
@@ -132,7 +161,12 @@ class MenuItemController extends Controller
             'parent_id' => $request->parent_id,
             'title' => $request->title,
             'destination_type' => $request->destination_type,
-            'url' => $request->url,
+            'url' => $request->destination_type === 'url'
+                ? $request->url
+                : null,
+            'page_id' => $request->destination_type === 'page'
+                ? $request->page_id
+                : null,
             'order' => $request->order,
             'is_active' => $request->boolean('is_active'),
             'is_quick_link' => $request->boolean('is_quick_link'),
@@ -275,6 +309,7 @@ class MenuItemController extends Controller
     | Reordenar elementos
     |--------------------------------------------------------------------------
     */
+
     public function reorder(Request $request)
     {
         $data = $request->validate([
@@ -294,10 +329,10 @@ class MenuItemController extends Controller
         $target = MenuItem::findOrFail($data['target_id']);
 
         /*
-    |--------------------------------------------------------------------------
-    | No se puede modificar la jerarquía
-    |--------------------------------------------------------------------------
-    */
+        |--------------------------------------------------------------------------
+        | No se puede modificar la jerarquía
+        |--------------------------------------------------------------------------
+        */
 
         if ($item->parent_id !== $target->parent_id) {
             return back()->withErrors([
@@ -307,20 +342,20 @@ class MenuItemController extends Controller
         }
 
         /*
-    |--------------------------------------------------------------------------
-    | Mismo elemento
-    |--------------------------------------------------------------------------
-    */
+        |--------------------------------------------------------------------------
+        | Mismo elemento
+        |--------------------------------------------------------------------------
+        */
 
         if ($item->id === $target->id) {
             return back();
         }
 
         /*
-    |--------------------------------------------------------------------------
-    | Obtener hermanos
-    |--------------------------------------------------------------------------
-    */
+        |--------------------------------------------------------------------------
+        | Obtener hermanos
+        |--------------------------------------------------------------------------
+        */
 
         $siblings = MenuItem::query()
             ->where('parent_id', $item->parent_id)
@@ -356,10 +391,10 @@ class MenuItemController extends Controller
         }
 
         /*
-    |--------------------------------------------------------------------------
-    | Sacar el elemento de su posición actual
-    |--------------------------------------------------------------------------
-    */
+        |--------------------------------------------------------------------------
+        | Sacar el elemento de su posición actual
+        |--------------------------------------------------------------------------
+        */
 
         array_splice(
             $orderedIds,
@@ -368,10 +403,10 @@ class MenuItemController extends Controller
         );
 
         /*
-    |--------------------------------------------------------------------------
-    | Buscar nuevamente la posición del destino
-    |--------------------------------------------------------------------------
-    */
+        |--------------------------------------------------------------------------
+        | Buscar nuevamente la posición del destino
+        |--------------------------------------------------------------------------
+        */
 
         $targetIndex = array_search(
             $target->id,
@@ -380,10 +415,10 @@ class MenuItemController extends Controller
         );
 
         /*
-    |--------------------------------------------------------------------------
-    | Insertar en la nueva posición
-    |--------------------------------------------------------------------------
-    */
+        |--------------------------------------------------------------------------
+        | Insertar en la nueva posición
+        |--------------------------------------------------------------------------
+        */
 
         array_splice(
             $orderedIds,
@@ -393,10 +428,10 @@ class MenuItemController extends Controller
         );
 
         /*
-    |--------------------------------------------------------------------------
-    | Guardar nuevo orden
-    |--------------------------------------------------------------------------
-    */
+        |--------------------------------------------------------------------------
+        | Guardar nuevo orden
+        |--------------------------------------------------------------------------
+        */
 
         foreach ($orderedIds as $index => $id) {
             MenuItem::whereKey($id)->update([
@@ -405,10 +440,10 @@ class MenuItemController extends Controller
         }
 
         /*
-    |--------------------------------------------------------------------------
-    | Volver sin recargar la página
-    |--------------------------------------------------------------------------
-    */
+        |--------------------------------------------------------------------------
+        | Volver sin recargar la página
+        |--------------------------------------------------------------------------
+        */
 
         return back();
     }
