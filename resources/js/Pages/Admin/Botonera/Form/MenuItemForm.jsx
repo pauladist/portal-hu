@@ -232,7 +232,7 @@ export default function MenuItemForm({
 
                         <input
                             id="url"
-                            type="url"
+                            type="text"
                             value={form.data.url}
                             onChange={(event) =>
                                 form.setData("url", event.target.value)

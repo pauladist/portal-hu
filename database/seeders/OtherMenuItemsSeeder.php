@@ -42,8 +42,8 @@ class OtherMenuItemsSeeder extends Seeder
         MenuItem::create([
             'parent_id' => $otros->id,
             'title' => 'CALENDARIO DE NOTICIAS',
-            'destination_type' => null,
-            'url' => null,
+            'destination_type' => 'url',
+            'url' => '/noticias',
             'file_path' => null,
             'order' => 3,
             'is_active' => true,

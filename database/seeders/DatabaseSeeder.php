@@ -12,7 +12,9 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
             UserSeeder::class,
             MenuItemSeeder::class,
-            OtherMenuItemsSeeder::class
+            OtherMenuItemsSeeder::class,
+            CategorySeeder::class,
+            TagSeeder::class,
         ]);
     }
 }

@@ -23,8 +23,9 @@ export default function PopularNews({ news = [] }) {
                         ?? item.media?.[0];
 
                     return (
-                        <article
+                        <a
                             key={item.id}
+                            href={`/noticias/${item.slug}`}
                             className="portal-popular-news__item"
                         >
 
@@ -68,7 +69,7 @@ export default function PopularNews({ news = [] }) {
 
                             </div>
 
-                        </article>
+                        </a>
                     );
                 })}
 

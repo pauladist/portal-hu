@@ -1,11 +1,14 @@
 import React from 'react';
-import FeaturedNews from './FeaturedNews';
+import NewsCarousel from './NewsCarousel';
 import PopularNews from './PopularNews';
+import MonthNews from './MonthNews';
 import './news.css';
 
 export default function NewsSection({
-    featuredNews,
+    latestNews = [],
     popularNews = [],
+    monthNews = [],
+    monthInfo = null,
 }) {
     return (
         <section className="portal-news">
@@ -21,15 +24,27 @@ export default function NewsSection({
                             Últimas novedades
                         </h2>
                     </div>
+
+                    <a
+                        href="/noticias"
+                        className="portal-news__archive-link"
+                    >
+                        Ver historial de noticias
+                        <span className="material-symbols-outlined">
+                            arrow_forward
+                        </span>
+                    </a>
                 </div>
 
                 <div className="portal-news__grid">
 
-                    <FeaturedNews news={featuredNews} />
+                    <NewsCarousel news={latestNews} />
 
                     <PopularNews news={popularNews} />
 
                 </div>
+
+                <MonthNews news={monthNews} info={monthInfo} />
 
             </div>
         </section>

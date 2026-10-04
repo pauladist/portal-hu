@@ -138,6 +138,15 @@
     font-weight: 700;
 }
 
+.news-field-description {
+    margin: 0;
+
+    color: var(--hu-text-muted);
+
+    font-size: 12px;
+    line-height: 1.5;
+}
+
 .news-form-field input,
 .news-form-field textarea,
 .news-form-field select {
