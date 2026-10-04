@@ -157,115 +157,12 @@ class NewsController extends Controller
             |--------------------------------------------------------------------------
             */
 
-            $content = $request->content;
-
-            foreach ($request->editor_media ?? [] as $mediaData) {
-
-                $mediaId = $mediaData['id'];
-
-                $file = $mediaData['file'];
-
-                $mimeType = $file->getMimeType();
-
-                /*
-                | Guardar archivo
-                */
-
-                $path = $file->store('news', 'public');
-
-                /*
-                | Determinar tipo
-                */
-
-                if (str_starts_with($mimeType, 'image/')) {
-                    $type = 'image';
-                } else {
-                    $type = 'pdf';
-                }
-
-                /*
-                | Crear registro de media
-                */
-
-                $media = $news->media()->create([
-                    'type' => $type,
-                    'path' => $path,
-                    'title' => $mediaData['file']->getClientOriginalName(),
-                    'is_featured' => false,
-                    'order' => $news->media()->count(),
-                ]);
-
-                /*
-                |--------------------------------------------------------------------------
-                | URL pública definitiva
-                |--------------------------------------------------------------------------
-                */
-
-                $publicUrl = Storage::disk('public')->url($path);
-
-                /*
-                |--------------------------------------------------------------------------
-                | Reemplazar blob URL del editor
-                |--------------------------------------------------------------------------
-                |
-                | El RichTextEditor guarda temporalmente:
-                |
-                | blob:http://localhost/...
-                |
-                | junto con:
-                |
-                | mediaId="..."
-                |
-                */
-
-                $content = str_replace(
-                    $mediaId,
-                    (string) $media->id,
-                    $content
-                );
-
-                /*
-                | Imagen
-                */
-
-                if ($type === 'image') {
-
-                    /*
-                    | Reemplazamos el src blob por la URL definitiva.
-                    */
-
-                    $content = preg_replace(
-                        '/(<img[^>]*mediaId="' .
-                        preg_quote($mediaId, '/') .
-                        '"[^>]*src=")[^"]*(")/',
-                        '$1' . $publicUrl . '$2',
-                        $content
-                    );
-
-                    /*
-                    | También puede aparecer media-id con otra variante.
-                    */
-
-                    $content = preg_replace(
-                        '/(<img[^>]*src=")[^"]*(".*?data-news-image)/',
-                        '$1' . $publicUrl . '$2',
-                        $content
-                    );
-                }
-
-                /*
-                | PDF / archivo
-                */
-
-                if ($type === 'pdf') {
-
-                    $content = preg_replace(
-                        '/(<div[^>]*data-pdf-file[^>]*>.*?<a[^>]*href=")[^"]*(")/s',
-                        '$1' . $publicUrl . '$2',
-                        $content
-                    );
-                }
-            }
+            $content = $this->processEditorMedia(
+                $news,
+                $request->content,
+                $request->input('editor_media', []),
+                $request->file('editor_media', [])
+            );
 
             /*
             |--------------------------------------------------------------------------
@@ -304,12 +201,24 @@ class NewsController extends Controller
     {
         return Inertia::render('Communication/News/Edit', [
             'news' => $news->load([
-                'categories',
-                'tags',
+                'categories:id',
+                'tags:id',
                 'media',
             ]),
-            'categories' => Category::orderBy('title')->get(),
-            'tags' => Tag::orderBy('title')->get(),
+
+            'publishedAtInput' => $news->status === 'scheduled' && $news->published_at
+                ? $news->published_at->format('Y-m-d\\TH:i')
+                : '',
+
+            'categories' => Category::withCount('news')
+                ->orderByDesc('news_count')
+                ->orderBy('title')
+                ->get(),
+
+            'tags' => Tag::withCount('news')
+                ->orderByDesc('news_count')
+                ->orderBy('title')
+                ->get(),
         ]);
     }
 
@@ -328,9 +237,52 @@ class NewsController extends Controller
                 $publishedAt = null;
             }
 
+            // Si ya estaba publicada, conservar su fecha original
             if ($request->status === 'published' && !$publishedAt) {
-                $publishedAt = now();
+                $publishedAt = $news->status === 'published'
+                    ? $news->published_at
+                    : now();
             }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Portada nueva (opcional)
+            |--------------------------------------------------------------------------
+            */
+
+            if ($request->hasFile('cover')) {
+
+                $oldCovers = $news->media()
+                    ->where('type', 'image')
+                    ->where('is_featured', true)
+                    ->get();
+
+                foreach ($oldCovers as $oldCover) {
+                    $this->deleteMediaFile($oldCover);
+                    $oldCover->delete();
+                }
+
+                $news->media()->create([
+                    'type' => 'image',
+                    'path' => $request->file('cover')->store('news', 'public'),
+                    'title' => $request->title,
+                    'is_featured' => true,
+                    'order' => 0,
+                ]);
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Archivos nuevos insertados en el editor
+            |--------------------------------------------------------------------------
+            */
+
+            $content = $this->processEditorMedia(
+                $news,
+                $request->content,
+                $request->input('editor_media', []),
+                $request->file('editor_media', [])
+            );
 
             /*
             |--------------------------------------------------------------------------
@@ -342,7 +294,7 @@ class NewsController extends Controller
                 'title' => $request->title,
                 'slug' => $slug,
                 'subtitle' => $request->subtitle,
-                'content' => $request->content,
+                'content' => $content,
                 'published_at' => $publishedAt,
                 'status' => $request->status,
             ]);
@@ -352,110 +304,31 @@ class NewsController extends Controller
 
             /*
             |--------------------------------------------------------------------------
-            | Eliminar medios
+            | Limpiar archivos del editor que ya no se usan en el contenido
             |--------------------------------------------------------------------------
             */
 
-            foreach ($request->deleted_media ?? [] as $mediaId) {
-
-                $media = $news->media()
-                    ->where('id', $mediaId)
-                    ->first();
-
-                if (!$media) {
-                    continue;
-                }
-
-                $this->deleteMediaFile($media);
-
-                $media->delete();
-            }
-
-            /*
-            |--------------------------------------------------------------------------
-            | Actualizar medios existentes
-            |--------------------------------------------------------------------------
-            */
-
-            foreach ($request->existing_media ?? [] as $mediaData) {
-
-                $media = $news->media()
-                    ->where('id', $mediaData['id'])
-                    ->first();
-
-                if (!$media) {
-                    continue;
-                }
-
-                /*
-                | Reemplazar archivo
-                */
-
-                if (isset($mediaData['file'])) {
-
-                    $this->deleteMediaFile($media);
-
-                    $media->path = $mediaData['file']
-                        ->store('news', 'public');
-                }
-
-                /*
-                | Actualizar datos
-                */
-
-                $media->title = $mediaData['title'] ?? null;
-                $media->order = $mediaData['order'] ?? 0;
-
-                /*
-                | Cambiar imagen principal
-                */
-
-                $isFeatured = filter_var(
-                    $mediaData['is_featured'] ?? false,
-                    FILTER_VALIDATE_BOOLEAN
-                );
-
-                if ($isFeatured && $media->type === 'image') {
-
-                    $news->media()
-                        ->where('id', '!=', $media->id)
-                        ->update([
-                            'is_featured' => false,
-                        ]);
-                }
-
-                $media->is_featured = $isFeatured;
-
-                $media->save();
-            }
-
-            /*
-            |--------------------------------------------------------------------------
-            | Crear medios nuevos
-            |--------------------------------------------------------------------------
-            */
-
-            foreach ($request->new_media ?? [] as $mediaData) {
-
-                $this->createMedia($news, $mediaData);
-            }
+            $this->removeUnusedEditorMedia($news->fresh('media'));
         });
 
         return redirect()
-            ->route('news.index')
+            ->route('news.dashboard')
             ->with('success', 'Noticia actualizada correctamente.');
     }
 
     public function destroy(News $news)
     {
-        foreach ($news->media as $media) {
-            $this->deleteMediaFile($media);
-        }
+        DB::transaction(function () use ($news) {
 
-        $news->delete();
+            foreach ($news->media as $media) {
+                $this->deleteMediaFile($media);
+            }
+
+            $news->delete();
+        });
 
         return redirect()
-            ->route('news.index')
+            ->route('news.dashboard')
             ->with('success', 'Noticia eliminada correctamente.');
     }
 
@@ -490,56 +363,72 @@ class NewsController extends Controller
         return $slug;
     }
 
-    private function createMedia(
+    /**
+     * Guarda los archivos (imágenes / PDF) insertados en el editor y
+     * reemplaza en el HTML la URL temporal (blob:) por la URL pública.
+     * Los archivos que el usuario sacó del editor antes de enviar se ignoran.
+     */
+    private function processEditorMedia(
         News $news,
-        array $mediaData
-    ): NewsMedia {
+        string $content,
+        array $mediaInputs,
+        array $mediaFiles
+    ): string {
 
-        $path = null;
+        foreach ($mediaInputs as $index => $mediaData) {
 
-        /*
-        | Imagen o PDF
-        */
+            $file = $mediaFiles[$index]['file'] ?? null;
+            $blobUrl = $mediaData['url'] ?? null;
 
-        if (
-            in_array($mediaData['type'], ['image', 'pdf']) &&
-            isset($mediaData['file'])
-        ) {
-            $path = $mediaData['file']->store('news', 'public');
-        }
+            if (!$file || !$blobUrl) {
+                continue;
+            }
 
-        /*
-        | Video externo
-        */
+            // El archivo ya no está en el contenido: no lo guardamos
+            if (!str_contains($content, $blobUrl)) {
+                continue;
+            }
 
-        if ($mediaData['type'] === 'video') {
-            $path = $mediaData['url'];
-        }
+            $type = str_starts_with($file->getMimeType(), 'image/')
+                ? 'image'
+                : 'pdf';
 
-        /*
-        | Si este medio es la nueva principal,
-        | quitar principal a cualquier otra.
-        */
+            $path = $file->store('news', 'public');
 
-        $isFeatured = filter_var(
-            $mediaData['is_featured'] ?? false,
-            FILTER_VALIDATE_BOOLEAN
-        );
-
-        if ($isFeatured && $mediaData['type'] === 'image') {
-
-            $news->media()->update([
+            $news->media()->create([
+                'type' => $type,
+                'path' => $path,
+                'title' => $file->getClientOriginalName(),
                 'is_featured' => false,
+                'order' => $news->media()->count(),
             ]);
+
+            $content = str_replace(
+                $blobUrl,
+                Storage::disk('public')->url($path),
+                $content
+            );
         }
 
-        return $news->media()->create([
-            'type' => $mediaData['type'],
-            'path' => $path,
-            'title' => $mediaData['title'] ?? null,
-            'is_featured' => $isFeatured,
-            'order' => $mediaData['order'] ?? 0,
-        ]);
+        return $content;
+    }
+
+    /**
+     * Borra archivos no destacados cuyo path ya no aparece en el contenido.
+     */
+    private function removeUnusedEditorMedia(News $news): void
+    {
+        foreach ($news->media as $media) {
+
+            if ($media->is_featured || !in_array($media->type, ['image', 'pdf'])) {
+                continue;
+            }
+
+            if (!str_contains($news->content, $media->path)) {
+                $this->deleteMediaFile($media);
+                $media->delete();
+            }
+        }
     }
 
     private function deleteMediaFile(NewsMedia $media): void

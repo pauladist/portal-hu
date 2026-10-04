@@ -126,9 +126,16 @@ class StoreNewsRequest extends FormRequest
                 'max:100',
             ],
 
+            'editor_media.*.url' => [
+                'required',
+                'string',
+                'max:2048',
+            ],
+
             'editor_media.*.file' => [
                 'required',
                 'file',
+                'mimes:jpeg,jpg,png,webp,gif,pdf',
                 'max:20480',
             ],
         ];
@@ -227,6 +234,9 @@ class StoreNewsRequest extends FormRequest
 
             'editor_media.*.file.file' =>
                 'Uno de los archivos del contenido no es válido.',
+
+            'editor_media.*.file.mimes' =>
+                'Los archivos del contenido deben ser imágenes (JPG, PNG, WEBP, GIF) o PDF.',
 
             'editor_media.*.file.max' =>
                 'Uno de los archivos del contenido supera el tamaño máximo permitido.',
