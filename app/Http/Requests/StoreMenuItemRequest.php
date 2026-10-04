@@ -35,8 +35,15 @@ class StoreMenuItemRequest extends FormRequest
 
             'url' => [
                 'nullable',
-                'url',
                 'max:2048',
+                // Acepta URLs completas o rutas internas del portal (ej: /noticias)
+                function ($attribute, $value, $fail) {
+                    $isInternalPath = preg_match('#^/(?!/)\S*$#', (string) $value);
+
+                    if (!$isInternalPath && !filter_var($value, FILTER_VALIDATE_URL)) {
+                        $fail('La URL ingresada no es válida.');
+                    }
+                },
             ],
 
             'file' => [

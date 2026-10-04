@@ -28,6 +28,17 @@ class News extends Model
         'views' => 'integer',
     ];
 
+    /**
+     * Noticias visibles para el público: publicadas y con fecha ya vencida.
+     */
+    public function scopePublished($query)
+    {
+        return $query
+            ->where('status', 'published')
+            ->whereNotNull('published_at')
+            ->where('published_at', '<=', now());
+    }
+
     public function tags(): BelongsToMany
     {
         return $this->belongsToMany(Tag::class, 'news_tag');

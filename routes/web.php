@@ -22,6 +22,9 @@ Route::get('/', [HomeController::class, 'index'])
     ->middleware('logout.public')
     ->name('home');
 
+Route::get('/noticias', [NewsController::class, 'archive'])
+    ->name('news.archive');
+
 Route::get('/noticias/{news:slug}', [NewsController::class, 'show'])
     ->name('news.show');
 

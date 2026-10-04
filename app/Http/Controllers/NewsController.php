@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreNewsRequest;
 use App\Http\Requests\UpdateNewsRequest;
 use App\Models\Category;
+use App\Models\MenuItem;
 use App\Models\News;
 use App\Models\NewsMedia;
 use App\Models\Tag;
@@ -180,6 +181,69 @@ class NewsController extends Controller
             ->with('success', 'Noticia creada correctamente.');
     }
 
+    /**
+     * Historial público de noticias, filtrable por año y mes.
+     */
+    public function archive(Request $request)
+    {
+        $year = $request->integer('year') ?: null;
+        $month = $request->integer('month') ?: null;
+
+        if ($month !== null && ($month < 1 || $month > 12)) {
+            $month = null;
+        }
+
+        // El mes solo tiene sentido junto con un año
+        if (!$year) {
+            $month = null;
+        }
+
+        // Períodos disponibles (solo años/meses que tienen noticias)
+        $dates = News::published()
+            ->orderByDesc('published_at')
+            ->pluck('published_at');
+
+        $years = $dates
+            ->map(fn ($date) => $date->year)
+            ->unique()
+            ->values();
+
+        $months = [];
+
+        if ($year) {
+            foreach ($dates as $date) {
+                if ($date->year === $year) {
+                    $months[$date->month] = ($months[$date->month] ?? 0) + 1;
+                }
+            }
+        }
+
+        $news = News::published()
+            ->select(['id', 'title', 'slug', 'subtitle', 'published_at'])
+            ->with([
+                'media' => fn ($query) => $query
+                    ->where('type', 'image')
+                    ->where('is_featured', true),
+            ])
+            ->when($year, fn ($query) => $query->whereYear('published_at', $year))
+            ->when($month, fn ($query) => $query->whereMonth('published_at', $month))
+            ->orderByDesc('published_at')
+            ->paginate(9)
+            ->withQueryString();
+
+        return Inertia::render('News/Archive', [
+            'news' => $news,
+            'years' => $years,
+            'months' => (object) $months,
+            'filters' => [
+                'year' => $year,
+                'month' => $month,
+            ],
+            'menuItems' => MenuItem::publicTree(),
+            'quickLinks' => MenuItem::publicQuickLinks(),
+        ]);
+    }
+
     public function show(News $news)
     {
         abort_unless($news->status === 'published', 404);
@@ -192,13 +256,56 @@ class NewsController extends Controller
 
         $news->increment('views');
 
+        // Arregla imágenes guardadas antes con la URL absoluta de APP_URL
+        $news->content = $this->normalizeStorageUrls($news->content);
+
+        /*
+        | Noticias relacionadas: primero las de la misma categoría
+        | y, si faltan, se completa con las más recientes.
+        */
+        $relatedQuery = fn () => News::published()
+            ->select(['id', 'title', 'slug', 'subtitle', 'published_at'])
+            ->with([
+                'media' => fn ($query) => $query
+                    ->where('type', 'image')
+                    ->where('is_featured', true),
+            ])
+            ->where('id', '!=', $news->id)
+            ->latest('published_at');
+
+        $categoryIds = $news->categories->pluck('id');
+
+        $related = $categoryIds->isNotEmpty()
+            ? $relatedQuery()
+                ->whereHas(
+                    'categories',
+                    fn ($query) => $query->whereIn('categories.id', $categoryIds)
+                )
+                ->limit(3)
+                ->get()
+            : collect();
+
+        if ($related->count() < 3) {
+            $related = $related->concat(
+                $relatedQuery()
+                    ->whereNotIn('id', $related->pluck('id'))
+                    ->limit(3 - $related->count())
+                    ->get()
+            );
+        }
+
         return Inertia::render('News/Show', [
             'news' => $news,
+            'relatedNews' => $related->values(),
+            'menuItems' => MenuItem::publicTree(),
+            'quickLinks' => MenuItem::publicQuickLinks(),
         ]);
     }
 
     public function edit(News $news)
     {
+        $news->content = $this->normalizeStorageUrls($news->content);
+
         return Inertia::render('Communication/News/Edit', [
             'news' => $news->load([
                 'categories:id',
@@ -403,9 +510,10 @@ class NewsController extends Controller
                 'order' => $news->media()->count(),
             ]);
 
+            // URL relativa: no depende de APP_URL ni del puerto del servidor
             $content = str_replace(
                 $blobUrl,
-                Storage::disk('public')->url($path),
+                '/storage/' . $path,
                 $content
             );
         }
@@ -429,6 +537,20 @@ class NewsController extends Controller
                 $media->delete();
             }
         }
+    }
+
+    /**
+     * Convierte las URLs absolutas del storage (APP_URL/storage/...) en
+     * relativas (/storage/...), para que las imágenes y PDF del contenido
+     * carguen aunque APP_URL no coincida con el host/puerto real.
+     */
+    private function normalizeStorageUrls(?string $content): string
+    {
+        $content = $content ?? '';
+
+        $base = rtrim((string) config('app.url'), '/') . '/storage/';
+
+        return str_replace($base, '/storage/', $content);
     }
 
     private function deleteMediaFile(NewsMedia $media): void

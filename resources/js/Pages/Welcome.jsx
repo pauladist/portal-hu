@@ -8,8 +8,10 @@ import NewsSection from '@/Components/Portal/News/NewsSection';
 export default function Welcome({
     menuItems = [],
     quickLinks = [],
-    featuredNews = null,
+    latestNews = [],
     popularNews = [],
+    monthNews = [],
+    monthInfo = null,
 }) {
     return (
         <>
@@ -21,8 +23,10 @@ export default function Welcome({
                 <QuickLinks quickLinks={quickLinks} />
 
                 <NewsSection
-                    featuredNews={featuredNews}
+                    latestNews={latestNews}
                     popularNews={popularNews}
+                    monthNews={monthNews}
+                    monthInfo={monthInfo}
                 />
             </main>
         </>
