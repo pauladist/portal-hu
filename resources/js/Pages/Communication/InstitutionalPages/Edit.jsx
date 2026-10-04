@@ -1,22 +1,21 @@
-import React from 'react';
-import { Head } from '@inertiajs/react';
-import PanelLayout from '../../../Layouts/PanelLayout';
-import MenuItemForm from '../Botonera/Form/MenuItemForm';
+import React from "react";
+
+import { Head } from "@inertiajs/react";
+
+import PanelLayout from "../../../Layouts/PanelLayout";
+
+import InstitutionalPageForm from "./components/InstitutionalPageForm";
 
 export default function Edit({
-    menuItem,
-    parentItem = null,
-    pages = [],
+    page,
 }) {
     return (
         <PanelLayout>
-            <Head title="Editar botón" />
+            <Head title="Editar contenido institucional" />
 
             <div className="page-container">
-                <MenuItemForm
-                    menuItem={menuItem}
-                    parentItem={parentItem}
-                    pages={pages}
+                <InstitutionalPageForm
+                    page={page}
                     mode="edit"
                 />
             </div>
