@@ -6,6 +6,7 @@ import MenuItemForm from '../Botonera/Form/MenuItemForm';
 export default function Edit({
     menuItem,
     parentItem = null,
+    institutionalPages = [],
 }) {
     return (
         <PanelLayout>
@@ -15,6 +16,7 @@ export default function Edit({
                 <MenuItemForm
                     menuItem={menuItem}
                     parentItem={parentItem}
+                    institutionalPages={institutionalPages}
                     mode="edit"
                 />
             </div>

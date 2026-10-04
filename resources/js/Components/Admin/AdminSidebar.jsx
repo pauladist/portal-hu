@@ -46,6 +46,28 @@ export default function AdminSidebar({ onNavigate }) {
                 </Link>
             )}
 
+            {/* =====================================
+                CONTENIDO INSTITUCIONAL
+                ADMINISTRADOR + COMUNICACIÓN
+                ===================================== */}
+
+            {(isAdmin || isCommunication) && (
+                <Link
+                    href="/institutional-pages"
+                    onClick={onNavigate}
+                    className={`panel-sidebar-item ${
+                        isActive('/institutional-pages')
+                            ? 'is-active'
+                            : ''
+                    }`}
+                >
+                    <InstitutionalIcon />
+
+                    <span>
+                        Contenido institucional
+                    </span>
+                </Link>
+            )}
 
             {/* =====================================
                 BOTONERA
@@ -69,7 +91,6 @@ export default function AdminSidebar({ onNavigate }) {
                     </span>
                 </Link>
             )}
-
 
             {/* =====================================
                 USUARIOS
@@ -137,6 +158,51 @@ function NewsIcon() {
 
             <path
                 d="M8 15H13"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+            />
+        </svg>
+    );
+}
+
+
+/* =====================================================
+   ICONO - CONTENIDO INSTITUCIONAL
+   ===================================================== */
+
+function InstitutionalIcon() {
+    return (
+        <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+        >
+            <path
+                d="M4 20V9L12 4L20 9V20"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+            />
+
+            <path
+                d="M7 20V11H17V20"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinejoin="round"
+            />
+
+            <path
+                d="M9 14H15"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+            />
+
+            <path
+                d="M9 17H15"
                 stroke="currentColor"
                 strokeWidth="1.8"
                 strokeLinecap="round"

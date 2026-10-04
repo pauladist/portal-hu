@@ -15,6 +15,7 @@ class MenuItem extends Model
         'parent_id',
         'title',
         'destination_type',
+        'page_id',
         'url',
         'file_path',
         'order',
@@ -30,15 +31,29 @@ class MenuItem extends Model
         'quick_link_order' => 'integer',
     ];
 
+    /**
+     * Elemento padre.
+     */
     public function parent(): BelongsTo
     {
         return $this->belongsTo(MenuItem::class, 'parent_id');
     }
 
+    /**
+     * Elementos hijos.
+     */
     public function children(): HasMany
     {
         return $this->hasMany(MenuItem::class, 'parent_id')
             ->orderBy('order')
-            ->with('children');
+            ->with(['children', 'page']);
+    }
+
+    /**
+     * Página institucional a la que apunta el botón.
+     */
+    public function page(): BelongsTo
+    {
+        return $this->belongsTo(InstitutionalPage::class, 'page_id');
     }
 }

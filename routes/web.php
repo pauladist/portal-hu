@@ -7,6 +7,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\MenuItemController;
+use App\Http\Controllers\InstitutionalPageController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -23,6 +24,18 @@ Route::get('/', [HomeController::class, 'index'])
 
 Route::get('/noticias/{news:slug}', [NewsController::class, 'show'])
     ->name('news.show');
+
+
+/*
+|--------------------------------------------------------------------------
+| Páginas institucionales públicas
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/paginas/{institutionalPage:slug}', [
+    InstitutionalPageController::class,
+    'publicShow'
+])->name('institutional-pages.show');
 
 
 /*
@@ -149,10 +162,6 @@ Route::middleware([
         |--------------------------------------------------------------------------
         | Categorías
         |--------------------------------------------------------------------------
-        |
-        | Las categorías se administran directamente desde el
-        | formulario de crear/editar noticia.
-        |
         */
 
         Route::post(
@@ -174,10 +183,6 @@ Route::middleware([
         |--------------------------------------------------------------------------
         | Tags
         |--------------------------------------------------------------------------
-        |
-        | Los tags se administran directamente desde el
-        | formulario de crear/editar noticia.
-        |
         */
 
         Route::post(
@@ -221,4 +226,113 @@ Route::middleware([
 
         Route::delete('/{news}', [NewsController::class, 'destroy'])
             ->name('destroy');
+    });
+
+
+/*
+|--------------------------------------------------------------------------
+| Contenido institucional
+|--------------------------------------------------------------------------
+|
+| Igual que las noticias:
+| Administrador y Comunicación utilizan las mismas rutas.
+|
+*/
+
+Route::middleware([
+    'auth',
+    'role:Administrador,Comunicación',
+    'no.cache.auth'
+])
+    ->prefix('institutional-pages')
+    ->name('institutional-pages.')
+    ->group(function () {
+
+        /*
+        |--------------------------------------------------------------------------
+        | Listado
+        |--------------------------------------------------------------------------
+        */
+
+        Route::get('/', [
+            InstitutionalPageController::class,
+            'index'
+        ])->name('index');
+
+        /*
+        |--------------------------------------------------------------------------
+        | Crear
+        |--------------------------------------------------------------------------
+        */
+
+        Route::get('/create', [
+            InstitutionalPageController::class,
+            'create'
+        ])->name('create');
+
+        /*
+        |--------------------------------------------------------------------------
+        | Guardar
+        |--------------------------------------------------------------------------
+        */
+
+        Route::post('/', [
+            InstitutionalPageController::class,
+            'store'
+        ])->name('store');
+
+        /*
+        |--------------------------------------------------------------------------
+        | Editar
+        |--------------------------------------------------------------------------
+        */
+
+        Route::get('/{institutionalPage}/edit', [
+            InstitutionalPageController::class,
+            'edit'
+        ])->name('edit');
+
+        /*
+        |--------------------------------------------------------------------------
+        | Actualizar
+        |--------------------------------------------------------------------------
+        */
+
+        Route::put('/{institutionalPage}', [
+            InstitutionalPageController::class,
+            'update'
+        ])->name('update');
+
+        /*
+        |--------------------------------------------------------------------------
+        | Eliminar
+        |--------------------------------------------------------------------------
+        */
+
+        Route::delete('/{institutionalPage}', [
+            InstitutionalPageController::class,
+            'destroy'
+        ])->name('destroy');
+
+        /*
+        |--------------------------------------------------------------------------
+        | Publicar
+        |--------------------------------------------------------------------------
+        */
+
+        Route::patch('/{institutionalPage}/publish', [
+            InstitutionalPageController::class,
+            'publish'
+        ])->name('publish');
+
+        /*
+        |--------------------------------------------------------------------------
+        | Pasar a borrador
+        |--------------------------------------------------------------------------
+        */
+
+        Route::patch('/{institutionalPage}/unpublish', [
+            InstitutionalPageController::class,
+            'unpublish'
+        ])->name('unpublish');
     });

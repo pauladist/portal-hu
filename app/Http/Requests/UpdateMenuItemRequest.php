@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\InstitutionalPage;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -32,7 +33,7 @@ class UpdateMenuItemRequest extends FormRequest
 
             'destination_type' => [
                 'nullable',
-                Rule::in(['url', 'pdf']),
+                Rule::in(['url', 'pdf', 'page']),
             ],
 
             'url' => [
@@ -48,6 +49,12 @@ class UpdateMenuItemRequest extends FormRequest
                 'max:10240',
             ],
 
+            'page_id' => [
+                'nullable',
+                'integer',
+                'exists:institutional_pages,id',
+            ],
+
             'order' => [
                 'required',
                 'integer',
@@ -58,6 +65,7 @@ class UpdateMenuItemRequest extends FormRequest
                 'required',
                 'boolean',
             ],
+
             'is_quick_link' => [
                 'required',
                 'boolean',
@@ -107,6 +115,31 @@ class UpdateMenuItemRequest extends FormRequest
                     );
                 }
             }
+
+            if ($type === 'page') {
+                $pageId = $this->input('page_id');
+
+                if (!$pageId) {
+                    $validator->errors()->add(
+                        'page_id',
+                        'Debe seleccionar una página institucional.'
+                    );
+
+                    return;
+                }
+
+                $pageExists = InstitutionalPage::query()
+                    ->where('id', $pageId)
+                    ->where('status', 'published')
+                    ->exists();
+
+                if (!$pageExists) {
+                    $validator->errors()->add(
+                        'page_id',
+                        'La página institucional seleccionada no está publicada.'
+                    );
+                }
+            }
         });
     }
 
@@ -127,6 +160,8 @@ class UpdateMenuItemRequest extends FormRequest
             'file.file' => 'El archivo seleccionado no es válido.',
             'file.mimes' => 'El archivo debe ser un PDF.',
             'file.max' => 'El archivo no puede superar los 10 MB.',
+
+            'page_id.exists' => 'La página institucional seleccionada no existe.',
 
             'order.required' => 'El orden es obligatorio.',
             'order.integer' => 'El orden debe ser un número entero.',
