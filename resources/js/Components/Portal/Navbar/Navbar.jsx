@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { getMenuItemHref } from "@/Utils/menuLinks";
+import { getMenuItemLinkProps } from "@/Utils/menuLinks";
 import "./Navbar.css";
 
 /* =========================================================
@@ -13,13 +13,10 @@ function NavbarItem({ item, level = 0 }) {
 
     const itemRef = React.useRef(null);
 
-    const getItemHref = () => {
-        if (hasChildren) {
-            return "#";
-        }
-
-        return getMenuItemHref(item);
-    };
+    // Los botones con hijos solo abren el submenú (no navegan).
+    const linkProps = hasChildren
+        ? { href: "#" }
+        : getMenuItemLinkProps(item);
 
     const handleMouseEnter = () => {
         if (!hasChildren) {
@@ -80,7 +77,7 @@ function NavbarItem({ item, level = 0 }) {
                       : ""
             }`}
         >
-            <a href={getItemHref()} className="portal-navbar__item">
+            <a {...linkProps} className="portal-navbar__item">
                 <span>{item.title}</span>
 
                 {hasChildren && (
@@ -125,11 +122,12 @@ function MobileNavItem({ item }) {
     const children = item.children ?? [];
     const hasChildren = children.length > 0;
 
-    const href = getMenuItemHref(item);
-
     if (!hasChildren) {
         return (
-            <a href={href} className="portal-navbar__mobile-link">
+            <a
+                {...getMenuItemLinkProps(item)}
+                className="portal-navbar__mobile-link"
+            >
                 <span>{item.title}</span>
             </a>
         );

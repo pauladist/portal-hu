@@ -31,7 +31,7 @@
 .institutional-index__heading h1 {
     margin: 0;
 
-    color: #163b5c;
+    color: var(--hu-primary, #003764);
 
     font-family: "Montserrat", sans-serif;
     font-size: 34px;
@@ -197,7 +197,7 @@
 
 .institutional-search__clear:hover {
     background: #eef2f5;
-    color: #163b5c;
+    color: var(--hu-primary, #003764);
 }
 
 
@@ -277,7 +277,7 @@
 .institutional-page-card__main h2 {
     margin: 0;
 
-    color: #163b5c;
+    color: var(--hu-primary, #003764);
 
     font-family: "Montserrat", sans-serif;
     font-size: 19px;
@@ -398,7 +398,7 @@
 
 .institutional-page-card__menu-button:hover {
     background: #edf2f6;
-    color: #163b5c;
+    color: var(--hu-primary, #003764);
 }
 
 
@@ -440,7 +440,7 @@
     border-radius: 7px;
 
     background: transparent;
-    color: #344b5f;
+    color: var(--hu-text, #59595b);
 
     font-family: "Montserrat", sans-serif;
     font-size: 12px;

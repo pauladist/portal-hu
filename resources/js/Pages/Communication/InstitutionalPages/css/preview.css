@@ -83,7 +83,7 @@
 .institutional-preview-heading h2 {
     margin: 0;
 
-    color: #163b5c;
+    color: var(--hu-primary, #003764);
 
     font-family: "Montserrat", sans-serif;
     font-size: 24px;
@@ -120,7 +120,7 @@
 
 .institutional-preview-close:hover {
     background: #e4eaee;
-    color: #163b5c;
+    color: var(--hu-primary, #003764);
 }
 
 
@@ -160,7 +160,7 @@
 
     margin: 0 auto;
 
-    color: #344b5f;
+    color: var(--hu-text, #59595b);
 
     font-family: "Montserrat", sans-serif;
     font-size: 15px;
@@ -178,7 +178,7 @@
     margin-top: 28px;
     margin-bottom: 12px;
 
-    color: #163b5c;
+    color: var(--hu-primary, #003764);
 
     font-weight: 700;
     line-height: 1.35;
@@ -212,7 +212,7 @@
 }
 
 .institutional-preview-content a {
-    color: #00649d;
+    color: var(--hu-primary, #003764);
 
     text-decoration: underline;
 }
@@ -268,7 +268,7 @@
 
     background: #f5f7f8;
 
-    color: #596c7d;
+    color: var(--hu-text-secondary, #6f6f72);
 }
 
 

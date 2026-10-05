@@ -22,14 +22,8 @@ export default function Login() {
             <main className="ph-login-page">
                 <section className="ph-login-card">
 
-                    {/* Imagen del Hospital */}
+                    {/* Fondo azul institucional */}
                     <div className="ph-login-hero">
-                        <img
-                            src="/images/hospital.jpg"
-                            alt="Hospital Universitario"
-                        />
-
-                        <div className="ph-login-overlay"></div>
 
                         {/* Logo */}
                         <div className="ph-login-brand">

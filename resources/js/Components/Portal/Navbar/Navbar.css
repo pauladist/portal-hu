@@ -107,13 +107,14 @@
 
     min-height: 42px;
 
-    padding: 7px 12px;
+    padding: 7px 11px;
 
     border-radius: var(--hu-radius-sm);
 
     color: var(--hu-text);
 
-    font-size: 13px;
+    /* Montserrat es más ancha que Arial: 12px equivale visualmente a 13px de Arial */
+    font-size: 12px;
     font-weight: 600;
 
     white-space: nowrap;
