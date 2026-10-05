@@ -632,6 +632,46 @@ a.portal-popular-news__item:hover h4 {
     line-height: 1.55;
 }
 
+.portal-month-news__actions {
+    display: flex;
+    justify-content: center;
+
+    margin-top: 32px;
+}
+
+.portal-month-news__more {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    padding: 11px 24px;
+
+    color: var(--hu-primary);
+    background-color: var(--hu-surface);
+
+    border: 1px solid var(--hu-primary);
+    border-radius: 999px;
+
+    font-family: var(--hu-font);
+    font-size: 13px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease;
+}
+
+.portal-month-news__more:hover {
+    color: #fff;
+    background-color: var(--hu-primary);
+}
+
+.portal-month-news__more .material-symbols-outlined {
+    font-size: 20px;
+}
+
 @media (max-width: 900px) {
 
     .portal-month-news__grid {

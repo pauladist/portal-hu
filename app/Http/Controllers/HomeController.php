@@ -40,20 +40,11 @@ class HomeController extends Controller
             ->get();
 
         /*
-        | Resto de las noticias del mes: las publicadas en el mes actual
-        | que no se están mostrando ya en el carrusel ni en las populares.
+        | Noticias del mes: todas las publicadas en el mes actual
+        | (el "Ver más" se resuelve en el frontend).
         */
-        $shownIds = $latestNews->pluck('id')
-            ->merge($popularNews->pluck('id'))
-            ->unique();
-
-        $monthQuery = News::published()
+        $monthNews = News::published()
             ->where('published_at', '>=', now()->startOfMonth())
-            ->whereNotIn('id', $shownIds);
-
-        $monthTotal = (clone $monthQuery)->count();
-
-        $monthNews = $monthQuery
             ->select(['id', 'title', 'slug', 'subtitle', 'published_at'])
             ->with([
                 'media' => fn ($query) => $query
@@ -61,7 +52,6 @@ class HomeController extends Controller
                     ->where('is_featured', true),
             ])
             ->latest('published_at')
-            ->limit(9)
             ->get();
 
         return Inertia::render('Welcome', [
@@ -72,9 +62,6 @@ class HomeController extends Controller
             'monthNews' => $monthNews,
             'monthInfo' => [
                 'name' => now()->locale('es')->translatedFormat('F'),
-                'year' => now()->year,
-                'month' => now()->month,
-                'total' => $monthTotal,
             ],
         ]);
     }

@@ -134,7 +134,7 @@
 .news-form-field label {
     color: var(--hu-primary);
 
-    font-size: 13px;
+    font-size: 17px;
     font-weight: 700;
 }
 
@@ -227,7 +227,7 @@
     color: var(--hu-text);
 
     font-family: var(--hu-font);
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 600;
 
     cursor: pointer;
@@ -237,6 +237,10 @@
         border-color 0.2s ease,
         color 0.2s ease,
         transform 0.15s ease;
+}
+
+.news-chip-add .material-symbols-outlined {
+    font-size: 18px;
 }
 
 .news-chip:hover {
