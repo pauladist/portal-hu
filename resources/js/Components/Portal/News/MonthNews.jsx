@@ -1,7 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from '@inertiajs/react';
 
+const PAGE_SIZE = 6;
+
 export default function MonthNews({ news = [], info = null }) {
+
+    const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
     if (!info || news.length === 0) {
         return null;
@@ -9,6 +13,9 @@ export default function MonthNews({ news = [], info = null }) {
 
     const monthName =
         info.name.charAt(0).toUpperCase() + info.name.slice(1);
+
+    const visibleNews = news.slice(0, visibleCount);
+    const hasMore = visibleCount < news.length;
 
     return (
         <div className="portal-month-news">
@@ -20,26 +27,14 @@ export default function MonthNews({ news = [], info = null }) {
                     </span>
 
                     <h2 className="portal-news__title">
-                        Más noticias de {monthName}
+                        Noticias de {monthName}
                     </h2>
                 </div>
-
-                {info.total > news.length && (
-                    <a
-                        href={`/noticias?year=${info.year}&month=${info.month}`}
-                        className="portal-news__archive-link"
-                    >
-                        Ver todas las de {info.name}
-                        <span className="material-symbols-outlined">
-                            arrow_forward
-                        </span>
-                    </a>
-                )}
             </div>
 
             <div className="portal-month-news__grid">
 
-                {news.map((item) => {
+                {visibleNews.map((item) => {
 
                     const image = item.media?.[0];
 
@@ -57,6 +52,7 @@ export default function MonthNews({ news = [], info = null }) {
                                         src={`/storage/${image.path}`}
                                         alt={image.title || item.title}
                                         className="portal-month-news__image"
+                                        loading="lazy"
                                     />
                                 )}
 
@@ -94,6 +90,23 @@ export default function MonthNews({ news = [], info = null }) {
                 })}
 
             </div>
+
+            {hasMore && (
+                <div className="portal-month-news__actions">
+                    <button
+                        type="button"
+                        className="portal-month-news__more"
+                        onClick={() =>
+                            setVisibleCount((count) => count + PAGE_SIZE)
+                        }
+                    >
+                        Ver más noticias
+                        <span className="material-symbols-outlined">
+                            expand_more
+                        </span>
+                    </button>
+                </div>
+            )}
 
         </div>
     );
