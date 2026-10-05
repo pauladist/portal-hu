@@ -5,6 +5,7 @@
 /* ---------------------------------------------------------
    ICONOS
    --------------------------------------------------------- */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,300,0,0');
    
 /* ---------------------------------------------------------
@@ -14,11 +15,13 @@
 :root {
     --hu-primary: #003764;
     --hu-primary-dark: #002b4d;
+    --hu-primary-border: rgba(0, 55, 100, 0.18);
     --hu-secondary: #c7a36e;
 
     --hu-text: #59595b;
     --hu-text-light: #777777;
     --hu-text-muted: #9aa4b2;
+    --hu-text-secondary: #6f6f72;
 
     --hu-background: #f5f7fa;
     --hu-surface: #ffffff;
@@ -28,6 +31,9 @@
     --hu-success: #2e7d32;
     --hu-warning: #ed9f00;
     --hu-danger: #b42318;
+    --hu-danger-dark: #8f1d14;
+    --hu-danger-bg: #fff1f0;
+    --hu-danger-border: #edcaca;
 
     --hu-radius-sm: 8px;
     --hu-radius-md: 12px;

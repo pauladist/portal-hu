@@ -61,7 +61,7 @@
     border-radius: var(--hu-radius-lg);
     background: var(--hu-surface);
 
-    color: #344b5f;
+    color: var(--hu-text, #59595b);
 
     font-family: var(--hu-font);
     font-size: 15px;
@@ -83,7 +83,7 @@
     margin-top: 28px;
     margin-bottom: 12px;
 
-    color: #163b5c;
+    color: var(--hu-primary, #003764);
 
     font-weight: 700;
     line-height: 1.35;
@@ -108,7 +108,7 @@
 }
 
 .portal-page__content a {
-    color: #00649d;
+    color: var(--hu-primary, #003764);
     text-decoration: underline;
 }
 
@@ -155,7 +155,7 @@
     border-left: 4px solid #c7a36e;
     background: #f5f7f8;
 
-    color: #596c7d;
+    color: var(--hu-text-secondary, #6f6f72);
 }
 
 .portal-page__empty {

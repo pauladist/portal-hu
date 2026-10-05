@@ -29,7 +29,7 @@
 
 .users-header p {
     margin: 8px 0 0;
-    color: var(--hu-text-secondary, #657687);
+    color: var(--hu-text-secondary, #6f6f72);
     font-size: 15px;
     line-height: 1.5;
 }
@@ -123,7 +123,7 @@
 
     border-bottom: 1px solid var(--hu-border, #e1e6eb);
 
-    color: #647582;
+    color: var(--hu-text-secondary, #6f6f72);
 
     font-family: inherit;
     font-size: 11px;
@@ -215,7 +215,7 @@
 
     overflow: hidden;
 
-    color: #42515d;
+    color: var(--hu-text, #59595b);
 
     font-size: 13px;
 
@@ -238,7 +238,7 @@
     border-radius: 6px;
 
     background: #eef5f9;
-    color: #2474a8;
+    color: var(--hu-primary, #003764);
 
     font-size: 11px;
     font-weight: 600;
@@ -293,9 +293,9 @@
    ========================================================= */
 
 .user-action-edit {
-    border: 1px solid #c7dfee;
+    border: 1px solid var(--hu-primary-border, rgba(0, 55, 100, 0.18));
     background: #ffffff;
-    color: #2474a8;
+    color: var(--hu-primary, #003764);
 }
 
 .user-action-edit:hover {
@@ -314,9 +314,9 @@
    ========================================================= */
 
 .user-action-delete {
-    border: 1px solid #edcaca;
+    border: 1px solid var(--hu-danger-border, #edcaca);
     background: #ffffff;
-    color: #b33b3b;
+    color: var(--hu-danger, #b42318);
 }
 
 .user-action-delete:hover {
@@ -357,7 +357,7 @@
 .users-empty p {
     margin: 0;
 
-    color: var(--hu-text-secondary, #657687);
+    color: var(--hu-text-secondary, #6f6f72);
 
     font-size: 14px;
     line-height: 1.5;
@@ -413,7 +413,7 @@
 .users-delete-content p {
     margin: 0;
 
-    color: #374151;
+    color: var(--hu-text, #59595b);
 
     font-size: 14px;
     line-height: 1.6;
@@ -467,24 +467,24 @@
 .users-delete-cancel {
     border: 1px solid #d5dce3;
     background: #ffffff;
-    color: #4b5563;
+    color: var(--hu-text, #59595b);
 }
 
 .users-delete-cancel:hover {
     border-color: #b8c2cc;
     background: #f7f9fa;
-    color: #374151;
+    color: var(--hu-text, #59595b);
 }
 
 .users-delete-confirm {
-    border: 1px solid #c62828;
-    background: #c62828;
+    border: 1px solid var(--hu-danger, #b42318);
+    background: var(--hu-danger, #b42318);
     color: #ffffff;
 }
 
 .users-delete-confirm:hover {
-    border-color: #a91f1f;
-    background: #a91f1f;
+    border-color: var(--hu-danger-dark, #8f1d14);
+    background: var(--hu-danger-dark, #8f1d14);
 }
 
 
@@ -562,7 +562,7 @@
 .users-form-header p {
     margin: 7px 0 0;
 
-    color: var(--hu-text-secondary, #657687);
+    color: var(--hu-text-secondary, #6f6f72);
 
     font-size: 13px;
     line-height: 1.5;
@@ -589,7 +589,7 @@
     border-radius: 7px;
 
     background: #ffffff;
-    color: #657687;
+    color: var(--hu-text-secondary, #6f6f72);
 
     font-family: inherit;
     font-size: 21px;
@@ -647,7 +647,7 @@
 .users-form-field label {
     margin-bottom: 7px;
 
-    color: #42515d;
+    color: var(--hu-text, #59595b);
 
     font-size: 12px;
     font-weight: 700;
@@ -704,7 +704,7 @@
 
     margin-top: 6px;
 
-    color: #b33b3b;
+    color: var(--hu-danger, #b42318);
 
     font-size: 11px;
     line-height: 1.4;
@@ -724,11 +724,11 @@
 
     padding: 0 12px;
 
-    border: 1px solid #c7dfee;
+    border: 1px solid var(--hu-primary-border, rgba(0, 55, 100, 0.18));
     border-radius: 7px;
 
     background: #eef5f9;
-    color: #2474a8;
+    color: var(--hu-primary, #003764);
 
     font-size: 12px;
     font-weight: 600;
@@ -795,14 +795,14 @@
     border: 1px solid #d5dce3;
 
     background: #ffffff;
-    color: #4b5563;
+    color: var(--hu-text, #59595b);
 }
 
 .users-form-cancel:hover {
     border-color: #b8c2cc;
 
     background: #f7f9fa;
-    color: #374151;
+    color: var(--hu-text, #59595b);
 }
 
 

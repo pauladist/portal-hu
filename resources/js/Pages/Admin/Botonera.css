@@ -30,7 +30,7 @@
 
 .botonera-header p {
     margin: 8px 0 0;
-    color: var(--hu-text-secondary, #657687);
+    color: var(--hu-text-secondary, #6f6f72);
     font-size: 15px;
     line-height: 1.5;
 }
@@ -94,7 +94,7 @@
 
     margin-bottom: 10px;
 
-    color: var(--hu-text-secondary, #657687);
+    color: var(--hu-text-secondary, #6f6f72);
 
     font-size: 13px;
 }
@@ -340,7 +340,7 @@
 
     margin-top: 4px;
 
-    color: var(--hu-text-secondary, #657687);
+    color: var(--hu-text-secondary, #6f6f72);
 
     font-size: 12px;
     line-height: 1.3;
@@ -392,7 +392,7 @@
 
     padding: 0 9px 0 12px;
 
-    border: 1px solid #c7dfee;
+    border: 1px solid var(--hu-primary-border, rgba(0, 55, 100, 0.18));
     border-radius: 6px;
 
     font-family: inherit;
@@ -409,9 +409,9 @@
 
 .status-toggle.is-active {
     background: #e5f2fb;
-    border-color: #c7dfee;
+    border-color: var(--hu-primary-border, rgba(0, 55, 100, 0.18));
 
-    color: #2474a8;
+    color: var(--hu-primary, #003764);
 }
 
 .status-toggle.is-active:hover {
@@ -420,10 +420,10 @@
 }
 
 .status-toggle.is-inactive {
-    background: #fff0f0;
-    border-color: #edcaca;
+    background: var(--hu-danger-bg, #fff1f0);
+    border-color: var(--hu-danger-border, #edcaca);
 
-    color: #b33b3b;
+    color: var(--hu-danger, #b42318);
 }
 
 .status-toggle.is-inactive:hover {
@@ -475,7 +475,7 @@
 
     background: var(--hu-white, #ffffff);
 
-    color: #647582;
+    color: var(--hu-text-secondary, #6f6f72);
 
     font-family: inherit;
     font-size: 11px;
@@ -515,7 +515,7 @@
     background: var(--hu-white, #ffffff);
     border-color: #d9e0e5;
 
-    color: #647582;
+    color: var(--hu-text-secondary, #6f6f72);
 }
 
 .quick-link-button svg {
@@ -613,7 +613,7 @@
 
     background: transparent;
 
-    color: #42515d;
+    color: var(--hu-text, #59595b);
 
     font-family: inherit;
     font-size: 13px;
@@ -639,7 +639,7 @@
 }
 
 .menu-item-dropdown button.is-danger:hover {
-    background: #fff0f0;
+    background: var(--hu-danger-bg, #fff1f0);
 
     color: #c73737;
 }
@@ -677,7 +677,7 @@
 .botonera-empty p {
     margin: 0;
 
-    color: var(--hu-text-secondary, #657687);
+    color: var(--hu-text-secondary, #6f6f72);
 
     font-size: 14px;
 }
@@ -749,7 +749,7 @@
 
     background: #ffffff;
 
-    color: #647582;
+    color: var(--hu-text-secondary, #6f6f72);
 
     font-family: inherit;
     font-size: 24px;
@@ -861,7 +861,7 @@
 .delete-modal__content p {
     margin: 0;
 
-    color: #374151;
+    color: var(--hu-text, #59595b);
     font-size: 15px;
     line-height: 1.6;
 }
@@ -915,7 +915,7 @@
 .delete-modal__cancel {
     border: 1px solid #d5dce3;
     background: #ffffff;
-    color: #4b5563;
+    color: var(--hu-text, #59595b);
 }
 
 .delete-modal__cancel:hover {
@@ -926,14 +926,14 @@
 /* ELIMINAR */
 
 .delete-modal__confirm {
-    border: 1px solid #c62828;
-    background: #c62828;
+    border: 1px solid var(--hu-danger, #b42318);
+    background: var(--hu-danger, #b42318);
     color: #ffffff;
 }
 
 .delete-modal__confirm:hover {
-    border-color: #a91f1f;
-    background: #a91f1f;
+    border-color: var(--hu-danger-dark, #8f1d14);
+    background: var(--hu-danger-dark, #8f1d14);
 }
 /* =========================================================
    TOAST DE BOTONERA

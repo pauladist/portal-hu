@@ -50,7 +50,7 @@
 .institutional-form-header h1 {
     margin: 0;
 
-    color: #163b5c;
+    color: var(--hu-primary, #003764);
 
     font-family: "Montserrat", sans-serif;
     font-size: 30px;
@@ -270,7 +270,7 @@
 .institutional-form-button--cancel:hover {
     background: #f5f7f9;
     border-color: #c8d3dc;
-    color: #163b5c;
+    color: var(--hu-primary, #003764);
 }
 
 

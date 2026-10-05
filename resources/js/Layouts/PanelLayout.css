@@ -21,41 +21,15 @@
     height: 100vh;
     overflow: hidden;
     z-index: 1000;
-    background: var(--hu-primary-dark, #002b4d);
+    background: var(--hu-primary, #003764);
 }
 
+/* Fondo azul institucional (sin imagen) */
 .panel-sidebar-background {
     position: absolute;
     inset: 0;
 
-    background-image:
-        linear-gradient(
-            to bottom,
-            rgba(0, 55, 100, 0.88) 0%,
-            rgba(0, 55, 100, 0.84) 45%,
-            rgba(0, 43, 77, 0.94) 100%
-        ),
-        url('/images/hospital-bg.jpg');
-
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-}
-
-
-/* Capa adicional para integrar mejor la foto */
-.panel-sidebar-background::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-
-    background:
-        linear-gradient(
-            180deg,
-            rgba(0, 43, 77, 0.15) 0%,
-            rgba(0, 43, 77, 0.10) 50%,
-            rgba(0, 43, 77, 0.30) 100%
-        );
+    background: var(--hu-primary, #003764);
 }
 
 

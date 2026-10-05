@@ -179,7 +179,7 @@
 .menu-item-form__error {
     margin-top: 7px;
 
-    color: #c62828;
+    color: var(--hu-danger, #b42318);
 
     font-size: 12px;
 }
@@ -227,7 +227,7 @@
     border: 1px solid #d9dee5;
 
     background: #ffffff;
-    color: #4b5563;
+    color: var(--hu-text, #59595b);
 }
 
 .menu-item-form__button--secondary:hover {

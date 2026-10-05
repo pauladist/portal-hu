@@ -406,7 +406,7 @@
 /* ---------- Contenido del editor (Tiptap) ---------- */
 
 .portal-news-show__content {
-    color: #344b5f;
+    color: var(--hu-text, #59595b);
 
     font-family: var(--hu-font);
     font-size: 16px;
@@ -425,7 +425,7 @@
 .portal-news-show__content h4 {
     margin: 30px 0 12px;
 
-    color: #163b5c;
+    color: var(--hu-primary, #003764);
 
     font-weight: 700;
     line-height: 1.35;
@@ -451,7 +451,7 @@
 }
 
 .portal-news-show__content a {
-    color: #00649d;
+    color: var(--hu-primary, #003764);
     text-decoration: underline;
 }
 
@@ -462,7 +462,7 @@
     border-left: 4px solid var(--hu-secondary);
     background: var(--hu-background);
 
-    color: #596c7d;
+    color: var(--hu-text-secondary, #6f6f72);
 }
 
 .portal-news-show__content hr {
