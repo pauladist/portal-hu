@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Head, Link, router } from '@inertiajs/react';
 
 import Navbar from '@/Components/Portal/Navbar/Navbar';
@@ -22,9 +22,18 @@ export default function Archive({
 }) {
     const year = filters.year ? Number(filters.year) : null;
     const month = filters.month ? Number(filters.month) : null;
+    const appliedSearch = filters.search ?? '';
 
-    const applyFilters = (params) => {
-        router.get('/noticias', params, {
+    const [search, setSearch] = useState(appliedSearch);
+
+    const applyFilters = (params = {}) => {
+        const query = { ...params };
+
+        if (search.trim() !== '') {
+            query.search = search.trim();
+        }
+
+        router.get('/noticias', query, {
             preserveScroll: true,
             preserveState: true,
             replace: true,
@@ -40,6 +49,21 @@ export default function Archive({
             value === month ? { year } : { year, month: value }
         );
     };
+
+    // Búsqueda en vivo: se aplica mientras se escribe (con una pequeña pausa)
+    useEffect(() => {
+        if (search.trim() === appliedSearch) {
+            return undefined;
+        }
+
+        const timeout = setTimeout(() => {
+            applyFilters(
+                year ? (month ? { year, month } : { year }) : {}
+            );
+        }, 300);
+
+        return () => clearTimeout(timeout);
+    }, [search]);
 
     const periodLabel = year
         ? month
@@ -67,13 +91,31 @@ export default function Archive({
                     <div className="portal-archive__container">
 
                         <header className="portal-archive__header">
-                            <span className="portal-archive__eyebrow">
-                                Noticias
-                            </span>
+                            <div>
+                                <span className="portal-archive__eyebrow">
+                                    Noticias
+                                </span>
 
-                            <h2 className="portal-archive__title">
-                                Historial de noticias
-                            </h2>
+                                <h2 className="portal-archive__title">
+                                    Historial de noticias
+                                </h2>
+                            </div>
+
+                            <div className="portal-search">
+                                <span className="material-symbols-outlined">
+                                    search
+                                </span>
+
+                                <input
+                                    type="search"
+                                    placeholder="Buscar noticia..."
+                                    aria-label="Buscar noticias"
+                                    value={search}
+                                    onChange={(event) =>
+                                        setSearch(event.target.value)
+                                    }
+                                />
+                            </div>
                         </header>
 
                         {/* FILTROS */}
@@ -153,12 +195,20 @@ export default function Archive({
                             {' · '}
                             {news.total}{' '}
                             {news.total === 1 ? 'noticia' : 'noticias'}
+                            {appliedSearch && (
+                                <>
+                                    {' · '}
+                                    búsqueda: “{appliedSearch}”
+                                </>
+                            )}
                         </p>
 
                         {/* LISTADO */}
                         {news.data.length === 0 ? (
                             <p className="portal-archive__empty">
-                                No hay noticias publicadas en este período.
+                                {appliedSearch
+                                    ? `No se encontraron noticias para “${appliedSearch}”.`
+                                    : 'No hay noticias publicadas en este período.'}
                             </p>
                         ) : (
                             <div className="portal-archive__grid">
@@ -272,6 +322,10 @@ export default function Archive({
                     </div>
                 </section>
             </main>
+
+            <footer className="portal-footer">
+                © {new Date().getFullYear()} Hospital Universitario · Mendoza, Argentina
+            </footer>
         </>
     );
 }

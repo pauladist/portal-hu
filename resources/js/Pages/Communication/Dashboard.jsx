@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Head, Link, router } from '@inertiajs/react';
 import PanelLayout from '@/Layouts/PanelLayout';
 
@@ -8,6 +8,7 @@ export default function Dashboard({
     news,
     counts,
     filters,
+    years = [],
 }) {
     const [search, setSearch] = useState(filters?.search ?? '');
     const [month, setMonth] = useState(filters?.month ?? '');
@@ -84,15 +85,40 @@ export default function Dashboard({
 
     /*
     |--------------------------------------------------------------------------
-    | Buscar
+    | Buscar (en vivo, mientras se escribe)
     |--------------------------------------------------------------------------
     */
 
+    useEffect(() => {
+        if (search === (filters?.search ?? '')) {
+            return undefined;
+        }
+
+        const timeout = setTimeout(() => applyFilters(), 300);
+
+        return () => clearTimeout(timeout);
+    }, [search]);
+
+    // Enter busca al instante, sin esperar
     const handleSearchKeyDown = (event) => {
         if (event.key === 'Enter') {
             applyFilters();
         }
     };
+
+    /*
+    |--------------------------------------------------------------------------
+    | Años del filtro (los que tienen noticias)
+    |--------------------------------------------------------------------------
+    */
+
+    const yearOptions = years.map(String);
+
+    if (year && !yearOptions.includes(String(year))) {
+        yearOptions.push(String(year));
+    }
+
+    yearOptions.sort((a, b) => Number(b) - Number(a));
 
 
     /*
@@ -271,9 +297,11 @@ export default function Dashboard({
                             Año
                         </option>
 
-                        <option value="2026">2026</option>
-                        <option value="2025">2025</option>
-                        <option value="2024">2024</option>
+                        {yearOptions.map((value) => (
+                            <option key={value} value={value}>
+                                {value}
+                            </option>
+                        ))}
 
                     </select>
 

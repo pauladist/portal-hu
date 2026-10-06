@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Head, Link } from '@inertiajs/react';
 
 import Navbar from '@/Components/Portal/Navbar/Navbar';
@@ -14,18 +14,80 @@ const formatDate = (value) =>
         year: 'numeric',
     });
 
+/* Imagen ampliada (portada o imágenes del contenido) */
+function ImageLightbox({ image = null, onClose }) {
+    useEffect(() => {
+        if (!image) {
+            return undefined;
+        }
+
+        const handleKeyDown = (event) => {
+            if (event.key === 'Escape') {
+                onClose();
+            }
+        };
+
+        const previousOverflow = document.body.style.overflow;
+
+        document.addEventListener('keydown', handleKeyDown);
+        document.body.style.overflow = 'hidden';
+
+        return () => {
+            document.removeEventListener('keydown', handleKeyDown);
+            document.body.style.overflow = previousOverflow;
+        };
+    }, [image, onClose]);
+
+    if (!image) {
+        return null;
+    }
+
+    return (
+        <div
+            className="portal-lightbox"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Imagen ampliada"
+            onClick={onClose}
+        >
+            <button
+                type="button"
+                className="portal-lightbox__close"
+                onClick={onClose}
+                aria-label="Cerrar imagen"
+            >
+                <span className="material-symbols-outlined">
+                    close
+                </span>
+            </button>
+
+            <img
+                src={image.src}
+                alt={image.alt}
+                className="portal-lightbox__image"
+                onClick={(event) => event.stopPropagation()}
+            />
+        </div>
+    );
+}
+
 export default function Show({
     news,
+    previousNews = null,
+    nextNews = null,
     relatedNews = [],
     menuItems = [],
     quickLinks = [],
 }) {
-    // Vuelve a la página anterior (home, historial con sus filtros, etc.).
-    // Si no hay historial (ej: se abrió en una pestaña nueva), va al historial.
-    const handleBack = (event) => {
-        if (window.history.length > 1) {
-            event.preventDefault();
-            window.history.back();
+    // Imagen ampliada (portada o imágenes del contenido)
+    const [lightboxImage, setLightboxImage] = useState(null);
+
+    const handleContentClick = (event) => {
+        if (event.target instanceof HTMLImageElement) {
+            setLightboxImage({
+                src: event.target.currentSrc || event.target.src,
+                alt: event.target.alt,
+            });
         }
     };
 
@@ -51,14 +113,13 @@ export default function Show({
                         <article className="portal-news-show">
 
                             <a
-                                href="/noticias"
+                                href="/"
                                 className="portal-news-show__back"
-                                onClick={handleBack}
                             >
                                 <span className="material-symbols-outlined">
                                     arrow_back
                                 </span>
-                                Volver
+                                Volver al inicio
                             </a>
 
                             {/* ENCABEZADO */}
@@ -104,16 +165,29 @@ export default function Show({
 
                             {/* PORTADA */}
                             {cover && (
-                                <img
-                                    src={`/storage/${cover.path}`}
-                                    alt={cover.title || news.title}
-                                    className="portal-news-show__cover"
-                                />
+                                <button
+                                    type="button"
+                                    className="portal-news-show__cover-button"
+                                    aria-label="Ampliar imagen de portada"
+                                    onClick={() =>
+                                        setLightboxImage({
+                                            src: `/storage/${cover.path}`,
+                                            alt: cover.title || news.title,
+                                        })
+                                    }
+                                >
+                                    <img
+                                        src={`/storage/${cover.path}`}
+                                        alt={cover.title || news.title}
+                                        className="portal-news-show__cover"
+                                    />
+                                </button>
                             )}
 
                             {/* CONTENIDO COMPLETO */}
                             <div
                                 className="portal-news-show__content"
+                                onClick={handleContentClick}
                                 dangerouslySetInnerHTML={{ __html: news.content }}
                             />
 
@@ -124,6 +198,42 @@ export default function Show({
                                         <span key={tag.id}>#{tag.title}</span>
                                     ))}
                                 </footer>
+                            )}
+
+                            {/* NOTICIA ANTERIOR / SIGUIENTE */}
+                            {(previousNews || nextNews) && (
+                                <nav
+                                    className="portal-news-show__nav"
+                                    aria-label="Navegación entre noticias"
+                                >
+                                    {previousNews ? (
+                                        <Link
+                                            href={`/noticias/${previousNews.slug}`}
+                                            className="portal-news-show__back"
+                                        >
+                                            <span className="material-symbols-outlined">
+                                                arrow_back
+                                            </span>
+                                            Noticia anterior
+                                        </Link>
+                                    ) : (
+                                        <span />
+                                    )}
+
+                                    {nextNews ? (
+                                        <Link
+                                            href={`/noticias/${nextNews.slug}`}
+                                            className="portal-news-show__back"
+                                        >
+                                            Siguiente noticia
+                                            <span className="material-symbols-outlined">
+                                                arrow_forward
+                                            </span>
+                                        </Link>
+                                    ) : (
+                                        <span />
+                                    )}
+                                </nav>
                             )}
 
                         </article>
@@ -185,6 +295,15 @@ export default function Show({
                     </div>
                 </section>
             </main>
+
+            <footer className="portal-footer">
+                © {new Date().getFullYear()} Hospital Universitario · Mendoza, Argentina
+            </footer>
+
+            <ImageLightbox
+                image={lightboxImage}
+                onClose={() => setLightboxImage(null)}
+            />
         </>
     );
 }

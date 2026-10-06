@@ -29,6 +29,10 @@ export default function Welcome({
                     monthInfo={monthInfo}
                 />
             </main>
+
+            <footer className="portal-footer">
+                © {new Date().getFullYear()} Hospital Universitario · Mendoza, Argentina
+            </footer>
         </>
     );
 }

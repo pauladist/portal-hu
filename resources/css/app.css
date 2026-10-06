@@ -179,6 +179,77 @@ p {
 
 
 /* ---------------------------------------------------------
+   BUSCADOR DEL PORTAL
+   --------------------------------------------------------- */
+
+.portal-search {
+    position: relative;
+
+    width: 100%;
+    max-width: 300px;
+}
+
+
+.portal-search .material-symbols-outlined {
+    position: absolute;
+    top: 50%;
+    left: 14px;
+
+    color: var(--hu-text-muted);
+
+    font-size: 20px;
+
+    transform: translateY(-50%);
+
+    pointer-events: none;
+}
+
+
+.portal-search input {
+    width: 100%;
+    padding: 10px 16px 10px 42px;
+
+    color: var(--hu-text);
+    background-color: var(--hu-surface);
+
+    border: 1px solid var(--hu-border);
+    border-radius: 999px;
+
+    font-family: var(--hu-font);
+    font-size: 13px;
+
+    outline: none;
+
+    transition: border-color 0.2s ease;
+}
+
+
+.portal-search input::placeholder {
+    color: var(--hu-text-muted);
+}
+
+
+.portal-search input:focus {
+    border-color: var(--hu-primary);
+}
+
+
+/* ---------------------------------------------------------
+   FOOTER DEL PORTAL
+   --------------------------------------------------------- */
+
+.portal-footer {
+    padding: 20px 30px;
+
+    color: rgba(255, 255, 255, 0.8);
+    background-color: var(--hu-primary-dark);
+
+    font-size: 12px;
+    text-align: center;
+}
+
+
+/* ---------------------------------------------------------
    RESPONSIVE
    --------------------------------------------------------- */
 
@@ -187,6 +258,14 @@ p {
     .hu-container {
         padding-left: 18px;
         padding-right: 18px;
+    }
+
+    .portal-footer {
+        padding: 18px;
+    }
+
+    .portal-search {
+        max-width: none;
     }
 }
 
