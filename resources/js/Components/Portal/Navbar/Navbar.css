@@ -79,6 +79,7 @@
 .portal-navbar__menu {
     display: flex;
     align-items: center;
+    justify-content: center;
 
     gap: 4px;
 
@@ -523,7 +524,141 @@
 }
 
 /* =========================================================
-   MOBILE
+   MEDICIÓN (oculto)
+   =========================================================
+
+   Réplica invisible de los ítems para medir su ancho real.
+   ========================================================= */
+
+.portal-navbar__measure {
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    height: 0;
+    overflow: hidden;
+
+    visibility: hidden;
+    pointer-events: none;
+}
+
+/* =========================================================
+   MODO COMPACTO (hamburguesa)
+   =========================================================
+
+   Lo activa Navbar.jsx cuando los ítems no entran en la fila,
+   sin importar el ancho de la pantalla.
+   ========================================================= */
+
+.portal-navbar--compact .portal-navbar__container,
+.portal-navbar--compact .portal-navbar__container--more-open {
+    border-radius: var(--hu-radius-md);
+}
+
+.portal-navbar--compact .portal-navbar__brand {
+    margin-right: 0;
+}
+
+.portal-navbar--compact .portal-navbar__menu {
+    display: none;
+}
+
+.portal-navbar--compact .portal-navbar__toggle {
+    display: flex;
+}
+
+.portal-navbar--compact .portal-navbar__mobile {
+    display: block;
+
+    max-height: 0;
+    overflow: hidden;
+
+    border-radius: 0 0 var(--hu-radius-md) var(--hu-radius-md);
+
+    transition: max-height 0.3s ease;
+}
+
+.portal-navbar--compact .portal-navbar__mobile--open {
+    max-height: calc(100vh - 100px);
+    overflow-y: auto;
+
+    border-top: 1px solid var(--hu-border);
+}
+
+.portal-navbar--compact .portal-navbar__mobile-menu {
+    display: flex;
+    flex-direction: column;
+
+    padding: 8px 12px 12px;
+}
+
+.portal-navbar--compact .portal-navbar__mobile-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    width: 100%;
+    min-height: 46px;
+
+    padding: 10px 12px;
+
+    border: 0;
+    border-radius: var(--hu-radius-sm);
+
+    background: transparent;
+    color: var(--hu-text);
+
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: left;
+
+    cursor: pointer;
+}
+
+.portal-navbar--compact .portal-navbar__mobile-link:hover,
+.portal-navbar--compact .portal-navbar__mobile-link:active,
+.portal-navbar--compact .portal-navbar__mobile-link.is-open {
+    background: #f1f4f7;
+    color: var(--hu-primary);
+}
+
+.portal-navbar--compact .portal-navbar__mobile-icon {
+    flex-shrink: 0;
+
+    margin-left: 12px;
+
+    font-size: 22px;
+
+    color: var(--hu-primary);
+}
+
+.portal-navbar--compact .portal-navbar__mobile-children {
+    margin: 2px 0 6px 14px;
+    padding-left: 8px;
+
+    border-left: 2px solid var(--hu-border);
+}
+
+.portal-navbar--compact
+    .portal-navbar__mobile-children
+    .portal-navbar__mobile-link {
+    min-height: 42px;
+
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.portal-navbar--compact .portal-navbar__more-row {
+    display: none;
+}
+
+/* =========================================================
+   MOBILE (solo tamaños: la hamburguesa la decide el modo compacto)
    ========================================================= */
 
 @media (max-width: 768px) {
@@ -540,127 +675,14 @@
         border-radius: var(--hu-radius-md);
     }
 
-    /* Por si se abrió "Más" en desktop y luego se achica la ventana */
-    .portal-navbar__container--more-open {
-        border-radius: var(--hu-radius-md);
-    }
-
     .portal-navbar__top {
         min-height: 62px;
 
         padding: 7px 12px;
     }
 
-    .portal-navbar__brand {
-        margin-right: 0;
-    }
-
     .portal-navbar__brand img {
         height: 42px;
-    }
-
-    /* Ocultar desktop */
-
-    .portal-navbar__menu {
-        display: none;
-    }
-
-    /* Hamburger */
-
-    .portal-navbar__toggle {
-        display: flex;
-    }
-
-    /* Panel del menú mobile (dentro de la tarjeta blanca) */
-
-    .portal-navbar__mobile {
-        display: block;
-
-        max-height: 0;
-        overflow: hidden;
-
-        border-radius: 0 0 var(--hu-radius-md) var(--hu-radius-md);
-
-        transition: max-height 0.3s ease;
-    }
-
-    .portal-navbar__mobile--open {
-        max-height: calc(100vh - 100px);
-        overflow-y: auto;
-
-        border-top: 1px solid var(--hu-border);
-    }
-
-    .portal-navbar__mobile-menu {
-        display: flex;
-        flex-direction: column;
-
-        padding: 8px 12px 12px;
-    }
-
-    /* Items (link o botón con +/-) */
-
-    .portal-navbar__mobile-link {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-
-        width: 100%;
-        min-height: 46px;
-
-        padding: 10px 12px;
-
-        border: 0;
-        border-radius: var(--hu-radius-sm);
-
-        background: transparent;
-        color: var(--hu-text);
-
-        font-family: inherit;
-        font-size: 14px;
-        font-weight: 600;
-        text-align: left;
-
-        cursor: pointer;
-    }
-
-    .portal-navbar__mobile-link:hover,
-    .portal-navbar__mobile-link:active,
-    .portal-navbar__mobile-link.is-open {
-        background: #f1f4f7;
-        color: var(--hu-primary);
-    }
-
-    .portal-navbar__mobile-icon {
-        flex-shrink: 0;
-
-        margin-left: 12px;
-
-        font-size: 22px;
-
-        color: var(--hu-primary);
-    }
-
-    /* Hijos (se indentan solos a cada nivel) */
-
-    .portal-navbar__mobile-children {
-        margin: 2px 0 6px 14px;
-        padding-left: 8px;
-
-        border-left: 2px solid var(--hu-border);
-    }
-
-    .portal-navbar__mobile-children .portal-navbar__mobile-link {
-        min-height: 42px;
-
-        font-size: 13px;
-        font-weight: 500;
-    }
-
-    /* Ocultar Más desktop */
-
-    .portal-navbar__more-row {
-        display: none;
     }
 }
 
