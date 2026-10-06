@@ -184,6 +184,9 @@ export default function MenuItemCard({
                     onAddChild={onAddChild}
                     onEdit={onEdit}
                     onDelete={onDelete}
+                    openActionId={openActionId}
+                    toggleActionMenu={toggleActionMenu}
+                    closeActionMenu={closeActionMenu}
                 />
             )}
         </div>
