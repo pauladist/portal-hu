@@ -370,6 +370,10 @@
 .institutional-page-card__actions {
     position: relative;
 
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
     flex-shrink: 0;
 
     align-self: flex-start;
@@ -377,89 +381,44 @@
     padding: 17px 17px 0 0;
 }
 
-.institutional-page-card__menu-button {
-    display: flex;
+/* Botones de ícono (mismo estilo que Noticias y Usuarios) */
+
+.institutional-action-button {
+    display: inline-flex;
     align-items: center;
     justify-content: center;
 
-    width: 36px;
-    height: 36px;
+    width: 34px;
+    height: 34px;
 
     padding: 0;
 
-    border: none;
-    border-radius: 50%;
-
-    background: transparent;
-    color: #506578;
-
-    cursor: pointer;
-}
-
-.institutional-page-card__menu-button:hover {
-    background: #edf2f6;
-    color: var(--hu-primary, #003764);
-}
-
-
-/* =========================================================
-   MENÚ
-   ========================================================= */
-
-.institutional-page-card__menu {
-    position: absolute;
-    z-index: 30;
-
-    top: 56px;
-    right: 12px;
-
-    width: 180px;
-
-    padding: 7px;
-
-    border: 1px solid #e0e5ea;
-    border-radius: 10px;
-
-    background: #ffffff;
-
-    box-shadow:
-        0 12px 30px rgba(28, 52, 70, 0.14);
-}
-
-.institutional-page-card__menu button {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-
-    width: 100%;
-    min-height: 40px;
-
-    padding: 0 10px;
-
-    border: none;
+    border: 0;
     border-radius: 7px;
 
     background: transparent;
-    color: var(--hu-text, #59595b);
 
-    font-family: "Montserrat", sans-serif;
-    font-size: 12px;
-
-    text-align: left;
+    color: var(--hu-text-secondary, #6f6f72);
 
     cursor: pointer;
+
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease;
 }
 
-.institutional-page-card__menu button:hover {
-    background: #f2f5f7;
+.institutional-action-button .material-symbols-outlined {
+    font-size: 20px;
 }
 
-.institutional-page-card__menu-danger {
-    color: #b04444 !important;
+.institutional-action-button:hover {
+    background: #edf3f7;
+    color: var(--hu-primary, #003764);
 }
 
-.institutional-page-card__menu-danger:hover {
-    background: #fdf0f0 !important;
+.institutional-action-button--delete:hover {
+    background: #fbecec;
+    color: var(--hu-danger, #b42318);
 }
 
 
@@ -594,6 +553,10 @@
         display: block;
     }
 
+    .institutional-page-card__main {
+        padding-right: 78px;
+    }
+
     .institutional-status {
         margin-top: 12px;
     }
@@ -620,6 +583,122 @@
 
     .institutional-page-card__content {
         padding: 18px 14px;
+    }
+
+}
+
+
+/* =========================================================
+   MODAL ELIMINAR PÁGINA
+   (mismo diseño que el modal de Noticias)
+   ========================================================= */
+
+.institutional-delete-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+
+    background: rgba(15, 23, 32, 0.5);
+}
+
+.institutional-delete-modal {
+    width: 100%;
+    max-width: 420px;
+
+    padding: 26px;
+
+    border-radius: 12px;
+
+    background: #fff;
+
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+}
+
+.institutional-delete-modal h2 {
+    margin: 0 0 10px;
+
+    font-size: 20px;
+    color: var(--hu-primary, #003764);
+}
+
+.institutional-delete-modal p {
+    margin: 0 0 6px;
+
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--hu-text, #59595b);
+
+    overflow-wrap: anywhere;
+}
+
+.institutional-delete-modal > span {
+    display: block;
+
+    font-size: 13px;
+    color: var(--hu-text-secondary, #6f6f72);
+}
+
+.institutional-delete-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+
+    margin-top: 22px;
+}
+
+.institutional-delete-actions button {
+    height: 40px;
+    padding: 0 18px;
+
+    border: 0;
+    border-radius: 8px;
+
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: background-color 0.2s ease;
+}
+
+.institutional-delete-actions button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.institutional-delete-cancel {
+    background: #edf1f4;
+    color: var(--hu-text, #59595b);
+}
+
+.institutional-delete-cancel:hover:not(:disabled) {
+    background: #e0e6eb;
+}
+
+.institutional-delete-confirm {
+    background: var(--hu-danger, #b42318);
+    color: #fff;
+}
+
+.institutional-delete-confirm:hover:not(:disabled) {
+    background: var(--hu-danger-dark, #8f1d14);
+}
+
+@media (max-width: 480px) {
+
+    .institutional-delete-actions {
+        flex-direction: column-reverse;
+    }
+
+    .institutional-delete-actions button {
+        width: 100%;
     }
 
 }

@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 
 import { Head, Link, router, useForm } from "@inertiajs/react";
 
@@ -11,6 +11,7 @@ export default function InstitutionalPageForm({
     page = null,
 }) {
     const isEdit = mode === "edit";
+    const [clientErrors, setClientErrors] = useState({});
 
     /*
     |--------------------------------------------------------------------------
@@ -52,6 +53,30 @@ export default function InstitutionalPageForm({
     */
 
     const submit = (status) => {
+        // Validación inmediata para mostrar mensajes en español sin esperar al servidor.
+        const plainContent = (data.content || "")
+            .replace(/<[^>]*>/g, " ")
+            .replace(/&nbsp;|&#160;/gi, " ")
+            .replace(/&amp;/gi, "&")
+            .replace(/&lt;/gi, "<")
+            .replace(/&gt;/gi, ">")
+            .trim();
+        const nextErrors = {};
+
+        if (!data.title.trim()) {
+            nextErrors.title = "El título es obligatorio.";
+        }
+
+        if (!plainContent) {
+            nextErrors.content = "El contenido es obligatorio.";
+        }
+
+        setClientErrors(nextErrors);
+
+        if (Object.keys(nextErrors).length > 0) {
+            return;
+        }
+
         const formData = new FormData();
 
         /*
@@ -198,16 +223,21 @@ export default function InstitutionalPageForm({
                             id="institutional-title"
                             type="text"
                             value={data.title}
-                            onChange={(event) =>
-                                setData("title", event.target.value)
-                            }
+                            onChange={(event) => {
+                                setData("title", event.target.value);
+                                if (clientErrors.title) {
+                                    setClientErrors((current) => ({ ...current, title: "" }));
+                                }
+                            }}
                             placeholder="Ingresá el título de la página"
                             autoComplete="off"
+                            required
+                            aria-invalid={Boolean(clientErrors.title || errors.title)}
                         />
 
-                        {errors.title && (
+                        {(clientErrors.title || errors.title) && (
                             <span className="institutional-form-error">
-                                {errors.title}
+                                {clientErrors.title || errors.title}
                             </span>
                         )}
                     </div>
@@ -226,13 +256,18 @@ export default function InstitutionalPageForm({
 
                         <RichTextEditor
                             value={data.content}
-                            onChange={(value) => setData("content", value)}
+                            onChange={(value) => {
+                                setData("content", value);
+                                if (clientErrors.content) {
+                                    setClientErrors((current) => ({ ...current, content: "" }));
+                                }
+                            }}
                             onMediaChange={handleEditorMediaChange}
                         />
 
-                        {errors.content && (
+                        {(clientErrors.content || errors.content) && (
                             <span className="institutional-form-error">
-                                {errors.content}
+                                {clientErrors.content || errors.content}
                             </span>
                         )}
 

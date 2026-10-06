@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Head, router } from "@inertiajs/react";
 
 import PanelLayout from "@/Layouts/PanelLayout";
@@ -9,8 +9,9 @@ import "./css/index.css";
 
 export default function Index({ pages = [] }) {
     const [search, setSearch] = useState("");
-    const [openMenu, setOpenMenu] = useState(null);
     const [selectedPage, setSelectedPage] = useState(null);
+    const [pageToDelete, setPageToDelete] = useState(null);
+    const [deleting, setDeleting] = useState(false);
 
     /*
     |--------------------------------------------------------------------------
@@ -40,7 +41,6 @@ export default function Index({ pages = [] }) {
     */
 
     const handleOpenPreview = (page) => {
-        setOpenMenu(null);
         setSelectedPage(page);
     };
 
@@ -61,7 +61,6 @@ export default function Index({ pages = [] }) {
     */
 
     const handleEdit = (page) => {
-        setOpenMenu(null);
         setSelectedPage(null);
 
         router.visit(route("institutional-pages.edit", page.id));
@@ -74,18 +73,48 @@ export default function Index({ pages = [] }) {
     */
 
     const handleDelete = (page) => {
-        setOpenMenu(null);
+        setPageToDelete(page);
+    };
 
-        const confirmed = window.confirm(
-            `¿Querés eliminar la página "${page.title}"?`,
-        );
-
-        if (!confirmed) {
+    const confirmDelete = () => {
+        if (!pageToDelete) {
             return;
         }
 
-        router.delete(route("institutional-pages.destroy", page.id));
+        router.delete(route("institutional-pages.destroy", pageToDelete.id), {
+            preserveScroll: true,
+
+            onStart: () => setDeleting(true),
+
+            onFinish: () => {
+                setDeleting(false);
+                setPageToDelete(null);
+            },
+        });
     };
+
+    const cancelDelete = () => {
+        if (!deleting) {
+            setPageToDelete(null);
+        }
+    };
+
+    // Cerrar el modal con la tecla Escape
+    useEffect(() => {
+        if (!pageToDelete) {
+            return undefined;
+        }
+
+        const onKeyDown = (event) => {
+            if (event.key === "Escape" && !deleting) {
+                setPageToDelete(null);
+            }
+        };
+
+        window.addEventListener("keydown", onKeyDown);
+
+        return () => window.removeEventListener("keydown", onKeyDown);
+    }, [pageToDelete, deleting]);
 
     /*
     |--------------------------------------------------------------------------
@@ -290,52 +319,33 @@ export default function Index({ pages = [] }) {
                                         onClick={(event) =>
                                             event.stopPropagation()
                                         }
+                                        onKeyDown={(event) =>
+                                            event.stopPropagation()
+                                        }
                                     >
                                         <button
                                             type="button"
-                                            className="institutional-page-card__menu-button"
-                                            onClick={() =>
-                                                setOpenMenu(
-                                                    openMenu === page.id
-                                                        ? null
-                                                        : page.id,
-                                                )
-                                            }
-                                            aria-label={`Acciones para ${page.title}`}
+                                            className="institutional-action-button"
+                                            aria-label={`Editar ${page.title}`}
+                                            title="Editar"
+                                            onClick={() => handleEdit(page)}
                                         >
                                             <span className="material-symbols-outlined">
-                                                more_vert
+                                                edit
                                             </span>
                                         </button>
 
-                                        {openMenu === page.id && (
-                                            <div className="institutional-page-card__menu">
-                                                <button
-                                                    type="button"
-                                                    onClick={() =>
-                                                        handleEdit(page)
-                                                    }
-                                                >
-                                                    <span className="material-symbols-outlined">
-                                                        edit
-                                                    </span>
-                                                    Editar
-                                                </button>
-
-                                                <button
-                                                    type="button"
-                                                    className="institutional-page-card__menu-danger"
-                                                    onClick={() =>
-                                                        handleDelete(page)
-                                                    }
-                                                >
-                                                    <span className="material-symbols-outlined">
-                                                        delete
-                                                    </span>
-                                                    Eliminar
-                                                </button>
-                                            </div>
-                                        )}
+                                        <button
+                                            type="button"
+                                            className="institutional-action-button institutional-action-button--delete"
+                                            aria-label={`Eliminar ${page.title}`}
+                                            title="Eliminar"
+                                            onClick={() => handleDelete(page)}
+                                        >
+                                            <span className="material-symbols-outlined">
+                                                delete
+                                            </span>
+                                        </button>
                                     </div>
                                 </article>
                             );
@@ -353,6 +363,56 @@ export default function Index({ pages = [] }) {
                 onClose={handleClosePreview}
                 onEdit={handleEdit}
             />
+
+            {/* =========================================================
+                MODAL ELIMINAR
+            ========================================================== */}
+
+            {pageToDelete && (
+                <div
+                    className="institutional-delete-overlay"
+                    onClick={cancelDelete}
+                >
+                    <div
+                        className="institutional-delete-modal"
+                        role="dialog"
+                        aria-modal="true"
+                        aria-labelledby="institutional-delete-title"
+                        onClick={(event) => event.stopPropagation()}
+                    >
+                        <h2 id="institutional-delete-title">
+                            Eliminar página
+                        </h2>
+
+                        <p>
+                            ¿Seguro que querés eliminar
+                            <strong>{` "${pageToDelete.title}"`}</strong>?
+                        </p>
+
+                        <span>Esta acción no se puede deshacer.</span>
+
+                        <div className="institutional-delete-actions">
+                            <button
+                                type="button"
+                                className="institutional-delete-cancel"
+                                onClick={cancelDelete}
+                                disabled={deleting}
+                            >
+                                Cancelar
+                            </button>
+
+                            <button
+                                type="button"
+                                className="institutional-delete-confirm"
+                                onClick={confirmDelete}
+                                disabled={deleting}
+                            >
+                                {deleting ? "Eliminando..." : "Eliminar"}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </PanelLayout>
     );
 }
