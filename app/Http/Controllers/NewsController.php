@@ -57,9 +57,17 @@ class NewsController extends Controller
             'draft' => News::where('status', 'draft')->count(),
         ];
 
+        // Años que tienen noticias (se actualiza solo a medida que pasan los años)
+        $years = News::query()
+            ->selectRaw('YEAR(created_at) as year')
+            ->distinct()
+            ->orderByDesc('year')
+            ->pluck('year');
+
         return Inertia::render('Communication/Dashboard', [
             'news' => $news,
             'counts' => $counts,
+            'years' => $years,
             'filters' => [
                 'search' => $request->search,
                 'status' => $request->status ?? 'all',
@@ -198,33 +206,51 @@ class NewsController extends Controller
             $month = null;
         }
 
-        // Períodos disponibles (solo años/meses que tienen noticias)
-        $dates = News::published()
-            ->orderByDesc('published_at')
-            ->pluck('published_at');
+        $search = trim((string) $request->input('search', ''));
 
-        $years = $dates
+        // Búsqueda por título o subtítulo
+        $applySearch = function ($query) use ($search) {
+            if ($search === '') {
+                return $query;
+            }
+
+            $term = '%' . addcslashes($search, '\\%_') . '%';
+
+            return $query->where(function ($query) use ($term) {
+                $query->where('title', 'like', $term)
+                    ->orWhere('subtitle', 'like', $term);
+            });
+        };
+
+        // Años disponibles (solo los que tienen noticias publicadas)
+        $years = News::published()
+            ->orderByDesc('published_at')
+            ->pluck('published_at')
             ->map(fn ($date) => $date->year)
             ->unique()
             ->values();
 
+        // Meses del año elegido, con la cantidad de noticias (respeta la búsqueda)
         $months = [];
 
         if ($year) {
-            foreach ($dates as $date) {
-                if ($date->year === $year) {
+            $applySearch(News::published())
+                ->whereYear('published_at', $year)
+                ->pluck('published_at')
+                ->each(function ($date) use (&$months) {
                     $months[$date->month] = ($months[$date->month] ?? 0) + 1;
-                }
-            }
+                });
         }
 
-        $news = News::published()
-            ->select(['id', 'title', 'slug', 'subtitle', 'published_at'])
-            ->with([
-                'media' => fn ($query) => $query
-                    ->where('type', 'image')
-                    ->where('is_featured', true),
-            ])
+        $news = $applySearch(
+            News::published()
+                ->select(['id', 'title', 'slug', 'subtitle', 'published_at'])
+                ->with([
+                    'media' => fn ($query) => $query
+                        ->where('type', 'image')
+                        ->where('is_featured', true),
+                ])
+        )
             ->when($year, fn ($query) => $query->whereYear('published_at', $year))
             ->when($month, fn ($query) => $query->whereMonth('published_at', $month))
             ->orderByDesc('published_at')
@@ -238,6 +264,7 @@ class NewsController extends Controller
             'filters' => [
                 'year' => $year,
                 'month' => $month,
+                'search' => $search,
             ],
             'menuItems' => MenuItem::publicTree(),
             'quickLinks' => MenuItem::publicQuickLinks(),
@@ -294,8 +321,42 @@ class NewsController extends Controller
             );
         }
 
+        /*
+        | Navegación entre noticias, por fecha de publicación:
+        | anterior = la publicada justo antes, siguiente = la publicada justo después.
+        */
+        $neighborColumns = ['id', 'title', 'slug', 'published_at'];
+
+        $previousNews = News::published()
+            ->select($neighborColumns)
+            ->where(function ($query) use ($news) {
+                $query->where('published_at', '<', $news->published_at)
+                    ->orWhere(function ($query) use ($news) {
+                        $query->where('published_at', $news->published_at)
+                            ->where('id', '<', $news->id);
+                    });
+            })
+            ->orderByDesc('published_at')
+            ->orderByDesc('id')
+            ->first();
+
+        $nextNews = News::published()
+            ->select($neighborColumns)
+            ->where(function ($query) use ($news) {
+                $query->where('published_at', '>', $news->published_at)
+                    ->orWhere(function ($query) use ($news) {
+                        $query->where('published_at', $news->published_at)
+                            ->where('id', '>', $news->id);
+                    });
+            })
+            ->orderBy('published_at')
+            ->orderBy('id')
+            ->first();
+
         return Inertia::render('News/Show', [
             'news' => $news,
+            'previousNews' => $previousNews,
+            'nextNews' => $nextNews,
             'relatedNews' => $related->values(),
             'menuItems' => MenuItem::publicTree(),
             'quickLinks' => MenuItem::publicQuickLinks(),

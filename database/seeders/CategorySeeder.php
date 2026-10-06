@@ -11,14 +11,16 @@ class CategorySeeder extends Seeder
     public function run(): void
     {
         $categories = [
-            'Institucional',
-            'Salud',
-            'Docencia',
-            'Investigación',
-            'Eventos',
-            'Comunicados',
-            'Capacitación',
-            'Convocatorias',
+            'Académicas',
+            'Buenas prácticas',
+            'Cumpleaños',
+            'Fundación Hospital Universitario',
+            'Material educativo',
+            'Menú Buffet',
+            'Noticias anteriores',
+            'Noticias del día',
+            'Principal',
+            'Reconocimientos',
         ];
 
         foreach ($categories as $title) {

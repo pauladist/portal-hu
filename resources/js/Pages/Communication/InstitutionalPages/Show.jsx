@@ -56,6 +56,10 @@ export default function Show({
                     </div>
                 </section>
             </main>
+
+            <footer className="portal-footer">
+                © {new Date().getFullYear()} Hospital Universitario · Mendoza, Argentina
+            </footer>
         </>
     );
 }

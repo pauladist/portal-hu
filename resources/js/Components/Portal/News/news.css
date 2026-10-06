@@ -632,6 +632,20 @@ a.portal-popular-news__item:hover h4 {
     line-height: 1.55;
 }
 
+.portal-month-news__empty {
+    margin: 0;
+    padding: 40px 20px;
+
+    color: var(--hu-text-light);
+    background-color: var(--hu-surface);
+
+    border-radius: var(--hu-radius-md);
+
+    font-family: var(--hu-font);
+    font-size: 14px;
+    text-align: center;
+}
+
 .portal-month-news__actions {
     display: flex;
     justify-content: center;
