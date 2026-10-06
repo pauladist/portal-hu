@@ -211,24 +211,9 @@ export default function MenuItemActions({
                         type="button"
                         onClick={handleAddChild}
                     >
-                        <svg
-                            viewBox="0 0 24 24"
-                            fill="none"
-                        >
-                            <path
-                                d="M12 5V19"
-                                stroke="currentColor"
-                                strokeWidth="1.8"
-                                strokeLinecap="round"
-                            />
-
-                            <path
-                                d="M5 12H19"
-                                stroke="currentColor"
-                                strokeWidth="1.8"
-                                strokeLinecap="round"
-                            />
-                        </svg>
+                        <span className="material-symbols-outlined">
+                            add
+                        </span>
 
                         Agregar subelemento
                     </button>
@@ -237,17 +222,9 @@ export default function MenuItemActions({
                         type="button"
                         onClick={handleEdit}
                     >
-                        <svg
-                            viewBox="0 0 24 24"
-                            fill="none"
-                        >
-                            <path
-                                d="M4 20H8L19 9C20.1 7.9 20.1 6.1 19 5C17.9 3.9 16.1 3.9 15 5L4 16V20Z"
-                                stroke="currentColor"
-                                strokeWidth="1.7"
-                                strokeLinejoin="round"
-                            />
-                        </svg>
+                        <span className="material-symbols-outlined">
+                            edit
+                        </span>
 
                         Editar
                     </button>
@@ -257,45 +234,9 @@ export default function MenuItemActions({
                         className="is-danger"
                         onClick={handleDelete}
                     >
-                        <svg
-                            viewBox="0 0 24 24"
-                            fill="none"
-                        >
-                            <path
-                                d="M5 7H19"
-                                stroke="currentColor"
-                                strokeWidth="1.8"
-                                strokeLinecap="round"
-                            />
-
-                            <path
-                                d="M10 11V17"
-                                stroke="currentColor"
-                                strokeWidth="1.8"
-                                strokeLinecap="round"
-                            />
-
-                            <path
-                                d="M14 11V17"
-                                stroke="currentColor"
-                                strokeWidth="1.8"
-                                strokeLinecap="round"
-                            />
-
-                            <path
-                                d="M8 7L9 19H15L16 7"
-                                stroke="currentColor"
-                                strokeWidth="1.8"
-                                strokeLinejoin="round"
-                            />
-
-                            <path
-                                d="M9 7L10 4H14L15 7"
-                                stroke="currentColor"
-                                strokeWidth="1.8"
-                                strokeLinejoin="round"
-                            />
-                        </svg>
+                        <span className="material-symbols-outlined">
+                            delete
+                        </span>
 
                         Eliminar
                     </button>

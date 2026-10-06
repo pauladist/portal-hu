@@ -266,25 +266,27 @@
     align-items: center;
     justify-content: center;
 
-    min-width: 70px;
+    width: 34px;
     height: 34px;
 
-    padding: 0 12px;
+    padding: 0;
 
-    border-radius: 6px;
+    border: 0;
+    border-radius: 7px;
 
-    font-family: inherit;
-    font-size: 12px;
-    font-weight: 600;
-    line-height: 1;
+    background: transparent;
+
+    color: var(--hu-text-secondary, #6f6f72);
 
     cursor: pointer;
 
     transition:
         background-color 0.2s ease,
-        border-color 0.2s ease,
-        color 0.2s ease,
-        transform 0.15s ease;
+        color 0.2s ease;
+}
+
+.user-action-button .material-symbols-outlined {
+    font-size: 20px;
 }
 
 
@@ -292,20 +294,9 @@
    EDITAR
    ========================================================= */
 
-.user-action-edit {
-    border: 1px solid var(--hu-primary-border, rgba(0, 55, 100, 0.18));
-    background: #ffffff;
-    color: var(--hu-primary, #003764);
-}
-
 .user-action-edit:hover {
-    border-color: #9fc7df;
-    background: #eef7fc;
-    color: #003764;
-}
-
-.user-action-edit:active {
-    transform: translateY(1px);
+    background: #edf3f7;
+    color: var(--hu-primary, #003764);
 }
 
 
@@ -313,20 +304,9 @@
    ELIMINAR
    ========================================================= */
 
-.user-action-delete {
-    border: 1px solid var(--hu-danger-border, #edcaca);
-    background: #ffffff;
-    color: var(--hu-danger, #b42318);
-}
-
 .user-action-delete:hover {
-    border-color: #dfa4a4;
-    background: #fff2f2;
-    color: #a52f2f;
-}
-
-.user-action-delete:active {
-    transform: translateY(1px);
+    background: #fbecec;
+    color: var(--hu-danger, #b42318);
 }
 
 

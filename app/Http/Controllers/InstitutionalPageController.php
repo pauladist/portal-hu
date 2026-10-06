@@ -70,8 +70,19 @@ class InstitutionalPageController extends Controller
             ],
 
             'content' => [
-                'nullable',
+                'required',
                 'string',
+                function ($attribute, $value, $fail) {
+                    $plainText = trim(html_entity_decode(
+                        strip_tags($value),
+                        ENT_QUOTES | ENT_HTML5,
+                        'UTF-8'
+                    ));
+
+                    if ($plainText === '') {
+                        $fail('El contenido es obligatorio.');
+                    }
+                },
             ],
 
             'status' => [
@@ -83,6 +94,15 @@ class InstitutionalPageController extends Controller
                 'nullable',
                 'date',
             ],
+        ], [
+            'title.required' => 'El título es obligatorio.',
+            'title.string' => 'El título debe ser un texto válido.',
+            'title.max' => 'El título no puede superar los 255 caracteres.',
+            'content.required' => 'El contenido es obligatorio.',
+            'content.string' => 'El contenido debe ser un texto válido.',
+            'status.required' => 'Seleccioná si querés guardar como borrador o publicar.',
+            'status.in' => 'El estado seleccionado no es válido.',
+            'published_at.date' => 'La fecha de publicación no es válida.',
         ]);
 
 
@@ -189,8 +209,19 @@ class InstitutionalPageController extends Controller
             ],
 
             'content' => [
-                'nullable',
+                'required',
                 'string',
+                function ($attribute, $value, $fail) {
+                    $plainText = trim(html_entity_decode(
+                        strip_tags($value),
+                        ENT_QUOTES | ENT_HTML5,
+                        'UTF-8'
+                    ));
+
+                    if ($plainText === '') {
+                        $fail('El contenido es obligatorio.');
+                    }
+                },
             ],
 
             'status' => [
@@ -202,6 +233,15 @@ class InstitutionalPageController extends Controller
                 'nullable',
                 'date',
             ],
+        ], [
+            'title.required' => 'El título es obligatorio.',
+            'title.string' => 'El título debe ser un texto válido.',
+            'title.max' => 'El título no puede superar los 255 caracteres.',
+            'content.required' => 'El contenido es obligatorio.',
+            'content.string' => 'El contenido debe ser un texto válido.',
+            'status.required' => 'Seleccioná si querés guardar como borrador o publicar.',
+            'status.in' => 'El estado seleccionado no es válido.',
+            'published_at.date' => 'La fecha de publicación no es válida.',
         ]);
 
 

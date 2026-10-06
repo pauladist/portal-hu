@@ -635,18 +635,17 @@
 }
 
 .menu-item-dropdown button.is-danger {
-    color: #c73737;
+    color: var(--hu-danger, #b42318);
 }
 
 .menu-item-dropdown button.is-danger:hover {
     background: var(--hu-danger-bg, #fff1f0);
 
-    color: #c73737;
+    color: var(--hu-danger, #b42318);
 }
 
-.menu-item-dropdown svg {
-    width: 17px;
-    height: 17px;
+.menu-item-dropdown .material-symbols-outlined {
+    font-size: 20px;
 
     flex-shrink: 0;
 }

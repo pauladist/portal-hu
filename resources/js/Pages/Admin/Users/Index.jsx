@@ -147,13 +147,17 @@ export default function Index({ users = [] }) {
                                                         <button
                                                             type="button"
                                                             className="user-action-button user-action-edit"
+                                                            aria-label="Editar usuario"
+                                                            title="Editar"
                                                             onClick={() =>
                                                                 handleEdit(
                                                                     user
                                                                 )
                                                             }
                                                         >
-                                                            Editar
+                                                            <span className="material-symbols-outlined">
+                                                                edit
+                                                            </span>
                                                         </button>
 
 
@@ -164,13 +168,17 @@ export default function Index({ users = [] }) {
                                                             <button
                                                                 type="button"
                                                                 className="user-action-button user-action-delete"
+                                                                aria-label="Eliminar usuario"
+                                                                title="Eliminar"
                                                                 onClick={() =>
                                                                     setDeletingUser(
                                                                         user
                                                                     )
                                                                 }
                                                             >
-                                                                Eliminar
+                                                                <span className="material-symbols-outlined">
+                                                                    delete
+                                                                </span>
                                                             </button>
                                                         )}
 

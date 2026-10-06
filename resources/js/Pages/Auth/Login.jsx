@@ -204,20 +204,6 @@ export default function Login() {
 
                         </form>
 
-                        {/* Información */}
-                        <div className="ph-login-info">
-
-                            <span className="material-symbols-outlined">
-                                info
-                            </span>
-
-                            <p>
-                                El acceso al Portal HU está restringido
-                                a usuarios autorizados.
-                            </p>
-
-                        </div>
-
                     </div>
 
                 </section>
