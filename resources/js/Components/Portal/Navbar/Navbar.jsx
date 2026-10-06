@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useLayoutEffect, useEffect } from "react";
 import { getMenuItemLinkProps } from "@/Utils/menuLinks";
 import "./Navbar.css";
 
@@ -165,23 +165,162 @@ function MobileNavItem({ item }) {
    NAVBAR
    ========================================================= */
 
+const MAX_VISIBLE = 7; // máximo de ítems en la fila principal
+const MIN_VISIBLE = 3; // por debajo de esto se usa la hamburguesa
+const MENU_GAP = 4; // debe coincidir con .portal-navbar__menu { gap }
+const BRAND_GAP = 24; // margen entre logo y menú
+const SAFETY = 8; // holgura para no quedar justo
+const MOBILE_MAX_WIDTH = 768; // en táctil siempre hamburguesa
+
 export default function Navbar({ menuItems = [] }) {
     const [menuOpen, setMenuOpen] = useState(false);
     const [moreOpen, setMoreOpen] = useState(false);
 
-    const visibleItems = menuItems.slice(0, 7);
-    const moreItems = menuItems.slice(7);
+    const [visibleCount, setVisibleCount] = useState(
+        Math.min(menuItems.length, MAX_VISIBLE)
+    );
+    const [compact, setCompact] = useState(false);
+
+    const topRef = useRef(null);
+    const brandRef = useRef(null);
+    const measureRef = useRef(null);
+
+    /*
+     * Cuántos ítems entran en la fila:
+     * - Se miden los ítems reales en un contenedor oculto.
+     * - Los que no entran pasan al botón "Más".
+     * - La hamburguesa solo aparece si no entran ni MIN_VISIBLE
+     *   ítems, o si la pantalla es de celular.
+     */
+    useLayoutEffect(() => {
+        const top = topRef.current;
+        const brand = brandRef.current;
+        const measure = measureRef.current;
+
+        if (!top || !brand || !measure) {
+            return undefined;
+        }
+
+        const check = () => {
+            const styles = window.getComputedStyle(top);
+
+            const available =
+                top.clientWidth -
+                parseFloat(styles.paddingLeft) -
+                parseFloat(styles.paddingRight) -
+                brand.offsetWidth -
+                BRAND_GAP;
+
+            const nodes = Array.from(measure.children);
+            const moreNode = nodes[nodes.length - 1];
+            const itemNodes = nodes.slice(0, -1);
+
+            const widths = itemNodes.map((el) => el.offsetWidth);
+            const moreWidth = moreNode ? moreNode.offsetWidth : 0;
+            const total = widths.length;
+
+            let fitCount = 0;
+
+            for (let k = Math.min(total, MAX_VISIBLE); k > 0; k--) {
+                const itemsWidth =
+                    widths.slice(0, k).reduce((sum, w) => sum + w, 0) +
+                    MENU_GAP * (k - 1);
+
+                const moreNeeded = k < total ? MENU_GAP + moreWidth : 0;
+
+                if (itemsWidth + moreNeeded + SAFETY <= available) {
+                    fitCount = k;
+                    break;
+                }
+            }
+
+            const isMobile =
+                window.matchMedia(`(max-width: ${MOBILE_MAX_WIDTH}px)`)
+                    .matches;
+
+            const minNeeded = Math.min(total, MIN_VISIBLE);
+
+            setVisibleCount(fitCount);
+            setCompact(isMobile || fitCount < minNeeded);
+        };
+
+        check();
+
+        const observer = new ResizeObserver(check);
+        observer.observe(top);
+        observer.observe(brand);
+        observer.observe(measure);
+
+        // Los textos cambian de ancho cuando terminan de cargar las fuentes
+        document.fonts?.ready.then(check);
+
+        return () => observer.disconnect();
+    }, [menuItems]);
+
+    useEffect(() => {
+        if (compact) {
+            setMoreOpen(false);
+        } else {
+            setMenuOpen(false);
+        }
+    }, [compact]);
+
+    const visibleItems = menuItems.slice(0, visibleCount);
+    const moreItems = menuItems.slice(visibleCount);
 
     return (
-        <header className="portal-navbar">
+        <header
+            className={`portal-navbar ${
+                compact ? "portal-navbar--compact" : ""
+            }`}
+        >
+            {/* MEDICIÓN (oculto): ancho real de cada ítem y del botón Más */}
+            <div
+                className="portal-navbar__measure"
+                aria-hidden="true"
+                inert=""
+                ref={measureRef}
+            >
+                {menuItems.map((item) => (
+                    <div
+                        key={item.id}
+                        className="portal-navbar__item-wrapper"
+                    >
+                        <span className="portal-navbar__item">
+                            <span>{item.title}</span>
+
+                            {item.children?.length > 0 && (
+                                <span className="material-symbols-outlined portal-navbar__arrow">
+                                    expand_more
+                                </span>
+                            )}
+                        </span>
+                    </div>
+                ))}
+
+                <div className="portal-navbar__item-wrapper">
+                    <span className="portal-navbar__more">
+                        <span>Menos</span>
+
+                        <span className="material-symbols-outlined portal-navbar__more-arrow">
+                            expand_more
+                        </span>
+                    </span>
+                </div>
+            </div>
+
             <div
                 className={`portal-navbar__container ${
                     moreOpen ? "portal-navbar__container--more-open" : ""
                 }`}
             >
                 {/* FILA PRINCIPAL */}
-                <div className="portal-navbar__top">
-                    <a href="/" className="portal-navbar__brand">
+                <div className="portal-navbar__top" ref={topRef}>
+                    <a
+                        href="/"
+                        className="portal-navbar__brand"
+                        ref={brandRef}
+                    >
                         <img
                             src="/images/logo-hu.png"
                             alt="Hospital Universitario"
